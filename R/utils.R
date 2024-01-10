@@ -22,15 +22,15 @@
     return(x1)
   }
   
-  
 #3 point.seq  - plot line by segments of width
 
-  line.seg = function(x,y,lwd,col)
+  line.seg = function(x,y,lwd,col,lty=1)
   {
     n=length(x)
     for (k in 1:(n-1))
         {
-        lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type='l',lwd=lwd[k],col=col)
+        lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type='l',lwd=lwd[k],col=col,lty=lty)
+        
         }
     
   }

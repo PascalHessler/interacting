@@ -1,14 +1,16 @@
-
-xlab='Moderator'  
-ylab1='Dependent Variable'
-ylab2='Marginal Effect'
-main1='Simple Slopes'
-main2='GAM Floodlight'
-
-col1='red4'
-col2='dodgerblue'
-coldy='purple'
-decimals=2
+#' Probe an interaction with GAM  
+#' 
+#' The interaction is probed as proposed in Simonsohn (2024), estimating a GAM model
+#' and computing both simple slopes and floodlight/Johnson-Neyman procedure.
+#'  
+#'@param x the predictor of interest (in an experiment, the discrete randomly 
+#'assigned manipulation).
+#'@param y the dependent variable.
+#'@param z the moderator
+#'@param col1 color used when x takes its lowest value
+#'@param col2 color used when x takes its highest value
+#'
+#'@export
 
 gam.probe=function(x,z,y,k,zs=NULL,spotlights=NULL,
           xlab='moderator',
@@ -16,18 +18,18 @@ gam.probe=function(x,z,y,k,zs=NULL,spotlights=NULL,
           col2='dodgerblue',
           coldy='purple',
           ylab1='Dependent Variable',
-          ylab2='Marginal Effect')
+          ylab2='Marginal Effect',main1="Simple Slopes",main2='Floodlight' , ...)
 {
   gam.probe.binary(x=x,z=z,y=y,k=k,zs=zs,spotlights=spotlights,xlab=xlab,
-                   ylab1=ylab1,ylab2=ylab2,col1=col1,col2=col2,coldy=coldy)
+                   ylab1=ylab1,ylab2=ylab2,col1=col1,col2=col2,coldy=coldy,
+                   main1=main1, main2=main2,...)
   
 }
 
   
-gam.probe.binary = function(x,z,y,k=4,zs, spotlights , 
-                            col1='red4',
-                            col2='dodgerblue',
-                            coldy='purple',
+gam.probe.binary = function(x,z,y,k,zs, spotlights, 
+                            xlab, ylab1, ylab2, col1,col2,
+                            coldy,main1,main2,
                             ...)
 {
   
@@ -49,7 +51,7 @@ gam.probe.binary = function(x,z,y,k=4,zs, spotlights ,
       xn=factor(xn)
       
       #Binary predictor
-        g1=gam(y~s(z,by=x)+x,data=df) 
+        g1 = mgcv::gam(y~s(z,by=x,k=k)+x,data=df) 
     
         #Values of the moderator
           #new data
