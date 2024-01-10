@@ -24,12 +24,12 @@
   
 #3 point.seq  - plot line by segments of width
 
-  line.seg = function(x,y,lwd,col,lty=1)
+  line.seg = function(x,y,lwd,col,g,lty=1)
   {
     n=length(x)
     for (k in 1:(n-1))
         {
-        lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type='l',lwd=lwd[k],col=col,lty=lty)
+        lines(x=c(x[k],x[k+1]-.05*(x[k+1]-x[k])),y=c(y[k],y[k+1]),type='l',lwd=lwd[k],col=adjustcolor(col,g[k]),lty=lty)
         
         }
     

@@ -97,7 +97,8 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
               w1 = sapply(zs,function(x) share.within(x,z1, 3*tick.width))
               lwd2 = rescale(w2, min1=.35 , max=8)
               lwd1 = rescale(w1, min1=.35 , max=8)
-              
+              gr1 = rescale(w1, min1=.01 , max=.9)
+              gr2 = rescale(w2, min1=.01 , max=.9)
               
             #Empty plot
               ylim = range(c(yh1.ub , yh1.lb , yh2.ub , yh2.lb))
@@ -105,10 +106,11 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
               plot(zs,yh2,type='n',xlab='',ylab='',las=1,ylim=ylim)
 
             #Lines    
-              line.seg(zs,yh1,lwd=lwd1,col=col1,lty=1) 
-              line.seg(zs,yh2,lwd=lwd2,col=col2,lty=2) 
+              line.seg(zs,yh1,lwd=lwd1,col=col1,g=gr1,lty=1) 
+              line.seg(zs,yh2,lwd=lwd2,col=col2,g=gr2,lty=2) 
                 #line.seg(): segmented line of varying width, see utils. #3
-              
+
+                 
             #Quantiles values
              # qt=10:90/100
              #  q1 = quantile(df1$z,qt)
@@ -133,7 +135,14 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
         #----------------------
               
           #Plot 2
-            plot(zs,dy,type='l',col=coldy,lwd=2,xlab='',ylab='',ylim=range(c(dy.ub,dy.lb)))
+              lwdm=(lwd1+lwd2)
+              grm=(gr1+gr2)
+              lwdm=rescale(lwdm,1,8)
+              lwdm=pmax(lwdm,8)
+             # grm=rescale(grm,.2,1)
+            plot(zs,dy,type='n',col=coldy,lwd=2,xlab='',ylab='',ylim=range(c(dy.ub,dy.lb)))
+            line.seg(zs,dy,lwd=lwdm,col=coldy,g=grm,lty=1) 
+
             polygon(c(zs,rev(zs)),c(dy.ub,rev(dy.lb)),col=adjustcolor(coldy,.1),border=NA)        
             abline(h=0,col='gray78',lty=2)
 
@@ -157,7 +166,7 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
               
             #Plot them
               points(spotlights ,dys , pch=16,col=coldy,cex=1.5)
-              text(spotlights,dys+.015*diff(ylim),round(dys,1),cex=.8,col=coldy)
+              text(spotlights+.03*diff(range(zs)),dys+.03*diff(ylim),round(dys,1),cex=.8,col=coldy)
             
     #output
         return(invisible(list(
