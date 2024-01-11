@@ -13,21 +13,23 @@
 #'@export
 
 gam.probe=function(x,z,y,k,zs=NULL,spotlights=NULL,
+          histogram=TRUE,
           xlab='moderator',
           col1='red4',
           col2='dodgerblue',
           coldy='purple',
           ylab1='Dependent Variable',
-          ylab2='Marginal Effect',main1="Simple Slopes",main2='Floodlight' , ...)
+          ylab2='Marginal Effect',main1="GAM Simple Slopes",main2='GAM Floodlight' , ...)
 {
-  gam.probe.binary(x=x,z=z,y=y,k=k,zs=zs,spotlights=spotlights,xlab=xlab,
+  gam.probe.binary(x=x,z=z,y=y,k=k,zs=zs,histogram=histogram,
+                   spotlights=spotlights,xlab=xlab,
                    ylab1=ylab1,ylab2=ylab2,col1=col1,col2=col2,coldy=coldy,
                    main1=main1, main2=main2,...)
   
 }
 
   
-gam.probe.binary = function(x,z,y,k,zs, spotlights, 
+gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights, 
                             xlab, ylab1, ylab2, col1,col2,
                             coldy,main1,main2,
                             ...)
@@ -100,23 +102,23 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
               gr1 = rescale(w1, min1=.01 , max=.9)
               gr2 = rescale(w2, min1=.01 , max=.9)
               
-            #Empty plot
+            #Ylims
               ylim = range(c(yh1.ub , yh1.lb , yh2.ub , yh2.lb))
               ylim[2]=ylim[2]+.1*diff(ylim)
+              
+            #Space for histogram
+              if (histogram==TRUE) ylim[1]=ylim[1]-.15*diff(ylim)
+              
+            #Empty plot
               plot(zs,yh2,type='n',xlab='',ylab='',las=1,ylim=ylim)
-
+              
+              
             #Lines    
-              line.seg(zs,yh1,lwd=lwd1,col=col1,g=gr1,lty=1) 
-              line.seg(zs,yh2,lwd=lwd2,col=col2,g=gr2,lty=2) 
-                #line.seg(): segmented line of varying width, see utils. #3
-
-                 
-            #Quantiles values
-             # qt=10:90/100
-             #  q1 = quantile(df1$z,qt)
-             #  q2 = quantile(df2$z,qt)
-
-
+              #line.seg(zs,yh1,lwd=lwd1,col=col1,g=gr1,lty=1) 
+              #line.seg(zs,yh2,lwd=lwd2,col=col2,g=gr2,lty=2) 
+              line.seg(zs,yh1,lwd=rep(4,length(z)),col=col1,g=gr1,lty=1) 
+              line.seg(zs,yh2,lwd=rep(4,length(z)),col=col2,g=gr2,lty=2) 
+            
                             
             #CI bands
               polygon(x=c(zs,rev(zs)),y=c(yh1.ub,rev(yh1.lb)),col=adjustcolor(col1,.1),border = NA)
@@ -131,21 +133,73 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
             #Legend
               legend("topleft",inset=.01,bty='n',lty=c(1,2),lwd=3,col=c(col1,col2),legend=as.character(ux))
               
-        
-        #----------------------
+            #histograms at the bottom
+              if (histogram==TRUE)
+              {
+              #Set braks to concide with those already in the graph
+                breaks=axTicks(1)
+                breaks=c(min(z),breaks,max(z))
+                h1=hist(z[x==ux[1]],plot=FALSE,breaks=breaks)
+                h2=hist(z[x==ux[2]],plot=FALSE,breaks=breaks)
+
+             #Shorter variable names
+                b1=h1$breaks
+                b2=h2$breaks
+                c1=h1$counts
+                c2=h2$counts
+              
+            #Adjust y coordinates too be bottom of figure
+              y0=par('usr')[3]
+              y1=y0+.1*diff(ylim)
+              d1 =y0+ (c1 /max(c1+c2)) * (y1-y0)
+              d2 =d1+ (c2 /max(c1+c2)) * (y1-y0)
+
+            
+              for (k in 1:length(h1$mids) )
+              {
+                
+                polygon(x=c(b1[k],b1[k],b1[k+1],b1[k+1]),
+                        y=c(y0,d1[k],d1[k],y0),col=col1)
+                polygon(x=c(b1[k],b1[k],b1[k+1],b1[k+1]),
+                        y=c(d1[k],d2[k],d2[k],d1[k]),col=col2) 
+                
+              } #End for
+              
+              
+          } #End if histogram==TRUE
+              
+                  #----------------------
               
           #Plot 2
-              lwdm=(lwd1+lwd2)
-              grm=(gr1+gr2)
-              lwdm=rescale(lwdm,1,8)
-              lwdm=pmax(lwdm,8)
-             # grm=rescale(grm,.2,1)
-            plot(zs,dy,type='n',col=coldy,lwd=2,xlab='',ylab='',ylim=range(c(dy.ub,dy.lb)))
-            line.seg(zs,dy,lwd=lwdm,col=coldy,g=grm,lty=1) 
-
+              #Color adustment  for line of floodlight
+                grm=pmin(gr1,gr2)
+              
+              #ylim
+                ylim=range(c(dy.ub,dy.lb))
+                
+              #Space for histogram
+                if (histogram==TRUE) ylim[1]=ylim[1]-.15*diff(ylim)
+                
+              #Start the plot
+                plot(zs,dy,type='n',col=coldy,lwd=2,xlab='',ylab='',ylim=ylim,las=1)
+         
+                  
+              #Spotlight 
+               spotlights.default=FALSE
+               if (is.null(spotlights)) {
+                 spotlights=quantile(z,c(.15,.5,.85) , type=3) 
+                 spotlights.default=TRUE
+                   }
+       
+           #Quantiles ilnes
+            
+         
+            line.seg(zs,dy,lwd=rep(4,length(z)),col=coldy,g=grm,lty=1) 
             polygon(c(zs,rev(zs)),c(dy.ub,rev(dy.lb)),col=adjustcolor(coldy,.1),border=NA)        
-            abline(h=0,col='gray78',lty=2)
+            abline(h=0,col='gray80',lty=1)
 
+            
+            
         #Headers
               mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
               mtext(side=2,line=2.5,font=2,cex=1.5,ylab2)
@@ -154,9 +208,7 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
             
           #Add spotlights
               
-           #Default values
-               if (is.null(spotlights)) spotlights=quantile(z,c(.25,.5,.75) , type=3)  
-           
+            
             #Get the ys
               ys1=predict(g1,newdata = data.frame(x=ux[1],z=spotlights))
               ys2=predict(g1,newdata = data.frame(x=ux[2],z=spotlights))
@@ -167,8 +219,33 @@ gam.probe.binary = function(x,z,y,k,zs, spotlights,
             #Plot them
               points(spotlights ,dys , pch=16,col=coldy,cex=1.5)
               text(spotlights+.03*diff(range(zs)),dys+.03*diff(ylim),round(dys,1),cex=.8,col=coldy)
+              
+            #Legend
+              legend('top',pch=16,col=coldy,legend='15th, 50th and 85th percentile',bty='n',cex=.8,pt.cex=1.2,text.col = coldy)
+    
+              
+          #histograms at the bottom
+            if (histogram==TRUE) {
+            #Adjust y coordinates too be bottom of figure
+              y0=par('usr')[3]
+              y1=y0+.1*diff(ylim)
+              d1 =y0+ (c1 /max(c1+c2)) * (y1-y0)
+              d2 =d1+ (c2 /max(c1+c2)) * (y1-y0)
+
             
-    #output
+              for (k in 1:length(h1$mids) )
+              {
+                
+                polygon(x=c(b1[k],b1[k],b1[k+1],b1[k+1]),
+                        y=c(y0,d1[k],d1[k],y0),col=col1)
+                polygon(x=c(b1[k],b1[k],b1[k+1],b1[k+1]),
+                        y=c(d1[k],d2[k],d2[k],d1[k]),col=col2) 
+                
+              } #End of for
+                    
+       }#End of if (histogram==TRUE)
+              
+      #output
         return(invisible(list(
            #Readme
                readme=paste0("The output of the gam.probe() function includes\n",
