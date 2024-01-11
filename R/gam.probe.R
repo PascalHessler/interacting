@@ -88,8 +88,8 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
             
     #Start the figure
      par(mfrow=c(1,2))
-      
-        #Plot 1 - Simple Slopes
+     
+          #Plot 1 - Simple Slopes
             
             #Set widths of lines
               z2 = z[x==ux[2]]
@@ -126,7 +126,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
               
             #Headers
               mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
-              mtext(side=2,line=2.5,font=2,cex=1.5,ylab1)
+              mtext(side=2,line=3,font=2,cex=1.5,ylab1)
               mtext(side=3,line=1.5,font=2,cex=1.5,main1)
               
 
@@ -202,7 +202,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
             
         #Headers
               mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
-              mtext(side=2,line=2.5,font=2,cex=1.5,ylab2)
+              mtext(side=2,line=3,font=2,cex=1.5,ylab2)
               mtext(side=3,line=1.5,font=2,cex=1.5,main2)
             
             
