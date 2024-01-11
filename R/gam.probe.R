@@ -50,8 +50,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
   #Check binary
     if (length(unique(x))!=2) stop("x needs to be a binary variable")
     
-      xn=factor(xn)
-      
+
       #Binary predictor
         g1 = mgcv::gam(y~s(z,by=x,k=k)+x,data=df) 
     
