@@ -12,7 +12,8 @@
 #'
 #'@export
 
-gam.probe=function(x,z,y,k,zs=NULL,spotlights=NULL,
+gam.probe=function(x,z,y,k=NULL,zs=NULL,spotlights=NULL,
+          plot=TRUE,
           histogram=TRUE,
           xlab='moderator',
           col1='red4',
@@ -21,7 +22,7 @@ gam.probe=function(x,z,y,k,zs=NULL,spotlights=NULL,
           ylab1='Dependent Variable',
           ylab2='Marginal Effect',main1="GAM Simple Slopes",main2='GAM Floodlight' , ...)
 {
-  gam.probe.binary(x=x,z=z,y=y,k=k,zs=zs,histogram=histogram,
+  gam.probe.binary(x=x,z=z,y=y,k=k,zs=zs,histogram=histogram,plot=plot,
                    spotlights=spotlights,xlab=xlab,
                    ylab1=ylab1,ylab2=ylab2,col1=col1,col2=col2,coldy=coldy,
                    main1=main1, main2=main2,...)
@@ -29,7 +30,7 @@ gam.probe=function(x,z,y,k,zs=NULL,spotlights=NULL,
 }
 
   
-gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights, 
+gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights, 
                             xlab, ylab1, ylab2, col1,col2,
                             coldy,main1,main2,
                             ...)
@@ -52,8 +53,9 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
     
 
       #Binary predictor
-        g1 = mgcv::gam(y~s(z,by=x,k=k)+x,data=df) 
-    
+       if (!is.null(k)) g1 = mgcv::gam(y~s(z,by=x,k=k)+x,data=df) 
+       if ( is.null(k)) g1 = mgcv::gam(y~s(z,by=x)+x,data=df) 
+
         #Values of the moderator
           #new data
             nd1=data.frame(z=zs,x=ux[1])  
@@ -82,10 +84,26 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
             dy.lb  = dy - tc * dy.se
             dy.ub  = dy + tc * dy.se
             
-   
-        
+        #Spotlight 
+               spotlights.default=FALSE
+               if (is.null(spotlights)) {
+                 spotlights=quantile(z,c(.15,.5,.85) , type=3) 
+                 spotlights.default=TRUE
+                   }
+       
             
-    #Start the figure
+      #Get the ys
+              ys1=predict(g1,newdata = data.frame(x=ux[1],z=spotlights))
+              ys2=predict(g1,newdata = data.frame(x=ux[2],z=spotlights))
+       
+            #The delta
+              dys=ys2-ys1
+              
+        
+    if (plot==TRUE)    
+    {
+      
+      #Start the figure
      par(mfrow=c(1,2))
      
           #Plot 1 - Simple Slopes
@@ -183,13 +201,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
                 plot(zs,dy,type='n',col=coldy,lwd=2,xlab='',ylab='',ylim=ylim,las=1)
          
                   
-              #Spotlight 
-               spotlights.default=FALSE
-               if (is.null(spotlights)) {
-                 spotlights=quantile(z,c(.15,.5,.85) , type=3) 
-                 spotlights.default=TRUE
-                   }
-       
+            
            #Quantiles ilnes
             
          
@@ -208,13 +220,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
           #Add spotlights
               
             
-            #Get the ys
-              ys1=predict(g1,newdata = data.frame(x=ux[1],z=spotlights))
-              ys2=predict(g1,newdata = data.frame(x=ux[2],z=spotlights))
-              
-            #The delta
-              dys=ys2-ys1
-              
+         
             #Plot them
               points(spotlights ,dys , pch=16,col=coldy,cex=1.5)
               text(spotlights+.03*diff(range(zs)),dys+.03*diff(ylim),round(dys,1),cex=.8,col=coldy)
@@ -243,7 +249,10 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,spotlights,
               } #End of for
                     
        }#End of if (histogram==TRUE)
+           
               
+    } #End if (plot==TRUE)
+       
       #output
         return(invisible(list(
            #Readme
