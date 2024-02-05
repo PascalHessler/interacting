@@ -1,6 +1,6 @@
-#' Probe an interaction with GAM  
+#' Probe interactions computing Simple Slopes and Floodlight (Johnson-Neyman) 
 #' 
-#' The interaction is probed as proposed in Simonsohn (2024), estimating a GAM model
+#' The interaction is probed, by default, as proposed in Simonsohn (2024), estimating a GAM model
 #' and computing both simple slopes and floodlight/Johnson-Neyman procedure.
 #'  
 #'@param x the predictor of interest (in an experiment, the discrete randomly 
@@ -12,59 +12,85 @@
 #'
 #'@export
 
-gam.probe=function(x,z,y,k=NULL,zs=NULL,spotlights=NULL,
-          plot=TRUE,
-          histogram=TRUE,
-          xlab='moderator',
-          col1='red4',
-          col2='dodgerblue',
-          coldy='purple',
-          ylab1='Dependent Variable',
-          ylab2='Marginal Effect',main1="GAM Simple Slopes",main2='GAM Floodlight' , ...)
-{
-  gam.probe.binary(x=x,z=z,y=y,k=k,zs=zs,histogram=histogram,plot=plot,
-                   spotlights=spotlights,xlab=xlab,
-                   ylab1=ylab1,ylab2=ylab2,col1=col1,col2=col2,coldy=coldy,
-                   main1=main1, main2=main2,...)
+interprobe=function(model=NULL,
+                    x,z,y,
+                    k=NULL,
+                    zs=NULL,
+                    spotlights=NULL,
+                    plot=TRUE,
+                    histogram=TRUE,
+                    xlab='moderator',
+                    col1='red4',
+                    col2='dodgerblue',
+                    col3='purple',
+                    ylab1='Dependent Variable',
+                    ylab2='Marginal Effect',
+                    main1="GAM Simple Slopes",
+                    main2='GAM Floodlight' , 
+                    ...)
+                    
+  {
   
-}
-
   
-gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights, 
-                            xlab, ylab1, ylab2, col1,col2,
-                            coldy,main1,main2,
-                            ...)
-{
+  data$x2=data$z*2
+  data$z2=rnorm(nrow(data),1,5)
+  data$x=factor(data$x)
+  g=gam(y~s(z,by=x)+x+x2+z2,data=data)
+  g$formula
   
-  #moderator range
-    if (is.null(zs))   zs = seq(quantile(z,.05),quantile(z,.95),length.out=100)
-
-  #Unique x values
-    ux=unique(x)
-
-  #Make dataframe
-    x=factor(x)
-
-    df=data.frame(x,z,y)
-   
- 
-  #Check binary
-    if (length(unique(x))!=2) stop("x needs to be a binary variable")
+  #Estimmate model if not provided 
+     if (is.null(model)==TRUE)
+     {
+     
+    #Get data ready
+       #case 1: entered x,y,z
+          if (is.null(data) & is.null(mmodel))  data=data.frame(x=x,z=z,y=y)
     
+       #Case 2: entered a model ,and it is GAM
+          if (!is.null(model) & ('gam' %in% class(model))) 
+          data = model$model  #this extract $model, which contains the original data.frame, from the gam
+          model$pred.formula
+            
+    #is x binary?
+        binary  <- length(unique(data$x))==2   #True if exactly 2 unique values
 
-      #Binary predictor
-       if (!is.null(k)) g1 = mgcv::gam(y~s(z,by=x,k=k)+x,data=df) 
-       if ( is.null(k)) g1 = mgcv::gam(y~s(z,by=x)+x,data=df) 
+    #If x is binary, make it factor
+        if (binary==TRUE) data$x=factor(data$x)
+       
+    #Run the model
+       gam1 = run.gam(data,k)  #see script: 'run.gam.R'
+       
+    #moderator grid
+       if (is.null(zs))   zs = seq(min(z),max(z),length.out=100)
 
-        #Values of the moderator
-          #new data
-            nd1=data.frame(z=zs,x=ux[1])  
-            nd2=data.frame(z=zs,x=ux[2])  
-        
+    #Prediction datasets
+       
+       #binary
+         if (binary==TRUE)
+         {
+           ux=unique(x)
+           nd1 = data.frame(z=zs,x=ux[1])  
+           nd2 = data.frame(z=zs,x=ux[2])  
+           
+           
+         }
+       
+      #non-binary
+        if (binary==TRUE)
+         {
+           ux=unique(x)
+           nd1 = data.frame(z=zs,x=ux[1])  
+           nd2 = data.frame(z=zs,x=ux[2])  
+           
+           
+         }
+         
+       
+ 
         
           #Prediction values and SET
-            fit2 = predict(g1,newdata=nd2, se.fit=TRUE)
-            fit1 = predict(g1,newdata=nd1, se.fit=TRUE)
+            fit2 = predict(gam1,newdata=nd2, se.fit=TRUE)
+            fit1 = predict(gam1,newdata=nd1, se.fit=TRUE)
             yh2 = fit2$fit
             yh1 = fit1$fit
             se2 = fit2$se.fit
@@ -74,7 +100,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights,
             dy.se =  sqrt(se2^2+se1^2)
             
           #Confidence bands
-            df   = g1$df.residual
+            df   = gam1$df.residual
             tc   = qt(p=.975,df=df)
             
             yh2.lb = yh2 - tc * se2
@@ -93,8 +119,8 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights,
        
             
       #Get the ys
-              ys1=predict(g1,newdata = data.frame(x=ux[1],z=spotlights))
-              ys2=predict(g1,newdata = data.frame(x=ux[2],z=spotlights))
+              ys1=predict(gam1,newdata = data.frame(x=ux[1],z=spotlights))
+              ys2=predict(gam1,newdata = data.frame(x=ux[2],z=spotlights))
        
             #The delta
               dys=ys2-ys1
@@ -198,15 +224,15 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights,
                 if (histogram==TRUE) ylim[1]=ylim[1]-.15*diff(ylim)
                 
               #Start the plot
-                plot(zs,dy,type='n',col=coldy,lwd=2,xlab='',ylab='',ylim=ylim,las=1)
+                plot(zs,dy,type='n',col=col3,lwd=2,xlab='',ylab='',ylim=ylim,las=1)
          
                   
             
            #Quantiles ilnes
             
          
-            line.seg(zs,dy,lwd=rep(4,length(z)),col=coldy,g=grm,lty=1) 
-            polygon(c(zs,rev(zs)),c(dy.ub,rev(dy.lb)),col=adjustcolor(coldy,.1),border=NA)        
+            line.seg(zs,dy,lwd=rep(4,length(z)),col=col3,g=grm,lty=1) 
+            polygon(c(zs,rev(zs)),c(dy.ub,rev(dy.lb)),col=adjustcolor(col3,.1),border=NA)        
             abline(h=0,col='gray80',lty=1)
 
             
@@ -222,11 +248,11 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights,
             
          
             #Plot them
-              points(spotlights ,dys , pch=16,col=coldy,cex=1.5)
-              text(spotlights+.03*diff(range(zs)),dys+.03*diff(ylim),round(dys,1),cex=.8,col=coldy)
+              points(spotlights ,dys , pch=16,col=col3,cex=1.5)
+              text(spotlights+.03*diff(range(zs)),dys+.03*diff(ylim),round(dys,1),cex=.8,col=col3)
               
             #Legend
-              legend('top',pch=16,col=coldy,legend='15th, 50th and 85th percentile',bty='n',cex=.8,pt.cex=1.2,text.col = coldy)
+              legend('top',pch=16,col=col3,legend='15th, 50th and 85th percentile',bty='n',cex=.8,pt.cex=1.2,text.col = col3)
     
               
           #histograms at the bottom
@@ -277,7 +303,7 @@ gam.probe.binary = function(x,z,y,k,zs, histogram,plot,spotlights,
                 
               
                 #Gam model
-                   gam=g1
+                   gam=gam1
                 
                 #Readme
                 
