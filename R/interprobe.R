@@ -32,11 +32,7 @@ interprobe=function(model=NULL,
   {
   
   
-  data$x2=data$z*2
-  data$z2=rnorm(nrow(data),1,5)
-  data$x=factor(data$x)
-  g=gam(y~s(z,by=x)+x+x2+z2,data=data)
-  g$formula
+
   
   #Estimmate model if not provided 
      if (is.null(model)==TRUE)
@@ -282,7 +278,7 @@ interprobe=function(model=NULL,
       #output
         return(invisible(list(
            #Readme
-               readme=paste0("The output of the gam.probe() function includes\n",
+               readme=paste0("The output of the interprobe() function includes\n",
                                 '1) df.full.grid: a dataframe with values needed to plot\n',
                                 'the simple slopes and the floodlight figures based on \n',
                                 'the full range of moderator values considered.\n\n',
@@ -308,7 +304,10 @@ interprobe=function(model=NULL,
                 #Readme
                 
                 ))) #End list and return() 
-        } #End function
+              
+        } #End if is.null() 
+  
+} 
                     
    
 
