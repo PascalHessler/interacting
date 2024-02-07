@@ -14,6 +14,7 @@
 
 interprobe=function(model=NULL,
                     x,z,y,
+                    data=NULL,
                     k=NULL,
                     zs=NULL,
                     spotlights=NULL,
@@ -38,49 +39,43 @@ interprobe=function(model=NULL,
      if (is.null(model)==TRUE)
      {
      
-    #Get data ready
-       #case 1: entered x,y,z
-          if (is.null(data) & is.null(mmodel))  data=data.frame(x=x,z=z,y=y)
+    #Case 1: entered x,y,z
+          if (is.null(data))  data = data.frame(x=x,z=z,y=y)
     
-       #Case 2: entered a model ,and it is GAM
-          if (!is.null(model) & ('gam' %in% class(model))) 
-          data = model$model  #this extract $model, which contains the original data.frame, from the gam
-          model$pred.formula
-            
-    #is x binary?
-        binary  <- length(unique(data$x))==2   #True if exactly 2 unique values
-
-    #If x is binary, make it factor
-        if (binary==TRUE) data$x=factor(data$x)
-       
-    #Run the model
-       gam1 = run.gam(data,k)  #see script: 'run.gam.R'
-       
-    #moderator grid
-       if (is.null(zs))   zs = seq(min(z),max(z),length.out=100)
-
-    #Prediction datasets
-       
-       #binary
-         if (binary==TRUE)
-         {
-           ux=unique(x)
-           nd1 = data.frame(z=zs,x=ux[1])  
-           nd2 = data.frame(z=zs,x=ux[2])  
-           
-           
-         }
-       
-      #non-binary
-        if (binary==TRUE)
-         {
-           ux=unique(x)
-           nd1 = data.frame(z=zs,x=ux[1])  
-           nd2 = data.frame(z=zs,x=ux[2])  
-           
-           
-         }
+       #is x binary?
+          binary  <- length(unique(data$x))==2   #True if exactly 2 unique values
+  
+      #If x is binary, make it factor
+          if (binary==TRUE) data$x=factor(data$x)
          
+      #Run the model
+         gam1 = run.gam(data,k)  #see script: 'run.gam.R'
+         
+      #moderator grid
+         if (is.null(zs))   zs = seq(min(z),max(z),length.out=100)
+  
+      #Prediction datasets
+         
+         #binary
+           if (binary==TRUE)
+           {
+             ux=unique(x)
+             nd1 = data.frame(z=zs,x=ux[1])  
+             nd2 = data.frame(z=zs,x=ux[2])  
+             
+             
+           }
+         
+        #non-binary
+          if (binary==TRUE)
+           {
+             ux=unique(x)
+             nd1 = data.frame(z=zs,x=ux[1])  
+             nd2 = data.frame(z=zs,x=ux[2])  
+             
+             
+           }
+           
        
  
         
