@@ -15,7 +15,7 @@
 
 
 
-interprobe=function(model,
+interprobe_dev <- function(model,
                     x,z,y,
                     data,
                     k=NULL,
@@ -45,8 +45,11 @@ interprobe=function(model,
           if (!missing(x) |  missing(y) | !missing(z))   input.xz=TRUE
           
        #1.1 Validate input style combinations
-          validate.input.combinations(input.xz, input.xyz, input.data, input.model)
+          validate.input.combinations(input.xz, input.xyz, input.data, input.model) 
+          
+              #See ./validate.input.combinations.R
 
+          
        #1.2 Check that x,y,z are of the same length
          if (input.xyz==TRUE & input.data==FALSE & input.model==FALSE) {
            nx=length(x)
@@ -61,28 +64,51 @@ interprobe=function(model,
   
   #------------------------------------------------------------------------------
 
-  #2 Type of input
+  #2 Get a dataframe
       
-      #2.1  If x,y,z, make it data(x,y,z)
-          if (is.null(data) & is.null(model))  data = data.frame(x=x,z=z,y=y)
-      
+      #2.1  If x,y,z are vectors, make it data(x,y,z)
+          if (input.data==FALSE & input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
+          
+      #2.2 If model, grab dataset from model
+          if (input.model==TRUE)                    data = model$model
+          
       
   #------------------------------------------------------------------------------
   
-  #3 How many unique values does x have
-          
-          
-          
-      if (input.model==FALSE)
-      {
+  #3 Create local variables xvar, zvar, yvar
         
+      #3.1 input data--> vectorize 
+        if (input.data==TRUE | input.model==TRUE)
+        {
+          xvar=data[,x]
+          zvar=data[,z]
+          yvar=data[,y]
+        }
       
-        
-        
-      }
+
+      #3.2 if vectors already
+        if (input.data==FALSE & input.xyz==TRUE)
+        {
+          xvar = x
+          zvar = z
+          yvar = y
+        }
       
-      
+  #------------------------------------------------------------------------------
+ 
+          return(namedList(xvar,zvar,yvar,data))
+             
+}
   
+
+
+x=rnorm(100)
+z=rnorm(100)+5
+z=rnorm(100)+25
+
+interprobe_dev(x,y,z)
+
+
   
   
   

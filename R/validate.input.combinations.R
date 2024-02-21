@@ -34,7 +34,7 @@ validate.input.combinations=function(input.xz, input.xyz, input.data, input.mode
             
   
    
-        if (input.data + input.xyz + input.model)==0
+        if (input.data + input.xyz + input.model==0) {
             stop("interprobe says:\nYou must specify the data by providing at least one of these arguments:\ndata, or 'x,y,z', or model")
             }
 
