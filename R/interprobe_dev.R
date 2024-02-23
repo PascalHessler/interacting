@@ -116,7 +116,7 @@ interprobe <- function(
               
             }
     #How many bins of moderator value
-          nbis=length(zs)
+          nbins=length(zs)
   #--------------------------------------------------------------------------------
           
   #6 Estimate model (if the user did not enter a model)
@@ -200,8 +200,6 @@ interprobe <- function(
  #--------------------------------------------------------------------------------
   #9 Plot Simple Slopes
         
-          
-    
            
 
     #9.1  x has 2 or 3 possible values
@@ -211,23 +209,25 @@ interprobe <- function(
           #Unlist data.frames
            simple.slopes.df <- do.call(rbind, simple.slopes)
  
-               #Puts the 2 or 3 data.frames, one for each x, ina  single 
-               #dataframe with estimate, SE, and conf.int
+               #Combines the 2 or 3 dataframes, currentlhy in a list, 
+               #on  each possible x-value in a single dataframe with 
+               #estimate, SE, and conf.int
            
-           
-          #Set ylim
+        #Set ylim
             ylim = range(simple.slopes.df[,c('conf.low','conf.high')]) #Default y-range
             ylim[2]=ylim[2]+.1*diff(ylim)                                   #Add at the top for the legend
             if (histogram==TRUE) ylim[1]=ylim[1]-.15*diff(ylim)             #add at the bottom for the histogram
               
-          #Split the x-axis into intervals (# of min(unique values,  zcutoff)
+        #Split the x-axis into intervals (# of min(unique values,  zcutoff)
               z_intervals <- cut(data$z, breaks = length(zs))
               
-          #Frequency of xs in each intervale
-              fx = table(data$x,z_intervals)
-              px = prop.table(fx,1)
               
-          #Color adjustment fore ach line
+        #Frequency of xs in each intervale
+              fx = table(data$x,z_intervals)  #Frequencies
+              px = prop.table(fx,1)           #share of observations
+              fz = table(data$z,z_intervals)  #Frequencies
+              
+          #Color adjustment for each line
               gr=list()
               for (j in 1:nux)
               {
@@ -240,17 +240,93 @@ interprobe <- function(
               
           #Empty plot
               plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim)
-          
-              
-            #Expected Lines  
-              type='b'
-              if (nbins>10) type='l'
+              ltys=c(1,2,4)
+          #Loop the 2 or 3 values of x slopes
               for (j in 1:nux) {
-                line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]],
-                         col=cols[j],g=gr[[j]],lty=1,type=type) 
+                #Lines
+                  #line.seg(zs,simple.slopes[[j]]$estimate,lwd=rep(4,nbins), col=cols[j],g=gr[[j]],lty=j)
+                  line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
+                
+                  #Changing both width and tly leads to weird looking lines
+              
+                #Confidence regions
+                  polygon(x=c(zs,rev(zs)),
+                        y=c(simple.slopes[[j]]$conf.high,
+                            rev(simple.slopes[[j]]$conf.low)),
+                            col=adjustcolor(cols[j],.03),border = NA)
+                  
+               #Dots if less than nbins<20
+                  if (nbins<=20) points(zs,simple.slopes[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
+                
               }
-         
-         #3 Plot line by segments of width and color
+              
+          #Headers
+            mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
+            mtext(side=2,line=3,font=2,cex=1.5,ylab1)
+            mtext(side=3,line=1.5,font=2,cex=1.5,main1)
+     
+          
+          #Legend
+              legend("topleft",inset=.01,bty='n',lty=ltys[1:nux],lwd=3,col=cols[1:nux],legend=as.character(ux))
+              
+            #histograms at the bottom
+              #if (histogram==TRUE)
+              #{
+                
+              #Less than 20 - Discrete vertical bars
+                #if (nbins<20)
+                #{
+                #Width in plot between zs
+                  bin.width=zs[2]-zs[1]
+
+                y0=par('usr')[3]                   #bottom of graph
+                y1=y0+.1*diff(ylim)                #10% of vertical distance for this
+                h = y0+(fx/max(fx))*.1*diff(ylim)
+                for (j in 1:3) segments(x0=zs + (j-1)*.08*bin.width -.04*bin.width,
+                                        x1=zs + (j-1)*.08*bin.width -.04*bin.width,
+                                        y0=y0,y1=h[j,],col=cols[j],lwd=4)
+                
+                
+                text(zs,y1,colSums(fx),cex=.8,pos=3,font=3,col='gray38')
+               
+                  
+                  
+                }
+                
+              #Set braks to concide with those already in the graph
+                breaks=axTicks(1)
+                breaks=c(min(z),breaks,max(z))
+                h1=hist(z[x==ux[1]],plot=FALSE,breaks=breaks)
+                h2=hist(z[x==ux[2]],plot=FALSE,breaks=breaks)
+
+             #Shorter variable names
+                b1=h1$breaks
+                b2=h2$breaks
+                c1=h1$counts
+                c2=h2$counts
+              
+            #Adjust y coordinates too be bottom of figure
+              y0=par('usr')[3]
+              y1=y0+.1*diff(ylim)
+              d1 =y0+ (c1 /max(c1+c2)) * (y1-y0)
+              d2 =d1+ (c2 /max(c1+c2)) * (y1-y0)
+
+            
+              for (k in 1:length(h1$mids) )
+              {
+                
+                polygon(x=c(b1[k],b1[k],b1[k+1],b1[k+1]),
+                        y=c(y0,d1[k],d1[k],y0),col=col1)
+                polygon(x=c(b1[k],b1[k],b1[k+1],b1[k+1]),
+                        y=c(d1[k],d2[k],d2[k],d1[k]),col=col2) 
+                
+              } #End for
+              
+              
+          } #End if histogram==TRUE  
+            
+            
+            
           
           
           
@@ -281,39 +357,7 @@ interprobe <- function(
           
         #Subset of values with uni
           
-          for (k in 1:nux) 
-              z2 = z[x==ux[2]]
-              z1 = z[x==ux[1]]
-          
-              w2 = sapply(zs,function(x) share.within(x,z2, 3*tick.width))
-              w1 = sapply(zs,function(x) share.within(x,z1, 3*tick.width))
-              lwd2 = rescale(w2, min1=.35 , max=8)
-              lwd1 = rescale(w1, min1=.35 , max=8)
-              gr1 = rescale(w1, min1=.01 , max=.9)
-              gr2 = rescale(w2, min1=.01 , max=.9)
-              
-               
-              
-            #Lines    
-              #line.seg(zs,yh1,lwd=lwd1,col=col1,g=gr1,lty=1) 
-              #line.seg(zs,yh2,lwd=lwd2,col=col2,g=gr2,lty=2) 
-              line.seg(zs,yh1,lwd=rep(4,length(z)),col=col1,g=gr1,lty=1) 
-              line.seg(zs,yh2,lwd=rep(4,length(z)),col=col2,g=gr2,lty=2) 
-            
-                            
-            #CI bands
-              polygon(x=c(zs,rev(zs)),y=c(yh1.ub,rev(yh1.lb)),col=adjustcolor(col1,.1),border = NA)
-              polygon(x=c(zs,rev(zs)),y=c(yh2.ub,rev(yh2.lb)),col=adjustcolor(col2,.1),border = NA)
-              
-            #Headers
-              mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
-              mtext(side=2,line=3,font=2,cex=1.5,ylab1)
-              mtext(side=3,line=1.5,font=2,cex=1.5,main1)
-              
-
-            #Legend
-              legend("topleft",inset=.01,bty='n',lty=c(1,2),lwd=3,col=c(col1,col2),legend=as.character(ux))
-              
+         
             #histograms at the bottom
               if (histogram==TRUE)
               {

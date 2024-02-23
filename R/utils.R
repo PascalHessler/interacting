@@ -1,12 +1,28 @@
 #Functions
 
+    
+ #Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
+    adjustcolor2 <- function(col, dark) {
+      new_cols=c()
+      for (dj in dark)
+      {
+      rgb_val <- col2rgb(col)
+      new_rgb_val <- rgb_val * dj + (1 - dj) * 255
+      new_rgb_val <- pmax(0, pmin(255, new_rgb_val))
+      new_col <- rgb(new_rgb_val[1], new_rgb_val[2], new_rgb_val[3], maxColorValue = 255)
+      new_cols=c(new_cols,new_col)
+      }
+      return(new_cols)
+    }
 
+      
+    
 #1 Plot line by segments of width and color
- line.seg = function(x,y,lwd,col,g,lty,type)
+ line.seg = function(x,y,lwd,col,g,lty,type='l')
           {
             n=length(x)
             for (k in 1:(n-1)) {
-                lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type=type,lwd=lwd[k],col=adjustcolor2(col,(g[k]+g[k+1])/2),lty=lty,pch=16)
+                lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type=type,lwd=lwd[k],col=adjustcolor2(col,(g[k]+g[k+1])/2),lty=lty)
                 }
             }
   
@@ -74,14 +90,5 @@
     }
   
     
-    
-#---------------------------------------------------
- #Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
-    adjustcolor2 <- function(col, dark) {
-      rgb_val <- col2rgb(col)
-      new_rgb_val <- rgb_val * dark + (1 - dark) * 255
-      new_rgb_val <- pmax(0, pmin(255, new_rgb_val))
-      new_col <- rgb(new_rgb_val[1], new_rgb_val[2], new_rgb_val[3], maxColorValue = 255)
-      return(new_col)
-    }
+
   
