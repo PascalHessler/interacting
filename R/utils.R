@@ -1,39 +1,17 @@
 #Functions
 
 
-
-#1 share.within
-  share.within <- function(yk , y, within=.05 ) {
-    return(mean( abs(y-yk) <=within))
-    
-}
-
+#1 Plot line by segments of width and color
+ line.seg = function(x,y,lwd,col,g,lty,type)
+          {
+            n=length(x)
+            for (k in 1:(n-1)) {
+                lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type=type,lwd=lwd[k],col=adjustcolor2(col,(g[k]+g[k+1])/2),lty=lty,pch=16)
+                }
+            }
   
-#2 Rescale
-  rescale=function(x,min1,max1,drop.zeros=TRUE)
-  {
-   
-    x=as.numeric(x)
-    min0=min(x)
-    max0=max(x)
-    x1 = min1+((x-min0)*(max1-min1))/(max0-min0)
-    
-    if (drop.zeros) x1 = ifelse(x>0,x1,0)
-    return(x1)
-  }
-  
-#3 point.seq  - plot line by segments of width
-  line.seg = function(x,y,lwd,col,g,lty=1)
-  {
-    n=length(x)
-    for (k in 1:(n-1))
-        {
-        lines(x=c(x[k],x[k+1]-.05*(x[k+1]-x[k])),y=c(y[k],y[k+1]),type='l',lwd=lwd[k],col=adjustcolor(col,g[k]),lty=lty)
-        
-        }
-    
-  }
-  
+ 
+#================================================
 #4 MESSAGING
     format_msg <- function(msg,width=70, header='IMPORTANT.', pre="| ")
     {
@@ -95,4 +73,15 @@
     exit()
     }
   
+    
+    
+#---------------------------------------------------
+ #Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
+    adjustcolor2 <- function(col, dark) {
+      rgb_val <- col2rgb(col)
+      new_rgb_val <- rgb_val * dark + (1 - dark) * 255
+      new_rgb_val <- pmax(0, pmin(255, new_rgb_val))
+      new_col <- rgb(new_rgb_val[1], new_rgb_val[2], new_rgb_val[3], maxColorValue = 255)
+      return(new_col)
+    }
   
