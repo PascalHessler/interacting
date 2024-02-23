@@ -23,7 +23,6 @@
   }
   
 #3 point.seq  - plot line by segments of width
-
   line.seg = function(x,y,lwd,col,g,lty=1)
   {
     n=length(x)
@@ -35,5 +34,65 @@
     
   }
   
+#4 MESSAGING
+    format_msg <- function(msg,width=70, header='IMPORTANT.', pre="| ")
+    {
+    #Line counter
+    j<-0
+    #Lines with formatted message starts empty
+      msg.lines=c()
+    #Turn message into vector of words
+      msg.left <- strsplit(msg,' ')[[1]]
+
+    #Loop over lines
+      while (length(msg.left)>0)
+      {
+     j=j+1
+     msg.lines[j]=''
+
+    #loop over words
+      while (nchar(msg.lines[j]) + nchar(msg.left[1]) <width)
+      {
+      new.word <- msg.left[1]
+      msg.left <- msg.left[-1]
+      if (regexpr('\n', new.word)>0) break   #skip line if \n is found
+      msg.lines[j] <- paste0(msg.lines[j],new.word," ")   #add the next word
+      
+      if (length(msg.left)==0) break
+    }
+      msg.lines[j]<- paste0(pre,"    ", msg.lines[j] ) 
+      if (length(msg.left)==0) break
+    }
+      
+  #formatted 
+    #Add |  
+      msg.lines <- gsub("\n", "\n|", msg.lines)
+      
+      
+    #Join al
+      msg.formatted <- paste0(msg.lines,collapse="\n")
+      
+    #Add header
+      msg.formatted <- paste0(pre,header,"\n",msg.formatted)
+      
+    #Add ------------- on top
+      sep.line <- c(paste0(rep('-',width+5)) , "\n" )
+      msg.formatted<-c(sep.line, msg.formatted)
+    
+    return(msg.formatted)
+    }
+
+   exit <- function(...) {
+    message(...)
+    invokeRestart("abort")
+    }
+  
+    gstop <- function(msg,format=FALSE) {
+    #Format the message with line breaks and border if requested
+    if (format==TRUE) msg=format_msg(msg) 
+    message(msg)
+    message("----------------------------------------")
+    exit()
+    }
   
   
