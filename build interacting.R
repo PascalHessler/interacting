@@ -1,16 +1,6 @@
   pkg_path <- "c:/git/interacting/r"
   #pkg_path <- "/Users/andres/Documents/[2] projects/[7] interacting/interacting/R" #in Andres's computer
   
-#SOURCE
-  
-  scripts<-list.files(pkg_path,full.names = TRUE)
-  for (scriptk in scripts) {
-    if (basename(scriptk) !='interprobe_dev.R') {
-    message("next:",basename(scriptk))
-    source(scriptk)
-    } }
-  
-  
   
 #INSTALL
   
@@ -23,14 +13,49 @@
 ############
   
   
+#------------------------------------------------------------------------------------------------
+  #SOURCE
+  pkg_path <- "c:/git/interacting/r"
   
-  x1=rnorm(10)
-  z1=rnorm(10)+5
-  y1=rnorm(10)+25
-
-  g=mgcv::gam(y1~s(x1)+s(z1))
-  interprobe_dev(data=data.frame(x1,z1,y1),x='x1',z='z1',y='y1')
-
-  interprobe_dev(model=g , x='x1', z='z1')
-
-
+  scripts<-list.files(pkg_path,full.names = TRUE)
+  for (scriptk in scripts) {
+    if (basename(scriptk) !='interprobe_dev.R') {
+    message("next:",basename(scriptk))
+    source(scriptk)
+    } }
+  
+  
+#DEBUG
+   x=NULL
+   z=NULL
+   y=NULL
+  data=NULL
+  model=NULL
+  k=NULL
+  zs=NULL
+  spotlights=NULL
+  draw=TRUE
+  histogram=TRUE
+  nbins=NULL
+  shade.up.to = 50  #below this sample size we shade to show few observations
+  xlab='moderator'
+  cols=c('red4','blue4','green4')
+  ylab1='Dependent Variable'
+  ylab2='Marginal Effect'
+  main1="GAM Simple Slopes"
+  main2='GAM Floodlight'
+  force.discrete.freqs=FALSE
+  
+  
+  n=100
+  xn=rep(c(1,2,3),n)
+  levels=sort(unique(xn))
+  labels=c('low','med','high')
+  x=factor(xn,levels=levels,labels=labels)  
+  z=sample(c(1,2,3,4,4,4,4,5,6,7,7,7,7),size=length(x),replace=TRUE)
+  z=rnorm(length(x),100,10)
+    y.raw=xn*z
+  e=rnorm(length(x),sd=sd(y.raw))
+  y=y.raw+e
+  
+  k=3

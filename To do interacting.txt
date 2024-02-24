@@ -1,0 +1,4 @@
+interprobe
+- allow linear model as an option, graph headers adjusted accordingly
+- automatize "x" or x work as values for x, so users can enter teh name of the column with or withot quotes
+- automatize reducing k, and only showing error if k is not set
