@@ -47,7 +47,7 @@
   force.discrete.freqs=FALSE
   
   
-  n=100
+  n=500
   xn=rep(c(1,2,3),n)
   levels=sort(unique(xn))
   labels=c('low','med','high')

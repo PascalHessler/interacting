@@ -119,7 +119,11 @@ interprobe <- function(
           if (is.null(zs))
             {
               if (nuz<=nbins) zs = uz
-              if (nuz>nbins)  zs = seq(min(data$z),max(data$z),length.out=nbins)
+              if (nuz>nbins)  {
+                zs = seq(min(data$z),max(data$z),length.out=nbins+1)[2:(nbins+1)]
+                zs.half.gap =(zs[2]-zs[1])/2
+                zs = zs - zs.half.gap
+                }
               
           }
           
@@ -226,18 +230,18 @@ interprobe <- function(
             if (histogram==TRUE) ylim[1]=ylim[1]-nux*.06*diff(ylim)        #add at the bottom for the histogram
           
         #Set x-lim
-            xlim=range(zs)
+            xlim=range(data$z)
             xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
             
         #Split the x-axis into intervals (# of min(unique values,  zcutoff)
-              z_intervals <- cut(data$z, breaks = length(zs))
+              z_breaks=zs+ z.half.gap
+              z_intervals <- cut(data$z, breaks = z_breaks,right=FALSE)
               
               
         #Frequency of xs in each interval
               fx = table(data$x,z_intervals)  #Frequencies
               px = prop.table(fx,1)           #share of observations
-              fz = table(data$z,z_intervals)  #Frequencies
-              
+
           #Line colors based on N of observations
               gr=list()
               for (j in 1:nux)
@@ -273,6 +277,7 @@ interprobe <- function(
                   if (nuz==nbins) points(zs,simple.slopes[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
                 
               }
+              
               
           #Headers
             mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
@@ -322,14 +327,14 @@ interprobe <- function(
            #Set values for plotting frequencies
                 
                 #Set breaks for 'histograms
-                  breaks=axTicks(1)
-                  breaks=c(min(data$z),breaks,max(data$z)) #Add start and end
-                
+                  #breaks=axTicks(1)
+                  #breaks=c(min(data$z),breaks,max(data$z)) #Add start and end
+                  
                 #Do the histograms (2 or 3 depending on unique x-values)
                   b=f=list()  #b:breaks f:frequencies
                   for (j in 1:nux)
                   {
-                  hist_j = hist(data$z[data$x==ux[j]],plot=FALSE,breaks=breaks)
+                  hist_j = hist(data$z[data$x==ux[j]],plot=FALSE,breaks=z_breaks)
                   b[[j]] = hist_j$breaks
                   f[[j]] = hist_j$counts
                   }
