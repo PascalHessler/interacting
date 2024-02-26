@@ -23,7 +23,8 @@ interprobe <- function(
                     spotlights=NULL,
                     draw=TRUE,
                     histogram=TRUE,
-                    nbins=NULL,
+                    max.unique = 11,
+                    n.bin.continuous = 10,
                     force.discrete.freqs=FALSE, #Should frequencies be shown for every value of moderator
                     shade.up.to = 50,           #below this sample size we shade to show few observations
                     xlab='moderator',
@@ -71,18 +72,7 @@ interprobe <- function(
   #------------------------------------------------------------------------------
   
   #3 Create data if given vectors 
-        
-      #3.1 input data--> vectorize 
-        #if (input.data==TRUE | input.model==TRUE)
-        #{
-          #xvar=data[,'x']
-          #zvar=data[,'z']
-          #yvar=data[,'y']
-        #}
-          
-        
-
-      #3.2 if vectors 
+     
         if (input.data==FALSE & input.xyz==TRUE)
         {
           #Put vectors into dataframe
@@ -96,7 +86,7 @@ interprobe <- function(
           
   #------------------------------------------------------------------------------
           
-    #4 Number of unique x values
+    #4 Number of unique x & z values
         #4.1 Count
           ux  = sort(unique(data$x))
           uz  = sort(unique(data$z))
@@ -107,25 +97,24 @@ interprobe <- function(
           if (nux==1) stop("interprobe says: there is only one observed value for the variable 'x'")
           if (nuz==1) stop("interprobe says: there is only one observed value for the variable 'z'")
           
+          
+        #4.3 Categorize as 'continuous' or 'discrete' moderators
+          moderation = ifelse(nuz>max.unique, 'continuous', 'discrete')
+          
   #--------------------------------------------------------------------
   #5 set moderator values
-        #5.1 If nbins is not set, we use so that we have 30 per bin, and min 5 max 10
-          if (is.null(nbins)) nbins=min(max(10, as.integer((nuz/nux)/30)),10)
-            
           
-            
-          
-        #3.3 Set of values for z moderations
-          if (is.null(zs))
-            {
-              if (nuz<=nbins) zs = uz
-              if (nuz>nbins)  {
-                zs = seq(min(data$z),max(data$z),length.out=nbins+1)[2:(nbins+1)]
-                zs.half.gap =(zs[2]-zs[1])/2
-                zs = zs - zs.half.gap
-                }
-              
+        #5.1 Fewer than maximal level of unique 
+          if (moderation=='discrete') {
+            zs=uz
           }
+          
+        #5.2 More than maximal level of unique
+          if (moderation=='continuous') {
+            zs = seq(min(data$z),max(data$z),length.out=100)
+          }
+          
+            
           
     
   #--------------------------------------------------------------------------------
@@ -209,21 +198,53 @@ interprobe <- function(
     
     
  #--------------------------------------------------------------------------------
-  #9 Plot Simple Slopes
+  # 8 Frequencies by bins of z
+      
+      #8.1 Setup z_bins
+          if (moderation=='continuous') z_bins = cut(data$z,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
+          if (moderation=='discrete')   z_bins = zs
+          nbins = length(unique(z_bins))
+            
+      #8.2 Frequencies by z_bins
+        if (moderation=='continuous') fx = table(data$x,z_bins)
+        if (moderation=='discrete')   fx = table(data$x,data$z) 
+          
+        px = prop.table(fx,1)           #share of observations
         
-           
-
-    #9.1  x has 2 or 3 possible values
+       
+        
+ 
+        
+      #8.3 Set tone of line for each bin
+          gr=list()
+          for (j in 1:nux)
+          {
+          #Color is going to be shaded if it is n=20, or < 1/3 the uniform distribution
+                gray.frequency = pmin(fx[j,]/shade.up.to ,1)
+                gray.percent   = pmin(px[j,]/((1/nbins)*(1/3)),1)  #Share in relation to 1/3 of the uniform expectation
+                gr[[j]] = pmin(gray.frequency, gray.percent)
+                
+          } #End for
+          
+      #8.4 Adjust to 100 if relying on 'continuous'
+          if (moderation == 'continuous') {
+            for (k in 1:length(gr)) gr[[k]]=rep(gr[[k]],each=n.bin.continuous) #n.bin.continuous defaults to 10 bins for continuous data
+          }
+    #--------------------------------------------------------------------------------
+          
+    #10 Setup plot
+          
+      #10.1 x has 2 or 3 possible values
         if (nux %in% c(2,3))
         {
           
-          #Unlist data.frames
+        #Unlist data.frames
            simple.slopes.df <- do.call(rbind, simple.slopes)
  
-               #Combines the 2 or 3 dataframes, currently in a list, 
-               #on  each possible x-value in a single dataframe with 
-               #estimate, SE, and conf.int
-           
+             #Combines the 2 or 3 dataframes, currently in a list, 
+             #on  each possible x-value in a single dataframe with 
+             #estimate, SE, and conf.int
+         
         #Set ylim
             ylim = range(simple.slopes.df[,c('conf.low','conf.high')]) #Default y-range
             ylim[2]=ylim[2]+.1*diff(ylim)                                  #Add at the top for the legend
@@ -233,38 +254,18 @@ interprobe <- function(
             xlim=range(data$z)
             xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
             
-        #Split the x-axis into intervals (# of min(unique values,  zcutoff)
-              z_breaks=zs+ z.half.gap
-              z_intervals <- cut(data$z, breaks = z_breaks,right=FALSE)
-              
-              
-        #Frequency of xs in each interval
-              fx = table(data$x,z_intervals)  #Frequencies
-              px = prop.table(fx,1)           #share of observations
-
-          #Line colors based on N of observations
-              gr=list()
-              for (j in 1:nux)
-              {
-              #Color is going to be shaded if it is n=20, or < 1/3 the uniform distribution
-                gray.frequency = pmin(fx[j,]/shade.up.to ,1)
-                gray.percent   = pmin(px[j,]/((1/nbins)*(1/3)),1)  #Share in relation to 1/3 of the uniform expectation
-                gr[[j]] = pmin(gray.frequency, gray.percent)
-                
-              } #End for
-            
-            
-                  
-          #Empty plot
-              plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim)
+        #Empty plot
+            plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim)
               #ltys=c(1,2,4)
-              ltys=c(1,1,1)
+            ltys=c(1,1,1)
+            
           #Loop the 2 or 3 values of x slopes
               for (j in 1:nux) {
                 #Lines
                   #line.seg(zs,simple.slopes[[j]]$estimate,lwd=rep(4,nbins), col=cols[j],g=gr[[j]],lty=j)
                   line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
-                
+              
+            
                   #Changing both width and tly leads to weird looking lines
               
                 #Confidence regions
@@ -288,15 +289,15 @@ interprobe <- function(
           #Legend
               legend("topleft",inset=.01,bty='n',lty=ltys[1:nux],lwd=3,col=cols[1:nux],legend=as.character(ux))
             
-              
-    #-- FREQUENCY BOTTOMM
+        }
+    # FREQUENCY BOTTOMM
     
         if (histogram==TRUE)
         {
           
           
         #DISCRETE
-            if (nuz==nbins)
+            if (moderation=='discrete')
               {
               #Width in plot between zs
                 bin.width=zs[2]-zs[1]
@@ -312,62 +313,50 @@ interprobe <- function(
                                       y0=y0,y1=h[j,],col=cols[j],lwd=4)
               
               #Add sample size values
-                text(zs,y1,colSums(fx),               cex=.8,pos=3,font=3,col='gray38')
-                text(min(zs)-.05*diff(xlim),y1,'n = ',cex=.8,pos=3,font=3,col='gray38')
+                text(zs,y1,colSums(fx),               cex=.8,font=3,col='gray38')
+                text(min(zs)-.05*diff(xlim),y1,'n = ',cex=.8,font=3,col='gray38')
                 
               
               } #End if nbins<20
           
           
           
-          #"CONTINUOUS" (MORE THAN 2- VALUES)
-              if (nuz>nbins)
+          #"CONTINUOUS" 
+              if (moderation=='continuous')
               {
                 
-           #Set values for plotting frequencies
-                
-                #Set breaks for 'histograms
-                  #breaks=axTicks(1)
-                  #breaks=c(min(data$z),breaks,max(data$z)) #Add start and end
-                  
-                #Do the histograms (2 or 3 depending on unique x-values)
-                  b=f=list()  #b:breaks f:frequencies
-                  for (j in 1:nux)
-                  {
-                  hist_j = hist(data$z[data$x==ux[j]],plot=FALSE,breaks=z_breaks)
-                  b[[j]] = hist_j$breaks
-                  f[[j]] = hist_j$counts
-                  }
-        
-            
+              #Get breakpoints for z bings
+                breaks=get.breaks(z_bins) #function 5 in utils.R
+          
             #Adjust y coordinates too be bottom of figure
               y0=par('usr')[3]
               y1=y0+.05*nux*diff(ylim)  #10% for 2 vars, 15% for 3
               
+            
             #Cumulative frequencies by bin
-              f2=result <- do.call(rbind, f)  #delist
-              f3=apply(f2, 2, cumsum)         #cumulative freq sum
-              f4=rbind(rep(0,ncol(f3)),f3)    #add 0 as baseline
-              f5=f4/max(f4)*(y1-y0)+y0        #express as share of teh 10% of the graph allocated to it
+              fx2=apply(fx, 2, cumsum)         #cumulative freq sum
+              fx2=rbind(rep(0,ncol(fx2)),fx2)    #add 0 as baseline
+              fx2=fx2/max(colSums(fx2))*(y1-y0)+y0        #express as share of teh 10% of the graph allocated to it
               
             
               for (j in 1:nux)
               {
-                for (m in 1:(nbins-2))
+                for (m in 1:nbins)
                 {
-                  xs=c(b[[j]][m] , b[[j]][m] , b[[j]][m+1], b[[j]][m+1])
-                  ys=c( f5[j,m] , f5[j+1,m] , f5[j+1,m], f5[j,m])
-                  #message(paste(xs,collapse='  |  '))
-                  #message(paste(ys,collapse='  |  '))
-                  
-                polygon(x=xs,y=ys,col=adjustcolor2(cols[j],.6))
-                
+                  xs=c(breaks$from[m] , breaks$from[m] , breaks$to[m], breaks$to[m])
+                  ys=c(fx2[j,m] ,  fx2[j+1,m],  fx2[j+1,m], fx2[j,m])
+                  polygon(x=xs,y=ys,col=adjustcolor2(cols[j],.6))
                 }} #End nested loop for histogram
-              
                 
-              
+              #Add sample size values
+                text(rowMeans(breaks) ,y1,colSums(fx),               cex=.8,font=3,col='gray38')
+                text(min(zs)-.05*diff(xlim),y1,'n = ',cex=.8,font=3,col='gray38')
+           
+                     
                 
+             
                 
+           
               }
             }#End if histogram=TRUE
   } #End simple slopes plot for nux<4

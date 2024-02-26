@@ -26,7 +26,7 @@
                 }
             }
   
- 
+
 #================================================
 #4 MESSAGING
     format_msg <- function(msg,width=70, header='IMPORTANT.', pre="| ")
@@ -90,5 +90,18 @@
     }
   
     
+#5 Get breaks
+  get.breaks=function(cut_var)
+  {
+  intervals=levels(z_bins)
+  start_end_points <- sapply(intervals, function(interval) {
+    bounds <- gsub("\\((.+),(.+)\\]", "\\1-\\2", interval)
+    as.numeric(strsplit(bounds, "-")[[1]])
+  })
+  start_end_matrix <- t(matrix(start_end_points, nrow = 2, byrow = FALSE))
+  df=data.frame(start_end_matrix)
+  names(df)=c("from","to")
+  return(df)
+  }
 
   
