@@ -21,7 +21,6 @@ interprobe <- function(
                     k=NULL,
                     zs=NULL,
                     spotlights=NULL,
-                    draw=TRUE,
                     histogram=TRUE,
                     max.unique = 11,
                     n.bin.continuous = 10,
@@ -33,6 +32,9 @@ interprobe <- function(
                     ylab2='Marginal Effect',
                     main1="GAM Simple Slopes",
                     main2='GAM Floodlight' , 
+                    draw.simple.slopes=TRUE,
+                    draw.floodlight=TRUE,
+                    
                     ...)
                     
   {
@@ -152,36 +154,45 @@ interprobe <- function(
       #7 Compute simple slopes 
         
         #7.1 x has 2 or 3 possible values
-          if (nux %in% c(2,3))
-          {
-          simple.slopes = list()
-          j=1
-          for (xj in ux)
-          {
-            #Make prediction data
-              ndj = expand.grid(z=zs,x=xj)
+          if (draw.simple.slopes==TRUE) {
+          
+              if (nux %in% c(2,3))
+              {
+              simple.slopes = list()
+              j=1
+              for (xj in ux)
+              {
+                #Make prediction data
+                  ndj = expand.grid(z=zs,x=xj)
+                  
+                #Save marginal effects results
+                  simple.slopes[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
+                 
+                  j=j+1 
+                } #End loop
+    
+              }  #End nux in 2,3
               
-            #Save marginal effects results
-              simple.slopes[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
-             
-              j=j+1 
-            } #End loop
-
-          }  #End nux in 2,3
-          
-          
+              
           
         #7.2 x has more 4+ values
-          if (nux>3)
-          {
-            
+              if (nux>3)
+              {
+                
+                
+                
+              }
             
             
           }
-        
  #--------------------------------------------------------------------------------
   #8 Compute floodlight / Johnson-Neyman
         
+          if (draw.floodlight==TRUE)
+          {
+          
+          
+          
       #8.1 x has 2 or 3 possible values
           if (nux %in% c(2,3))
           {
@@ -194,9 +205,9 @@ interprobe <- function(
           #Marginal effects produces x3 - x2, x2 -x1  and x1, we only need the first two.
           #We take the number of x values, for each there are zs marginal effects, so
           #nx*nz gives us the number of estimates we want to keep.
-          }  
+          } #End if nox in c(2,3)
     
-    
+          } #End if draw floodlight
  #--------------------------------------------------------------------------------
   # 8 Frequencies by bins of z
       
@@ -211,10 +222,7 @@ interprobe <- function(
           
         px = prop.table(fx,1)           #share of observations
         
-       
-        
  
-        
       #8.3 Set tone of line for each bin
           gr=list()
           for (j in 1:nux)
@@ -226,15 +234,15 @@ interprobe <- function(
                 
           } #End for
           
-      #8.4 Adjust to 100 if relying on 'continuous'
+      #8.4 Adjust if relying on 'continuous'
           if (moderation == 'continuous') {
-            for (k in 1:length(gr)) gr[[k]]=rep(gr[[k]],each=n.bin.continuous) #n.bin.continuous defaults to 10 bins for continuous data
+            for (k in 1:length(gr)) gr[[k]]=rep(gr[[k]],each=length(zs)/n.bin.continuous) #n.bin.continuous defaults to 10 bins for continuous data
           }
     #--------------------------------------------------------------------------------
           
-    #10 Setup plot
+    #9 Setup plot
           
-      #10.1 x has 2 or 3 possible values
+      #9.1 x has 2 or 3 possible values
         if (nux %in% c(2,3))
         {
           
@@ -258,6 +266,7 @@ interprobe <- function(
             plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim)
               #ltys=c(1,2,4)
             ltys=c(1,1,1)
+
             
           #Loop the 2 or 3 values of x slopes
               for (j in 1:nux) {
@@ -265,14 +274,13 @@ interprobe <- function(
                   #line.seg(zs,simple.slopes[[j]]$estimate,lwd=rep(4,nbins), col=cols[j],g=gr[[j]],lty=j)
                   line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
               
-            
                   #Changing both width and tly leads to weird looking lines
               
                 #Confidence regions
                   polygon(x=c(zs,rev(zs)),
                         y=c(simple.slopes[[j]]$conf.high,
                             rev(simple.slopes[[j]]$conf.low)),
-                            col=adjustcolor(cols[j],.03),border = NA)
+                            col=adjustcolor(cols[j],.1),border = NA)
                   
                #Dots if we have not binned data
                   if (nuz==nbins) points(zs,simple.slopes[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
@@ -335,10 +343,13 @@ interprobe <- function(
             
             #Cumulative frequencies by bin
               fx2=apply(fx, 2, cumsum)         #cumulative freq sum
-              fx2=rbind(rep(0,ncol(fx2)),fx2)    #add 0 as baseline
-              fx2=fx2/max(colSums(fx2))*(y1-y0)+y0        #express as share of teh 10% of the graph allocated to it
+              fx2=fx2/max(fx2[3,])
+              fx2 = rbind(rep(0,ncol(fx2)),fx2)    #add 0 as baseline
+              fx2 = fx2*(y1-y0)+y0        #express as share of teh 10% of the graph allocated to it
               
             
+              
+              
               for (j in 1:nux)
               {
                 for (m in 1:nbins)
@@ -349,8 +360,8 @@ interprobe <- function(
                 }} #End nested loop for histogram
                 
               #Add sample size values
-                text(rowMeans(breaks) ,y1,colSums(fx),               cex=.8,font=3,col='gray38')
-                text(min(zs)-.05*diff(xlim),y1,'n = ',cex=.8,font=3,col='gray38')
+                text(rowMeans(breaks) ,y1,colSums(fx),pos=3,cex=.8,font=3,col='gray38')
+                text(min(zs)-.05*diff(xlim),y1,'n = ',pos=3,cex=.8,font=3,col='gray38')
            
                      
                 

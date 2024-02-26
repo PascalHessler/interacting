@@ -47,14 +47,16 @@
   force.discrete.freqs=FALSE
    n.bin.continuous = 10
   max.unique=11
+  draw.simple.slopes=TRUE
+  draw.floodlight=TRUE
   
-  n=500
+  n=2500
   xn=rep(c(1,2,3),n)
   levels=sort(unique(xn))
   labels=c('low','med','high')
   x=factor(xn,levels=levels,labels=labels)  
-  #z=sample(c(1,2,3,4,4,4,4,5,6,7,7,7,7),size=length(x),replace=TRUE)
-  z=rnorm(length(x),100,10)
+  z=sample(c(1,2,3,4,4,4,4,5,6,7,7,7,7),size=length(x),replace=TRUE)
+  #z=rnorm(length(x),100,10)
     y.raw=xn*z
   e=rnorm(length(x),sd=sd(y.raw))
   y=y.raw+e
