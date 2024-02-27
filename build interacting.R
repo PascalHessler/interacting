@@ -19,7 +19,7 @@
   
   scripts<-list.files(pkg_path,full.names = TRUE)
   for (scriptk in scripts) {
-    if (basename(scriptk) !='interprobe_dev.R') {
+    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev____.R')) {
     message("next:",basename(scriptk))
     source(scriptk)
     } }
@@ -50,15 +50,27 @@
   draw.simple.slopes=TRUE
   draw.floodlight=TRUE
   
-  n=2500
+  
+    #SOURCE
+  pkg_path <- "c:/git/interacting/r"
+  
+  scripts<-list.files(pkg_path,full.names = TRUE)
+  for (scriptk in scripts) {
+    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev____.R')) {
+    message("next:",basename(scriptk))
+    source(scriptk)
+    } }
+  n=150
   xn=rep(c(1,2,3),n)
   levels=sort(unique(xn))
   labels=c('low','med','high')
   x=factor(xn,levels=levels,labels=labels)  
   z=sample(c(1,2,3,4,4,4,4,5,6,7,7,7,7),size=length(x),replace=TRUE)
   #z=rnorm(length(x),100,10)
-    y.raw=xn*z
+  y.raw=xn*z
   e=rnorm(length(x),sd=sd(y.raw))
   y=y.raw+e
   
   k=3
+  
+  interprobe(x=xn,z=z,y=y)
