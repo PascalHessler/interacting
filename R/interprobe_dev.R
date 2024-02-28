@@ -217,6 +217,7 @@ interprobe_dev <- function(
           if (moderation=='discrete')   z_bins = zs
           nbins = length(unique(z_bins))
             
+
       #8.2 Frequencies by z_bins
         if (moderation=='continuous') fx = table(data$x,z_bins)
         if (moderation=='discrete')   fx = table(data$x,data$z) 
@@ -257,14 +258,17 @@ interprobe_dev <- function(
         #Set ylim
             ylim = range(simple.slopes.df[,c('conf.low','conf.high')]) #Default y-range
             ylim[2]=ylim[2]+.1*diff(ylim)                                  #Add at the top for the legend
-            if (histogram==TRUE) ylim[1]=ylim[1]-nux*.06*diff(ylim)        #add at the bottom for the histogram
+            if (histogram==TRUE) ylim[1]=ylim[1]-nux*.08*diff(ylim)        #add at the bottom for the histogram
           
         #Set x-lim
             xlim=range(data$z)
             xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
             
         #Empty plot
-            plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim)
+            plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim,yaxt='n')
+            axis(2,at=pretty(ylim)[c(-1,-2)],las=1)
+            print(ylim)
+            message('trying 268')
               #ltys=c(1,2,4)
             ltys=c(1,1,1)
 

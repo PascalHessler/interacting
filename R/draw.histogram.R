@@ -1,6 +1,14 @@
       
     draw.histogram = function(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
           {
+          #Box
+            y0=par('usr')[3]
+            x0=par('usr')[1]
+            x1=par('usr')[2]
+            yd=y0 + .08*nux*diff(ylim)*.9
+             polygon(x=c(x0,x0,x1,x1),
+                    border=NA,
+                     y=c(y0,yd,yd,y0),col=adjustcolor('gray77',.25))  
 
       
           #DISCRETE 
@@ -26,13 +34,11 @@
                 } #End if discrete
     
     
-      message("29",moderation)
-      return('end')
-      
-          #"CONTINUOUS" 
+    #------------------------------------------------------------------
+             
+    #"CONTINUOUS" 
             if (moderation=='continuous')
             {
-            
           #Get breakpoints for z bings
             breaks=get.breaks(z_bins) #function 5 in utils.R
         
@@ -60,6 +66,9 @@
           #Add sample size values
             text(rowMeans(breaks) ,y1,colSums(fx),pos=3,cex=.8,font=3,col='gray38')
             text(min(zs)-.05*diff(xlim),y1,'n = ',pos=3,cex=.8,font=3,col='gray38')
+            
+          
+            
        
         } #End continuous
     } #End function

@@ -93,7 +93,7 @@
 #5 Get breaks
   get.breaks=function(cut_var)
   {
-  intervals=levels(z_bins)
+  intervals=levels(cut_var)
   start_end_points <- sapply(intervals, function(interval) {
     bounds <- gsub("\\((.+),(.+)\\]", "\\1-\\2", interval)
     as.numeric(strsplit(bounds, "-")[[1]])

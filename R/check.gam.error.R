@@ -11,7 +11,7 @@
              "You can rely on the argument 'k' in interprobe(), setting it to ",
              "a low value like k=3 or k=2 and see if that fixes the problem.")
         message(format_msg (msg, header='Problem.'))
-        
+        exit()
       }
    
   

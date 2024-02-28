@@ -66,11 +66,13 @@
   labels=c('low','med','high')
   x=factor(xn,levels=levels,labels=labels)  
   z=sample(c(1,2,3,4,4,4,4,5,6,7,7,7,7),size=length(x),replace=TRUE)
-  #z=rnorm(length(x),100,10)
+  z=rnorm(length(x),100,10)
   y.raw=xn*z
   e=rnorm(length(x),sd=sd(y.raw))
   y=y.raw+e
   
-  k=3
+  svg("c:/temp/f1.svg")
+  interprobe_dev(x=x,z=z,y=y,k=3)
+  dev.off()
+pretty(c(-65,458))
   
-  interprobe(x=xn,z=z,y=y)
