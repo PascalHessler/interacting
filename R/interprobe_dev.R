@@ -57,12 +57,10 @@ interprobe_dev <- function(
   #------------------------------------------------------------------------------
    
   #2 Get a dataframe
+      if (v$input.data==FALSE & v$input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
+      if (v$input.model==TRUE)                      data = model$model
       
-      #2.1  If x,y,z are vectors, make it data(x,y,z)
-          if (v$input.data==FALSE & v$input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
-          
-      #2.2 If model, grab dataset from model
-          if (v$input.model==TRUE)                    data = model$model
+        #v is a list produced in #1 above
           
       
   #------------------------------------------------------------------------------
@@ -103,14 +101,15 @@ interprobe_dev <- function(
         
           if (moderation=='discrete')   zs = uz
           if (moderation=='continuous') zs = seq(min(data$z),max(data$z),length.out=100)
-          
+          nzs = length(zs)
             
   #--------------------------------------------------------------------------------
           
   #6 Estimate model (if the user did not enter a model)
           if (v$input.model==FALSE) model = estimate.model(nux,data,k)
           
-          #See estimate.model.R
+          #1. v is a list produced in #1 above (see validate.input.combinations.R)
+          #2. see estimate.model.R
       
   #--------------------------------------------------------------------------------
      
@@ -155,31 +154,35 @@ interprobe_dev <- function(
  #--------------------------------------------------------------------------------
   #8 Compute floodlight / Johnson-Neyman
         
-          if (draw.floodlight==TRUE)
-          {
-          
-          
+      if (draw.floodlight==TRUE)
+      {
           
       #8.1 x has 2 or 3 possible values
           if (nux %in% c(2,3))
           {
-          nd = expand.grid(z=zs,x=ux)
-          options(warn=-1)
-          floodlight = marginaleffects::slopes(model, newdata = nd,by='z')
-          options(warn=0)
-          
-              #Note: supress warnings because `marginaleffects` warns about k as a missing variable
-          
-          
-          #Subset
-            floodlight = data.frame(floodlight[1:((nux-1)*length(zs)),]  )
-                
-          #Marginal effects produces x3 - x2, x2 -x1  and x1, we only need the first two.
-          #We take the number of x values, for each there are zs marginal effects, so
-          #nx*nz gives us the number of estimates we want to keep.
-          } #End if nox in c(2,3)
+            
+            floodlight = list()
+
+          #Marginal effect for condition 2 - 1, or both 3-1 and 2-1, so we exclude from loop 1, and add to all
+            j=1
+            for (xj in ux[-1])
+            {
+              #Make prediction data
+                  ndj = expand.grid(z=zs,x=c(as.character(ux[1]),xj))
+                  
+                #Save marginal effects results
+                  options(warn=-1)
+                  floodlight[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
+                  options(warn=-0)
+                 
+                    #Note: suppress warnings because `marginaleffects` warns about k as a missing variable
+                    #SEE https://github.com/vincentarelbundock/marginaleffects/issues/1031
+                  j=j+1 
+                } #End loop
     
-          } #End if draw floodlight
+            
+      } #End if nux in c(2,3)
+    } #End if draw floodlight
  #--------------------------------------------------------------------------------
   # 8 Frequencies by bins of z, for both histogram and line colors
       
@@ -211,9 +214,9 @@ interprobe_dev <- function(
           if (moderation == 'continuous') {
             for (k in 1:length(gr)) gr[[k]]=rep(gr[[k]],each=length(zs)/n.bin.continuous) #n.bin.continuous defaults to 10 bins for continuous data
           }
-    #--------------------------------------------------------------------------------
+#--------------------------------------------------------------------------------
           
-    #9 Setup plot
+#9 PLOT 1 SIMPLE SLOPES 
           
       #9.1 x has 2 or 3 possible values
         if (nux %in% c(2,3))
@@ -246,7 +249,6 @@ interprobe_dev <- function(
           #Loop the 2 or 3 values of x slopes
               for (j in 1:nux) {
                 #Lines
-                  #line.seg(zs,simple.slopes[[j]]$estimate,lwd=rep(4,nbins), col=cols[j],g=gr[[j]],lty=j)
                   line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
               
                   #Changing both width and tly leads to weird looking lines
@@ -265,7 +267,7 @@ interprobe_dev <- function(
               
           #Headers
             mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
-            mtext(side=2,line=3,font=2,cex=1.5,ylab1)
+            mtext(side=2,line=2.25,font=2,cex=1.5,ylab1)
             mtext(side=3,line=1.5,font=2,cex=1.5,main1)
      
           
@@ -284,6 +286,78 @@ interprobe_dev <- function(
   } #End of function
     
 
+#--------------------------------------------------------------------------------
+          
+#10 PLOT 2 FLOODLIGHT
 
-    
+  #10.1 x has 2 or 3 possible values
+        if (nux %in% c(2,3))
+        {
+        
+          
+        #Unlist data.frames
+           floodlight.df <- do.call(rbind, floodlight)
+     
+          
+        #Set ylim
+            ylim = range(floodlight.df[,c('conf.low','conf.high')]) #Default y-range
+            ylim[2]=ylim[2]+.1*diff(ylim)                                  #Add at the top for the legend
+            if (histogram==TRUE) ylim[1]=ylim[1]-nux*.08*diff(ylim)        #add at the bottom for the histogram
+          
+        #Set x-lim
+            xlim=range(data$z)
+            xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
+            
+        #Empty plot
+            plot(zs,floodlight[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim,yaxt='n')
+            axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
+         
+            ltys=c(1,1,1)
+
+            
+            #Loop the 2 or 3 values of x slopes
+              for (j in 1:(nux-1)) {
+                #Lines
+                  #line.seg(zs,simple.slopes[[j]]$estimate,lwd=rep(4,nbins), col=cols[j],g=gr[[j]],lty=j)
+                  line.seg(zs,floodlight[[j]]$estimate,lwd=4*gr[[j]], col=cols[j+1],g=gr[[j]],lty=ltys[j]) 
+              
+                  #Changing both width and tly leads to weird looking lines
+              
+                #Confidence regions
+                  polygon(x=c(zs,rev(zs)),
+                        y=c(floodlight[[j]]$conf.high,
+                            rev(floodlight[[j]]$conf.low)),
+                            col=adjustcolor(cols[j+1],.1),border = NA)
+                  
+               #Dots if we have not binned data
+                  if (nuz==nbins) points(zs,floodlight[[j]]$estimate, col=adjustcolor2(cols[j+1],gr[[j]]),pch=16) 
+                
+              }#End loop nux
+              
+          #Headers
+           
+            yline = max(nchar(as.character(pretty(ylim)))) 
+            
+            
+            mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
+            mtext(side=2,line=yline,font=2,cex=1.5,ylab2)
+            mtext(side=3,line=1.5,font=2,cex=1.5,main2)
+          
+          #Legend
+            if (nux==2) legend("topleft",inset=.01,bty='n', lwd=3,col=cols[2],  legend = dms(floodlight[[1]][1,2]))
+            if (nux==3) legend("topleft",inset=.01,bty='n', lwd=3,col=cols[2:3],legend = paste0(ux[2:3]," - ",ux[1]))
+            
+        }
+
+
+    #Put histogram at the bottom if requested 
+    #
+        if (histogram==TRUE) draw.histogram(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
+                                            
+                #See draw.histogram.R
+                #Single function for continuous or discrete
+          
+          
+         
+  } #End of function
 
