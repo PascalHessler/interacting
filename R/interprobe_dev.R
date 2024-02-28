@@ -13,6 +13,13 @@
 #'
 #'@export
 
+#OUTLINE
+  #1 Validation
+  #2 Get a dataframe
+  #3 Create data if given vectors 
+  #4 Number of unique x & z values
+
+
 
 interprobe_dev <- function(
                     x=NULL,z=NULL,y=NULL,
@@ -48,9 +55,6 @@ interprobe_dev <- function(
           if (!is.null(model))                          input.model=TRUE
           if (!is.null(x) & !is.null(z) & !is.null(y))  input.xyz=TRUE
           if (!is.null(x) & !is.null(z) & is.null(y))   input.xz=TRUE
-          
-          
-      
           
        #1.1 Validate input style combinations
           validate.input.combinations(input.xz, input.xyz, input.data, input.model) 
@@ -105,51 +109,19 @@ interprobe_dev <- function(
           
       
   #--------------------------------------------------------------------
-  #5 set moderator values
-          
-        #5.1 Fewer than maximal level of unique 
-          if (moderation=='discrete') {
-            zs=uz
-          }
-          
-        #5.2 More than maximal level of unique
-          if (moderation=='continuous') {
-            zs = seq(min(data$z),max(data$z),length.out=100)
-          }
+  #5 set moderator values for computing marginal effects
+        
+          if (moderation=='discrete')   zs = uz
+          if (moderation=='continuous') zs = seq(min(data$z),max(data$z),length.out=100)
           
             
-          
-    
   #--------------------------------------------------------------------------------
           
   #6 Estimate model (if the user did not enter a model)
+          if (input.model==FALSE) model = estimate.model(nux,data,k)
           
-      if (input.model==FALSE)
-      {
-        #6.1 x has 2 or 3 possible values
-        
-            if (nux %in% c(2,3))
-               {
-             #Make xvar a factor to estimate GAM with it
-                  data$x = factor(data$x)
-                    
-             #Estimate model, with /without k
-                  if (!is.null(k)) model = try(mgcv::gam(y~s(z,by=x,k=k)+x, data=data),silent=TRUE )
-                  if ( is.null(k)) model = try(mgcv::gam(y~s(z,by=x)+x, data=data),    silent=TRUE )
-                  check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
-              } #End nux<4
-            
-        
-        #6.2 x has 4+ values        
-            if (nux>=4)
-            {
-            if (!is.null(k)) model = try(mgcv::gam(y~s(z,k)+s(x,k=k)+ti(x,z,k=k),data=data),silent=TRUE) 
-            if ( is.null(k)) model = try(mgcv::gam(y~s(z)  +s(x)    +ti(x,z),data=data),silent=TRUE) 
-            check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
-
-            }
-             
-      } #ENd run model 
+          #See estimate.model.R
+      
   #--------------------------------------------------------------------------------
      
       #7 Compute simple slopes 

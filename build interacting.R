@@ -74,5 +74,7 @@
   svg("c:/temp/f1.svg")
   interprobe_dev(x=x,z=z,y=y,k=3)
   dev.off()
-pretty(c(-65,458))
+
+    
   
+  rsvg::rsvg_png("c:/temp/f1.svg", "c:/temp/f1.svg.png")
