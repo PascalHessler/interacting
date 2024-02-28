@@ -1,7 +1,20 @@
 
 
-validate.input.combinations=function(input.xz, input.xyz, input.data, input.model)
+#validate.input.combinations=function(input.xz, input.xyz, input.data, input.model)
+validate.input.combinations=function(data, model, x,y,z)
+
+
 {
+  
+        input.xz = input.data = input.xyz = input.model <- FALSE
+         
+          if (!is.null(data))                           input.data=TRUE
+          if (!is.null(model))                          input.model=TRUE
+          if (!is.null(x) & !is.null(z) & !is.null(y))  input.xyz=TRUE
+          if (!is.null(x) & !is.null(z) & is.null(y))   input.xz=TRUE
+      
+  
+  
    #1 Specified data & model
         if (input.data + input.model==2) {
               stop("interprobe() says, you may include either a data, or a model statement,\n",
@@ -38,9 +51,8 @@ validate.input.combinations=function(input.xz, input.xyz, input.data, input.mode
             stop("interprobe says:\nYou must specify the data by providing at least one of these arguments:\ndata, or 'x,y,z', or model")
             }
 
-   #3 If they provide model or data, they must also provide x,y,z
    
-  
-  
-  
-}
+    #4 return input type
+          return(namedList(input.data, input.xyz, input.model, input.xz))
+   
+    }

@@ -46,21 +46,11 @@ interprobe_dev <- function(
                     
   {
   
-  #1 Validation
-  
-       #1.0 Detect input style, use later to decide how to proceed
-          input.xz = input.data = input.xyz = input.model <- FALSE
-         
-          if (!is.null(data))                           input.data=TRUE
-          if (!is.null(model))                          input.model=TRUE
-          if (!is.null(x) & !is.null(z) & !is.null(y))  input.xyz=TRUE
-          if (!is.null(x) & !is.null(z) & is.null(y))   input.xz=TRUE
-          
-       #1.1 Validate input style combinations
-          validate.input.combinations(input.xz, input.xyz, input.data, input.model) 
+  #1 Validate input and determe what was provided, vector, model, or data.frame
+        v = validate.input.combinations(data , model, x, y ,z)
           
           #NOTE: See ./validate.input.combinations.R
-
+          #outputs $input data, input xyz, input
           
       
   
@@ -69,17 +59,17 @@ interprobe_dev <- function(
   #2 Get a dataframe
       
       #2.1  If x,y,z are vectors, make it data(x,y,z)
-          if (input.data==FALSE & input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
+          if (v$input.data==FALSE & v$input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
           
       #2.2 If model, grab dataset from model
-          if (input.model==TRUE)                    data = model$model
+          if (v$input.model==TRUE)                    data = model$model
           
       
   #------------------------------------------------------------------------------
   
   #3 Create data if given vectors 
      
-        if (input.data==FALSE & input.xyz==TRUE)
+        if (v$input.data==FALSE & v$input.xyz==TRUE)
         {
           #Put vectors into dataframe
             data=data.frame(x, z, y)
@@ -118,7 +108,7 @@ interprobe_dev <- function(
   #--------------------------------------------------------------------------------
           
   #6 Estimate model (if the user did not enter a model)
-          if (input.model==FALSE) model = estimate.model(nux,data,k)
+          if (v$input.model==FALSE) model = estimate.model(nux,data,k)
           
           #See estimate.model.R
       
@@ -139,7 +129,11 @@ interprobe_dev <- function(
                   ndj = expand.grid(z=zs,x=xj)
                   
                 #Save marginal effects results
+                  options(warn=-1)
                   simple.slopes[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
+                  options(warn=-0)
+                 
+                    #Note: supress warnings because `marginaleffects` warns about k as a missing variable
                  
                   j=j+1 
                 } #End loop
@@ -170,7 +164,12 @@ interprobe_dev <- function(
           if (nux %in% c(2,3))
           {
           nd = expand.grid(z=zs,x=ux)
+          options(warn=-1)
           floodlight = marginaleffects::slopes(model, newdata = nd,by='z')
+          options(warn=0)
+          
+              #Note: supress warnings because `marginaleffects` warns about k as a missing variable
+          
           
           #Subset
             floodlight = data.frame(floodlight[1:((nux-1)*length(zs)),]  )
@@ -182,7 +181,7 @@ interprobe_dev <- function(
     
           } #End if draw floodlight
  #--------------------------------------------------------------------------------
-  # 8 Frequencies by bins of z
+  # 8 Frequencies by bins of z, for both histogram and line colors
       
       #8.1 Setup z_bins
           if (moderation=='continuous') z_bins = cut(data$z,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
@@ -202,7 +201,7 @@ interprobe_dev <- function(
           for (j in 1:nux)
           {
           #Color is going to be shaded if it is n=20, or < 1/3 the uniform distribution
-                gray.frequency = pmin(fx[j,]/shade.up.to ,1)
+                gray.frequency = pmin(fx[j,]/shade.up.to,1)
                 gray.percent   = pmin(px[j,]/((1/nbins)*(1/3)),1)  #Share in relation to 1/3 of the uniform expectation
                 gr[[j]] = pmin(gray.frequency, gray.percent)
                 
@@ -238,9 +237,8 @@ interprobe_dev <- function(
             
         #Empty plot
             plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim,yaxt='n')
-            axis(2,at=pretty(ylim)[c(-1,-2)],las=1)
-            print(ylim)
-            message('trying 268')
+            axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
+         
               #ltys=c(1,2,4)
             ltys=c(1,1,1)
 

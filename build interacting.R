@@ -65,16 +65,19 @@
   levels=sort(unique(xn))
   labels=c('low','med','high')
   x=factor(xn,levels=levels,labels=labels)  
-  z=sample(c(1,2,3,4,4,4,4,5,6,7,7,7,7),size=length(x),replace=TRUE)
-  z=rnorm(length(x),100,10)
+  z=sample(c(1,2,3,3,4,4,4,4,5,5,6,7,7,7,7),size=length(x),replace=TRUE)
+  
+  #z=rnorm(length(x),100,10)
   y.raw=xn*z
   e=rnorm(length(x),sd=sd(y.raw))
   y=y.raw+e
-  
+  k=3
   svg("c:/temp/f1.svg")
   interprobe_dev(x=x,z=z,y=y,k=3)
   dev.off()
 
+  
+  
     
   
   rsvg::rsvg_png("c:/temp/f1.svg", "c:/temp/f1.svg.png")
