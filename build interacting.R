@@ -15,6 +15,8 @@
   
 #------------------------------------------------------------------------------------------------
   #SOURCE
+  
+  
   pkg_path <- "c:/git/interacting/r"
   
   scripts<-list.files(pkg_path,full.names = TRUE)
@@ -23,6 +25,8 @@
     message("next:",basename(scriptk))
     source(scriptk)
     } }
+  
+  
   
   
 #DEBUG
@@ -50,8 +54,10 @@
   draw.simple.slopes=TRUE
   draw.floodlight=TRUE
   
-  
+
     #SOURCE
+      rm(list = ls())
+
   pkg_path <- "c:/git/interacting/r"
   
   scripts<-list.files(pkg_path,full.names = TRUE)
@@ -60,20 +66,37 @@
     message("next:",basename(scriptk))
     source(scriptk)
     } }
-  n=150
+  
+  
+  
+  
+  set.seed(123)
+  n=500
   xn=rep(c(1,2,3),n)
   levels=sort(unique(xn))
   labels=c('low','med','high')
   x=factor(xn,levels=levels,labels=labels)  
-  z=sample(c(1,2,3,3,4,4,4,4,5,5,6,7,7,7,7),size=length(x),replace=TRUE)
-  
-  #z=rnorm(length(x),100,10)
+  z=sample(c(1,2,3,3,4,4,5,5,6,7,7,7,7),size=length(x),replace=TRUE)
+  z=rnorm(length(x),mean=100,sd=10)
   y.raw=xn*z
   e=rnorm(length(x),sd=sd(y.raw))
   y=y.raw+e
-  k=3
+  
+  g=mgcv::gam(y~s(z,by=x,k=3)+x)
+  lm1=lm(y~x*z)
+  interprobe_dev(model=g)
+  interprobe_dev(model=g,x='x',z='z')
+  interprobe_dev(model=g,x='x',z='z')
+  interprobe_dev(model=lm1,x='x',z='z')
+
+  
+  i1=interprobe_dev(x=x,z=z,y=y,k=3)
+  i1$fx
+  df=i1$simple.slopes
+  
+  data
+  
   svg("c:/temp/f1.svg")
-  interprobe_dev(x=x,z=z,y=y,k=3)
   dev.off()
 
   

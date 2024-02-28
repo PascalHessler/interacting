@@ -33,7 +33,7 @@ interprobe_dev <- function(
                     n.bin.continuous = 10,
                     force.discrete.freqs=FALSE, #Should frequencies be shown for every value of moderator
                     shade.up.to = 50,           #below this sample size we shade to show few observations
-                    xlab='moderator',
+                    xlab='Moderator',
                     cols=c('red4','blue4','green4'),
                     ylab1='Dependent Variable',
                     ylab2='Marginal Effect',
@@ -46,7 +46,14 @@ interprobe_dev <- function(
                     
   {
   
-  #1 Validate input and determe what was provided, vector, model, or data.frame
+  #0 If x is specified and it is in a model/data version of interprobe() treat as string
+    if (!is.null(model) | !is.null(data)) {
+        x <- deparse(substitute(x))
+        z <- deparse(substitute(z))
+        if (!is.null(y)) y <- deparse(substitute(y))
+    }
+  
+  #1 Validate input and determine what was provided, vector, model, or data.frame
         v = validate.input.combinations(data , model, x, y ,z)
           
           #NOTE: See ./validate.input.combinations.R
@@ -55,13 +62,29 @@ interprobe_dev <- function(
       
   
   #------------------------------------------------------------------------------
-   
+  
   #2 Get a dataframe
       if (v$input.data==FALSE & v$input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
       if (v$input.model==TRUE)                      data = model$model
       
         #v is a list produced in #1 above
+  
+      
+  #2.1 Remove "GAM" from  figure headers for non-GAM models
+      if (v$input.model==TRUE) {
+        if (!inherits(model, "gam")) {
           
+          #Pre-print 'linear' if we know it is linear
+            linear.st=''
+            if (inherits(model, "lm")) linear.st='Linear '
+          
+          #Substitute default headers
+            if (main1=="GAM Simple Slopes") main1=paste0(linear.st,"Simple Slopes")
+            if (main2=="GAM Floodlight")    main2=paste0(linear.st,"Floodlight")
+          
+          
+        }
+      }
       
   #------------------------------------------------------------------------------
   
@@ -91,14 +114,12 @@ interprobe_dev <- function(
           if (nux==1) stop("interprobe says: there is only one observed value for the variable 'x'")
           if (nuz==1) stop("interprobe says: there is only one observed value for the variable 'z'")
           
-          
         #4.3 Categorize as 'continuous' or 'discrete' moderators
           moderation = ifelse(nuz>max.unique, 'continuous', 'discrete')
           
       
   #--------------------------------------------------------------------
   #5 set moderator values for computing marginal effects
-        
           if (moderation=='discrete')   zs = uz
           if (moderation=='continuous') zs = seq(min(data$z),max(data$z),length.out=100)
           nzs = length(zs)
@@ -132,7 +153,7 @@ interprobe_dev <- function(
                   simple.slopes[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
                   options(warn=-0)
                  
-                    #Note: supress warnings because `marginaleffects` warns about k as a missing variable
+                    #Note: suppress warnings because `marginaleffects` warns about k as a missing variable
                  
                   j=j+1 
                 } #End loop
@@ -173,6 +194,7 @@ interprobe_dev <- function(
                 #Save marginal effects results
                   options(warn=-1)
                   floodlight[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
+                  floodlight[[j]]$x=xj
                   options(warn=-0)
                  
                     #Note: suppress warnings because `marginaleffects` warns about k as a missing variable
@@ -183,8 +205,13 @@ interprobe_dev <- function(
             
       } #End if nux in c(2,3)
     } #End if draw floodlight
+          
+          
+          
  #--------------------------------------------------------------------------------
-  # 8 Frequencies by bins of z, for both histogram and line colors
+  
+          
+# 8 N of observations per bin, for both histogram and line colors
       
       #8.1 Setup z_bins
           if (moderation=='continuous') z_bins = cut(data$z,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
@@ -216,7 +243,21 @@ interprobe_dev <- function(
           }
 #--------------------------------------------------------------------------------
           
-#9 PLOT 1 SIMPLE SLOPES 
+#PLOTTING
+ 
+  #Make two panels if both are treu 
+      if (draw.simple.slopes+draw.floodlight==2) {
+        
+      #Two plots side by side
+        old_mfrow <- par('mfrow')
+        par(mfrow=c(1,2))
+        on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
+ 
+        }
+          
+#9 SIMPLE
+       if (draw.simple.slopes==TRUE)
+       {
           
       #9.1 x has 2 or 3 possible values
         if (nux %in% c(2,3))
@@ -239,7 +280,7 @@ interprobe_dev <- function(
             xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
             
         #Empty plot
-            plot(zs,simple.slopes[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim,yaxt='n')
+            plot(zs,simple.slopes[[1]]$estimate,type='n',xlab=xlab,ylab=ylab1,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3)
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
          
               #ltys=c(1,2,4)
@@ -266,8 +307,8 @@ interprobe_dev <- function(
               
               
           #Headers
-            mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
-            mtext(side=2,line=2.25,font=2,cex=1.5,ylab1)
+            
+            yline = max(nchar(as.character(pretty(ylim)))) 
             mtext(side=3,line=1.5,font=2,cex=1.5,main1)
      
           
@@ -309,7 +350,7 @@ interprobe_dev <- function(
             xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
             
         #Empty plot
-            plot(zs,floodlight[[1]]$estimate,type='n',xlab='',ylab='',las=1,ylim=ylim,xlim=xlim,yaxt='n')
+            plot(zs,floodlight[[1]]$estimate,type='n',xlab=xlab,ylab=ylab2,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3)
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
          
             ltys=c(1,1,1)
@@ -318,7 +359,6 @@ interprobe_dev <- function(
             #Loop the 2 or 3 values of x slopes
               for (j in 1:(nux-1)) {
                 #Lines
-                  #line.seg(zs,simple.slopes[[j]]$estimate,lwd=rep(4,nbins), col=cols[j],g=gr[[j]],lty=j)
                   line.seg(zs,floodlight[[j]]$estimate,lwd=4*gr[[j]], col=cols[j+1],g=gr[[j]],lty=ltys[j]) 
               
                   #Changing both width and tly leads to weird looking lines
@@ -335,12 +375,6 @@ interprobe_dev <- function(
               }#End loop nux
               
           #Headers
-           
-            yline = max(nchar(as.character(pretty(ylim)))) 
-            
-            
-            mtext(side=1,line=2.5,font=2,cex=1.5,xlab)
-            mtext(side=2,line=yline,font=2,cex=1.5,ylab2)
             mtext(side=3,line=1.5,font=2,cex=1.5,main2)
           
           #Legend
@@ -357,7 +391,15 @@ interprobe_dev <- function(
                 #See draw.histogram.R
                 #Single function for continuous or discrete
           
-          
          
+#FINAL OUTPUT
+        output=list(simple.slopes=simple.slopes.df, 
+                    floodlight=floodlight.df, 
+                    model=model, 
+                    frequencies=fx,
+                    color.adjustments=gr)
+        
+        return(invisible(output))          
+          
   } #End of function
 

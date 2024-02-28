@@ -68,8 +68,8 @@
             text(min(zs)-.05*diff(xlim),y1,'n = ',pos=3,cex=.8,font=3,col='gray38')
             
           
-            
-       
         } #End continuous
+             
+            
     } #End function
   

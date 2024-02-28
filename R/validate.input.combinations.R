@@ -13,7 +13,7 @@ validate.input.combinations=function(data, model, x,y,z)
           if (!is.null(x) & !is.null(z) & !is.null(y))  input.xyz=TRUE
           if (!is.null(x) & !is.null(z) & is.null(y))   input.xz=TRUE
       
-  
+   
   
    #1 Specified data & model
         if (input.data + input.model==2) {
@@ -34,21 +34,24 @@ validate.input.combinations=function(data, model, x,y,z)
   
    #3 Model without xz
       if (input.model==TRUE & input.xz==FALSE) {
-          stop("interprobe says: you specified a model but not x and z, recall that:\n",
+          message("interprobe says: you specified a model but not x and z, recall that:\n",
                "x: focal predictor\n",
                "z: moderator")
+          exit()
          }
 
   #3 Model with xyz
       if (input.model==TRUE & input.xyz==TRUE) {
-          stop("interprobe says: you specified both a model and the y argument.\nPlease specify only one of them");
+          message("interprobe says: you specified both a model and the y argument.\nPlease specify only one of them");
+          exit()
          }
 
             
   
    
         if (input.data + input.xyz + input.model==0) {
-            stop("interprobe says:\nYou must specify the data by providing at least one of these arguments:\ndata, or 'x,y,z', or model")
+            message("interprobe says:\nYou must specify the data by providing at least one of these arguments:\ndata, or 'x,y,z', or model")
+            exit()
             }
 
    
