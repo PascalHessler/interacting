@@ -103,7 +103,27 @@
   names(df)=c("from","to")
   return(df)
   }
+ 
+#----------------------------------
   
+#Legacy functions
+#6 Share
+
+  share.within <- function(yk , y, within=.05 ) {
+    return(mean( abs(y-yk) <=within))
+    }
+
  
   
   
+   rescale=function(x,min1,max1,drop.zeros=TRUE)
+  {
+   
+    x=as.numeric(x)
+    min0=min(x)
+    max0=max(x)
+    x1 = min1+((x-min0)*(max1-min1))/(max0-min0)
+    
+    if (drop.zeros) x1 = ifelse(x>0,x1,0)
+    return(x1)
+  }
