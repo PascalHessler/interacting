@@ -33,7 +33,7 @@ interprobe_dev <- function(
                     n.bin.continuous = 10,
                     force.discrete.freqs=FALSE, #Should frequencies be shown for every value of moderator
                     shade.up.to = 50,           #below this sample size we shade to show few observations
-                    xlab='Moderator',
+                    xlab='',
                     cols=c('red4','blue4','green4'),
                     ylab1='Dependent Variable',
                     ylab2='Marginal Effect',
@@ -116,14 +116,19 @@ interprobe_dev <- function(
           
         #4.3 Categorize as 'continuous' or 'discrete' moderators
           moderation = ifelse(nuz>max.unique, 'continuous', 'discrete')
+          focal       = ifelse(nux>max.unique, 'continuous', 'discrete')
           
       
   #--------------------------------------------------------------------
   #5 set moderator values for computing marginal effects
           if (moderation=='discrete')   zs = uz
           if (moderation=='continuous') zs = seq(min(data$z),max(data$z),length.out=100)
-          nzs = length(zs)
-            
+          
+    #set focal predictor values
+          if (focal=='discrete')   xs = ux
+          if (focal=='continuous') xs = seq(min(data$x),max(data$x),length.out=100)
+
+          
   #--------------------------------------------------------------------------------
           
   #6 Estimate model (if the user did not enter a model)
@@ -136,8 +141,10 @@ interprobe_dev <- function(
      
       #7 Compute simple slopes 
         
+      if (draw.simple.slopes==TRUE) {
+          
         #7.1 x has 2 or 3 possible values
-          if (draw.simple.slopes==TRUE) {
+          
           
               if (nux %in% c(2,3))
               {
@@ -163,15 +170,32 @@ interprobe_dev <- function(
               
           
         #7.2 x has more 4+ values
-              if (nux>3)
+              if (nux>=4)
               {
+              #Spotlights of z
+                if (is.null(spotlights)) spotlights=quantile(data$z,c(.15,.5,.85),type=3)
+              
+              simple.slopes = list()
+              j=1
+              for (zj in spotlights)
+              {
+                #Make prediction data
+                  ndj = expand.grid(z=zj,x=xs)
+                  ndj = add.covariates.at.mean(ndj, data)
+
+                #Save marginal effects results
+                  options(warn=-1)
+                  simple.slopes[[j]] = marginaleffects::predictions(model, newdata = ndj)
+                  options(warn=-0)
+                      #Note: suppress warnings because `marginaleffects` warns about k as a missing variable when it is specified
+                 
+                  j=j+1 
+                } #End loop
                 
-                
-                
-              }
+              } #End 7.2 if nux>=4
+       
+    }#End 7 if simple slopes     
             
-            
-          }
  #--------------------------------------------------------------------------------
   #8 Compute floodlight / Johnson-Neyman
         
@@ -204,6 +228,39 @@ interprobe_dev <- function(
     
             
       } #End if nux in c(2,3)
+        
+        
+       #8.2 x has more 4+ values
+              if (nux>=4)
+              {
+              #Spotlights of z
+                if (is.null(spotlights)) spotlights=quantile(data$z,c(.15,.5,.85),type=3)
+              
+                floodlight = list()
+                j=1
+                zj=spotlights[1]
+                for (zj in spotlights)
+                {
+                #Make prediction data
+                  ndj = expand.grid(z=zj,x=xs)
+                  ndj = add.covariates.at.mean(ndj, data)
+
+                #Save marginal effects results
+                  options(warn=-1)
+                  floodlight[[j]] = marginaleffects::slopes(model, newdata = ndj, var='x')
+                  floodlight[[j]]$z=zj
+
+                  options(warn=-0)
+                      #Note: suppress warnings because `marginaleffects` warns about k as a missing variable when it is specified
+                 
+                  j=j+1 
+                } #End loop
+                
+                
+            } #End if nux>=4
+        
+        
+        
     } #End if draw floodlight
           
           
@@ -212,23 +269,66 @@ interprobe_dev <- function(
   
           
 # 8 N of observations per bin, for both histogram and line colors
-      
-      #8.1 Setup z_bins
-          if (moderation=='continuous') z_bins = cut(data$z,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
-          if (moderation=='discrete')   z_bins = zs
-          nbins = length(unique(z_bins))
+    
+      #8.0 Ploting frequencies of x or z?
+            if (nux>=4) on_x_axis='x'
+            if (nux>=3) on_x_axis='z'
+        
+            
+            
+      #8.1 Setup bins and get their frequencies
+          
+      #8.1.1) Z on x-axis
+            if (on_x_axis=='z')
+              {
+              #Continuous Z
+                  if (moderation=='continuous') {
+                    bins = cut(data$z,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
+                    fx = table(data$x,bins)
+                  }
+              #Discrete Z
+                  if (moderation=='discrete')  {
+                      bins = zs
+                      nbins = length(unique(bins))
+                      fx = table(data$x,data$z) 
+                      
+                  } #End discrete Z
+              } #End z on x-axis
+           
+            
+      #8.1.2) X on x-axis   
+           #if (on_x_axis=='x')
+              #{
+              #Continuous x
+               #   if (focal=='continuous') {
+                    #bins = cut(data$x,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
+                    #zbins= cut(data$z,breaks=spotlights)  #n.bin.continuous defaults to 10 bins for continuous data
+                    #fx = table(zbin,bins)
+                    
+                  #}
+              #Discrete x
+                  #if (focal=='discrete')  {
+                   #   bins = xs
+                      #fx = table(data$x,data$z) 
+                  #} #End discrete Z
+              #} #End z on x-axis
+            
+          
+             #px = prop.table(fx,1)           #share of observations
+             #nbins = length(unique(bins))
+            #} End of 8.1.2
+ 
             
 
-      #8.2 Frequencies by z_bins
-        if (moderation=='continuous') fx = table(data$x,z_bins)
-        if (moderation=='discrete')   fx = table(data$x,data$z) 
+      #8.2 Set tone of line for each segment
+          if (on_x_axis=='z') n.segments = nux
+          if (on_x_axis=='x') n.segments = length(spotlights)
+            
           
-        px = prop.table(fx,1)           #share of observations
-        
- 
-      #8.3 Set tone of line for each bin
+      if (on_x_axis=='z')
+      {
           gr=list()
-          for (j in 1:nux)
+          for (j in 1:n.segments)
           {
           #Color is going to be shaded if it is n=20, or < 1/3 the uniform distribution
                 gray.frequency = pmin(fx[j,]/shade.up.to,1)
@@ -241,6 +341,19 @@ interprobe_dev <- function(
           if (moderation == 'continuous') {
             for (k in 1:length(gr)) gr[[k]]=rep(gr[[k]],each=length(zs)/n.bin.continuous) #n.bin.continuous defaults to 10 bins for continuous data
           }
+          
+      }  #RElyingo n  x-axis=z  - pending figuring out for x on the x-axis when everything is continuous
+          
+          
+             
+    #TEMP
+    if (on_x_axis=='x') {
+      gr=list()
+      nbins=length(levels(bins))
+      for (j in 1:nbins) gr[[j]] = rep(1,nbins)
+    }
+          
+          
 #--------------------------------------------------------------------------------
           
 #PLOTTING
@@ -262,6 +375,9 @@ interprobe_dev <- function(
       #9.1 x has 2 or 3 possible values
         if (nux %in% c(2,3))
         {
+          
+        #Default xlabel
+          if (xlab=='') xlab='Moderator'
           
         #Unlist data.frames
            simple.slopes.df <- do.call(rbind, simple.slopes)
@@ -314,14 +430,101 @@ interprobe_dev <- function(
           
           #Legend
               legend("topleft",inset=.01,bty='n',lty=ltys[1:nux],lwd=3,col=cols[1:nux],legend=as.character(ux))
-            
-        }
-    #Put histogram at the bottom if requested
-          
-        if (histogram==TRUE) draw.histogram(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
+      
+          #Histogram  
+              if (histogram==TRUE) draw.histogram(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
                                             
                 #See draw.histogram.R
+     
+                    
+        }
+    
+           
+    
+         
+         
+         
+       #9.2 x has 4+
+        if (nux %in% >=4)
+        {
           
+        #Default xlabel
+          if (xlab=='') xlab='X: Focal Predictor '
+          
+        #Unlist data.frames
+           simple.slopes.df <- do.call(rbind, simple.slopes)
+ 
+           #Combines the 3 dataframes, currently in a list, 
+             
+        #Set ylim
+            ylim = range(simple.slopes.df[,c('conf.low','conf.high')]) #Default y-range
+            ylim[2]=ylim[2]+.15*diff(ylim)                                  #Add at the top for the legend
+            if (histogram==TRUE) ylim[1]=ylim[1]- length(spotlights)*.08*diff(ylim)        #add at the bottom for the histogram
+          
+        #Set x-lim
+            xlim=range(data$x)
+            xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
+            
+        #Empty plot
+            plot(xs,simple.slopes[[1]]$estimate,type='n',xlab=xlab,ylab=ylab1,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3)
+            axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
+         
+              #ltys=c(1,2,4)
+            ltys=c(1,1,1)
+
+            
+          #Loop trhough the spotlights
+              n.lines=length(simple.slopes)
+              j=1
+              for (j in 1:n.lines) {
+              
+  #TEMP - single width line
+   gr=list()
+  gr[[j]] =rep(1,100)
+  
+                #Lines
+                  line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
+              
+                  #Changing both width and tly leads to weird looking lines
+              
+                #Confidence regions
+                  polygon(x=c(zs,rev(zs)),
+                        y=c(simple.slopes[[j]]$conf.high,
+                            rev(simple.slopes[[j]]$conf.low)),
+                            col=adjustcolor(cols[j],.1),border = NA)
+                  
+               #Dots if we have not binned data
+                #  if (nuz==nbins) points(zs,simple.slopes[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
+                
+              }#End loop nux
+              
+              
+          #Headers
+            
+            yline = max(nchar(as.character(pretty(ylim)))) 
+            mtext(side=3,line=1.5,font=2,cex=1.5,main1)
+     
+          
+          #Legend
+              
+              legend("topleft",inset=.01,bty='n',lty=ltys[1:nux],lwd=3,col=cols[1:n.segments],
+                     legend=round(spotlights,2))
+      
+          #Histogram  
+              if (histogram==TRUE) draw.histogram(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
+                                            
+                #See draw.histogram.R
+     
+                    
+        }
+         
+         
+         
+              
+         
+         
+         
+      
           
          
   } #End of function

@@ -126,4 +126,25 @@
     
     if (drop.zeros) x1 = ifelse(x>0,x1,0)
     return(x1)
-  }
+   }
+   
+   
+#7 Add all vars at means
+   add.covariates.at.mean=function(newdata, data)
+   {
+     #Add any variables missing at their mean
+        missing_vars <- setdiff(names(data), names(newdata))
+                   
+    #Get means
+        mean_values <- sapply(data[missing_vars], function(x) mean(x, na.rm = TRUE))
+
+    #add them
+        for(var in names(mean_values)) {
+            newdata[[var]] <- mean_values[var]
+            }
+                   
+    return(newdata)
+     
+    }
+   
+   
