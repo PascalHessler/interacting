@@ -1,5 +1,5 @@
       
-    draw.histogram = function(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
+    draw.histogram = function(moderation, zs,  nux, ylim,xlim, fx,cols, nbins,  bins)
           {
           #Box
             y0=par('usr')[3]
@@ -40,7 +40,7 @@
             if (moderation=='continuous')
             {
           #Get breakpoints for z bings
-            breaks=get.breaks(z_bins) #function 5 in utils.R
+            breaks=get.breaks(bins) #function 5 in utils.R
         
           #Adjust y coordinates too be bottom of figure
             y0=par('usr')[3]

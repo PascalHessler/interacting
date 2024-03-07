@@ -16,7 +16,7 @@
     }
 
       
-    
+  
 #1 Plot line by segments of width and color
  line.seg = function(x,y,lwd,col,g,lty,type='l')
           {
@@ -93,17 +93,19 @@
 #5 Get breaks
   get.breaks=function(cut_var)
   {
-  intervals=levels(cut_var)
-  start_end_points <- sapply(intervals, function(interval) {
-    bounds <- gsub("\\((.+),(.+)\\]", "\\1-\\2", interval)
-    as.numeric(strsplit(bounds, "-")[[1]])
-  })
-  start_end_matrix <- t(matrix(start_end_points, nrow = 2, byrow = FALSE))
-  df=data.frame(start_end_matrix)
-  names(df)=c("from","to")
+  interval_matrix <- do.call(rbind, strsplit(gsub("\\[|\\]|\\(|\\)", "", intervals), ",", fixed = TRUE))
+  df_intervals <- as.data.frame(interval_matrix, stringsAsFactors = FALSE)
+  df_intervals$V1 <- as.numeric(df_intervals$V1)
+  df_intervals$V2 <- as.numeric(df_intervals$V2)
+  names(df_intervals) <- c("from", "to")
   return(df)
   }
  
+  
+  
+  
+
+
 #----------------------------------
   
 #Legacy functions
