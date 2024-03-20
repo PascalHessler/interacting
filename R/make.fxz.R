@@ -31,17 +31,20 @@ make.fxz = function(data  , n.bin.continuous,  moderation  )
   
 #------------------------------------------------------------
 #CASE 2  x: discrete z: cont
-      if (nux<3 & moderation=='continuous') {
-            zbins  = cut(data$z, breaks = c(-Inf, quantile(data$z,c(1/3,2/3)), Inf),  labels = paste0("zbin_",1:3), include.lowest = TRUE)
-            fx   = table(x,zbins)
+      if (nux<=3 & moderation=='continuous') {
+            #zbins  = cut(data$z, breaks = c(-Inf, quantile(data$z,c(1/3,2/3)), Inf),  labels = paste0("zbin_",1:3), include.lowest = TRUE)
+            zbins  = cut(data$z, breaks = 10,  labels = paste0("zbin_",1:10), include.lowest = TRUE)
+            
+        
+            fx   = table(data$x,zbins)
             return(fx)
       }
-  
+  hist(data$z)
   
 #------------------------------------------------------------
 #CASE 3  x: discrete z: discrete
-      if (nux<3 & moderation=='discrete') {
-            fx   = table(x,z)
+      if (nux<=3 & moderation=='discrete') {
+            fx   = table(data$x,data$z)
             return(fx)
       }
   

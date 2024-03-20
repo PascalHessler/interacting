@@ -25,6 +25,4 @@ compute.floodlight.continuous=function(spotlights, data, xs)
         return(floodlight)  
     } #End function
         
-        
-}
 

@@ -63,7 +63,7 @@
   
   scripts<-list.files(pkg_path,full.names = TRUE)
   for (scriptk in scripts) {
-    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R')) {
+    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev2.R')) {
     message("next:",basename(scriptk))
     source(scriptk)
     } }
