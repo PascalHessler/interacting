@@ -102,6 +102,8 @@
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
     
+    interprobe_dev(x,z,y)
+    
     
     g=gam(y~s(x)+s(z)+ti(x,z)+s(m1)+m2)
     model=g

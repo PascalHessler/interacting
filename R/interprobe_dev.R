@@ -104,6 +104,9 @@ interprobe_dev <- function(
   #------------------------------------------------------------------------------
           
     #4 Number of unique x & z values
+        #4.0 Spotlights
+        if (!us.null(spotlights)) if (length(spotlights)!=3) stop("interprobe() says: spotlights must be a vector with three values")
+        
         #4.1 Count
           ux  = sort(unique(data$x))
           uz  = sort(unique(data$z))
@@ -111,14 +114,16 @@ interprobe_dev <- function(
           nuz = length(uz)     #nuz number of unique z values
           
         #4.2 Check if only 1 value
-          if (nux==1) stop("interprobe says: there is only one observed value for the variable 'x'")
-          if (nuz==1) stop("interprobe says: there is only one observed value for the variable 'z'")
+          if (nux==1) stop("interprobe() says: there is only one observed value for the variable 'x'")
+          if (nuz==1) stop("interprobe() says: there is only one observed value for the variable 'z'")
           
         #4.3 Categorize as 'continuous' or 'discrete' moderators
           moderation = ifelse(nuz>max.unique, 'continuous', 'discrete')
           focal       = ifelse(nux>max.unique, 'continuous', 'discrete')
           
       
+          
+          
   #--------------------------------------------------------------------
   #5 set moderator values for computing marginal effects
           if (moderation=='discrete')   zs = uz
