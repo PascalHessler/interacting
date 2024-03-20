@@ -93,10 +93,11 @@
   
 
   
+#Continuous
     x=rnorm(1000)
     z=rnorm(1000)
-    m1=rnorm(1000)
-    m2=rnorm(1000)
+    m1=rnorm(1000,mean=10)
+    m2=rnorm(1000,mean=15)
     y.raw=x*z+m1+m2
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
@@ -109,6 +110,16 @@
     y=NULL
     
     
+    
+#Discrete
+    n=200
+    x=rep(c(1,2,3),n)
+    z=rnorm(3*n)
+    y.raw=x*z
+    e=rnorm(length(y.raw),sd=sd(y.raw))
+    y=y.raw+e
+    
+ 
     
   g=mgcv::gam(y~s(z,by=x,k=3)+x)
   lm1=lm(y~x*z)

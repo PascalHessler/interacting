@@ -30,7 +30,7 @@ interprobe_dev <- function(
                     spotlights=NULL,
                     histogram=TRUE,
                     max.unique = 11,
-                    n.bin.continuous = 10,
+                    n.bin.continuous = 5,
                     force.discrete.freqs=FALSE, #Should frequencies be shown for every value of moderator
                     shade.up.to = 50,           #below this sample size we shade to show few observations
                     xlab='',
@@ -272,7 +272,7 @@ interprobe_dev <- function(
     
       #8.0 Ploting frequencies of x or z?
             if (nux>=4) on_x_axis='x'
-            if (nux>=3) on_x_axis='z'
+            if (nux<=3) on_x_axis='z'
         
             
             
@@ -283,10 +283,17 @@ interprobe_dev <- function(
               {
               #Continuous Z
                   if (moderation=='continuous') {
-                    bins = cut(data$z,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
-                    nbins = length(levels(bins))
-                    fx   = table(data$x,bins)
-                    px=prop.table(fx,1)
+                    nbins = n.bin.continuous
+
+                    bins = cut(data$x ,nbins,include.lowest=TRUE,labels=paste0('xbin_',1:(nbins)))  #n.bin.continuous defaults to 10 bins for continuous data
+                    
+                    zbins <- cut(data$z,
+                        breaks = c(-Inf, quantile(data$z,c(1/3,2/3)), Inf),
+                        labels = paste0("zbin_",1:3),
+                        include.lowest = TRUE)
+                    
+                    fx   = table(zbins , bins)
+                    px = prop.table(fx,1)
 
                   }
               
@@ -301,11 +308,11 @@ interprobe_dev <- function(
            
             
       #8.1.2) X on x-axis   
-           #if (on_x_axis=='x')
-              #{
+           if (on_x_axis=='x')
+              {
               #Continuous x
-               #   if (focal=='continuous') {
-                    #bins = cut(data$x,n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
+                  if (focal=='continuous') {
+                    bins = cut(data$x, n.bin.continuous)  #n.bin.continuous defaults to 10 bins for continuous data
                     #zbins= cut(data$z,breaks=spotlights)  #n.bin.continuous defaults to 10 bins for continuous data
                     #fx = table(zbin,bins)
                     
@@ -352,6 +359,7 @@ interprobe_dev <- function(
              
     #TEMP
     if (on_x_axis=='x') {
+      
       gr=list()
       nbins=length(levels(bins))
       for (j in 1:nbins) gr[[j]] = rep(1,nbins)
@@ -384,7 +392,7 @@ interprobe_dev <- function(
          
          
        #9.2 x has 4+
-        if (nux %in% >=4)
+        if (nux >=4)
         {
         # TEMP - single width line
           gr=list()
@@ -409,78 +417,4 @@ interprobe_dev <- function(
     
 
 #--------------------------------------------------------------------------------
-          
-#10 PLOT 2 FLOODLIGHT
-
-  #10.1 x has 2 or 3 possible values
-        if (nux %in% c(2,3))
-        {
-        
-          
-        #Unlist data.frames
-           floodlight.df <- do.call(rbind, floodlight)
-     
-          
-        #Set ylim
-            ylim = range(floodlight.df[,c('conf.low','conf.high')]) #Default y-range
-            ylim[2]=ylim[2]+.1*diff(ylim)                                  #Add at the top for the legend
-            if (histogram==TRUE) ylim[1]=ylim[1]-nux*.08*diff(ylim)        #add at the bottom for the histogram
-          
-        #Set x-lim
-            xlim=range(data$z)
-            xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
-            
-        #Empty plot
-            plot(zs,floodlight[[1]]$estimate,type='n',xlab=xlab,ylab=ylab2,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3)
-            axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
-         
-            ltys=c(1,1,1)
-
-            
-            #Loop the 2 or 3 values of x slopes
-              for (j in 1:(nux-1)) {
-                #Lines
-                  line.seg(zs,floodlight[[j]]$estimate,lwd=4*gr[[j]], col=cols[j+1],g=gr[[j]],lty=ltys[j]) 
-              
-                  #Changing both width and tly leads to weird looking lines
-              
-                #Confidence regions
-                  polygon(x=c(zs,rev(zs)),
-                        y=c(floodlight[[j]]$conf.high,
-                            rev(floodlight[[j]]$conf.low)),
-                            col=adjustcolor(cols[j+1],.1),border = NA)
-                  
-               #Dots if we have not binned data
-                  if (nuz==nbins) points(zs,floodlight[[j]]$estimate, col=adjustcolor2(cols[j+1],gr[[j]]),pch=16) 
-                
-              }#End loop nux
-              
-          #Headers
-            mtext(side=3,line=1.5,font=2,cex=1.5,main2)
-          
-          #Legend
-            if (nux==2) legend("topleft",inset=.01,bty='n', lwd=3,col=cols[2],  legend = dms(floodlight[[1]][1,2]))
-            if (nux==3) legend("topleft",inset=.01,bty='n', lwd=3,col=cols[2:3],legend = paste0(ux[2:3]," - ",ux[1]))
-            
-        }
-
-
-    #Put histogram at the bottom if requested 
-    #
-        if (histogram==TRUE) draw.histogram(moderation, zs,  nux, ylim,xlim, fx,cols, nbins,  bins)
-                                            
-                #See draw.histogram.R
-                #Single function for continuous or discrete
-          
-         
-#FINAL OUTPUT
-        output=list(simple.slopes=simple.slopes.df, 
-                    floodlight=floodlight.df, 
-                    model=model, 
-                    frequencies=fx,
-                    color.adjustments=gr)
-        
-        return(invisible(output))          
-          
-  } #End of function
-
+    
