@@ -1,14 +1,17 @@
 
 
 
-    plot.simple.slopes.z_on_axis = function(xlab , simple.slopes , histogram , data ,  ylab1 , spotlights , cols , nux , nuz,  zs ,  fx)
-    {
+    plot.simple.slopes.z_on_axis = function(xlab , simple.slopes , histogram , data ,  ylab1 , spotlights , cols , nux , nuz,  zs ,  fxz)
+                                           (fxz, gr, xlab, )
+      
+      {
       
     #How many z-values do we have frequencies for
-      n.zbins = ncol(fx)
+      n.zbins = ncol(fxz)
       
+        
     #Default xlabel
-      if (xlab=='') xlab = 'Moderator'
+      if (xlab=='') xlab = 'Focal Predic'
           
     #Unlist data.frames
       simple.slopes.df <- do.call(rbind, simple.slopes)
@@ -30,13 +33,18 @@
         plot(zs , simple.slopes[[1]]$estimate , type='n' , xlab=xlab , ylab=ylab1 , las=1 , ylim=ylim , xlim=xlim , yaxt='n',cex.lab=1.3)
         axis(2 , at = pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
         ltys=c(1,1,1)
-
+j=3
             
     #Loop the 2 or 3 values of x slopes
-        for (j in 1:nux) {
-          
+        for (j in 1:) {
+              g=as.numeric(gr[,j])
+              g=rep(g,length(zs))
             #Lines
-              line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
+              line.seg(zs,simple.slopes[[j]]$estimate,
+                       lwd=4*gr[,j], 
+                       col=cols[j],
+                       g=g,
+                       lty=ltys[j]) 
               
             #Changing both width and tly leads to weird looking lines
               
@@ -48,7 +56,7 @@
                   
                #Add dots to line if we are plotting actual frequencies of specific z values, 
                # which we detect with as many bins of z as there are unique z-values
-                  if (nuz == n.zbins) points(zs,simple.slopes[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
+                  if (nuz == n.zbins) points(zs,simple.slopes[[j]]$estimate, col=adjustcolor2(cols[j],g),pch=16) 
                 
               }#End loop nux
               

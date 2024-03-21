@@ -1,7 +1,7 @@
 
 
 
-    plot.simple.slopes.x_on_axis = function(xlab, simple.slopes, histogram, data,xs, ylab1,gr,spotlights,cols)
+    plot.simple.slopes.x_on_axis = function(xlab, simple.slopes, histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
     {
     
         #Default xlabel
@@ -14,7 +14,7 @@
              
         #Set ylim
             ylim = range(simple.slopes.df[,c('conf.low','conf.high')]) #Default y-range
-            ylim[2]=ylim[2]+.15*diff(ylim)                                  #Add at the top for the legend
+            ylim[2]=ylim[2]+.25*diff(ylim)                                  #Add at the top for the legend
             if (histogram==TRUE) ylim[1]=ylim[1]- length(spotlights)*.08*diff(ylim)        #add at the bottom for the histogram
           
         #Set x-lim
@@ -25,19 +25,19 @@
             plot(xs,simple.slopes[[1]]$estimate,type='n',xlab=xlab,ylab=ylab1,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3)
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
          
-              #ltys=c(1,2,4)
-            ltys=c(1,1,1)
-
             
           #Loop trhough the spotlights
               n.lines=length(simple.slopes)
               j=1
               for (j in 1:n.lines) {
-              
- 
+                  
+                  
+                  g1=as.numeric(gr[,j])
+                  g=rep(g1 , each=length(zs)/length(g1))
+                  
   
                 #Lines
-                  line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*gr[[j]], col=cols[j],g=gr[[j]],lty=ltys[j]) 
+                  line.seg(zs,simple.slopes[[j]]$estimate,lwd=4*g, col=cols[j],g=g) 
               
                   #Changing both width and tly leads to weird looking lines
               
@@ -60,9 +60,10 @@
      
           
           #Legend
-              
-              legend("topleft",inset=.01,bty='n',lty=ltys[1:nux],lwd=3,col=cols[1:n.segments],
-                     legend=round(spotlights,2))
+              legend("topleft",inset=.01,bty='n',lwd=3,col=cols[1:n.lines],
+                     title='Moderator Value',
+                     title.font=2,
+                     legend=spotlight.labels)
       
           #Histogram  
               #if (histogram==TRUE) draw.histogram(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)

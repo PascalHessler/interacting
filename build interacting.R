@@ -63,7 +63,7 @@
   
   scripts<-list.files(pkg_path,full.names = TRUE)
   for (scriptk in scripts) {
-    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev2.R')) {
+    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev2.R','plot.simple.slope.z_on_axis.R')) {
     message("next:",basename(scriptk))
     source(scriptk)
     } }
@@ -90,10 +90,11 @@
   max.unique=11
   draw.simple.slopes=TRUE
   draw.floodlight=TRUE
-  
+  legend.max.d=5
+  legend.min.d=2
 
   
-#Continuous
+#Continuous x,z
     x=rnorm(1000)
     z=rnorm(1000)
     m1=rnorm(1000,mean=10)
@@ -102,18 +103,8 @@
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
     
-    interprobe_dev(x,z,y)
-    
-    
-    g=gam(y~s(x)+s(z)+ti(x,z)+s(m1)+m2)
-    model=g
-    x='x'
-    z='z'
-    y=NULL
-    
-    
-    
-#Discrete
+
+#Discrete x, continuous z
     n=200
     x=rep(c(1,2,3),n)
     z=rnorm(3*n)
@@ -122,6 +113,10 @@
     y=y.raw+e
     
  
+    
+    
+    
+    
     
   g=mgcv::gam(y~s(z,by=x,k=3)+x)
   lm1=lm(y~x*z)

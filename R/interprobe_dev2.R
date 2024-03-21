@@ -22,6 +22,7 @@ interprobe_dev <- function(
                     k=NULL,
                     zs=NULL,
                     spotlights=NULL,
+                    spotlight.labels=NULL,
                     histogram=TRUE,
                     max.unique = 11,
                     n.bin.continuous = 5,
@@ -35,6 +36,9 @@ interprobe_dev <- function(
                     main2='GAM Floodlight' , 
                     draw.simple.slopes=TRUE,
                     draw.floodlight=TRUE,
+                    legend.max.d = 5,          #maximum number of decimals
+                    legend.min.d = 2,
+                    
                     
                     ...)
                     
@@ -95,9 +99,28 @@ interprobe_dev <- function(
   #5 Estimate model (if the user did not provide it as an argument)
           if (v$input.model==FALSE) model = estimate.model(nux,data,k)
 
-  #6 Compute simple slopes
-       if (is.null(spotlights)) spotlights=quantile(z,c(.15,.5,.85),type=3)
+  
+  #6 Set spotlight values and labels
+        
+       if (is.null(spotlights)) {
+         spotlights=quantile(data$z,c(.15,.5,.85),type=3)
+         if (is.null(spotlight.labels)) {
+             spotlight.labels=paste0(
+                              c("15th percentile (","50th percentile (", "85th percentile (") ,
+                              c(round2(as.numeric(spotlights), max.d=legend.max.d, min.d=legend.min.d )),
+                              c(")",")",")"))
+         }
+            
+         #Note: round2() is a function in utils.r that does rounding with default formatting
+         
+       }
           
+      #If user set spotlights but not spotlight.labels, assign them
+          if (is.null(spotlight.labels)) spotlight.lables=as.numeric(spotlights)
+          
+  
+  #6 Compute simple slopes        
+    
       if (draw.simple.slopes==TRUE) {
           if (nux  <4)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
           if (nux >=4)  simple.slopes = compute.slopes.continuous(spotlights, data, xs)
@@ -110,12 +133,19 @@ interprobe_dev <- function(
       }  
     
           
-  #8 Get fxz (frequencies of each bin to determine line width and histogram
-          fxz = make.fxz(data  , n.bin.continuous,  moderation)
-    
-      
+  #8 Get fxz and gr
+        #fx:  Frequencies of each bin to determine line width and histogram
+        #gr:  How transparent to make the line that is being plotted, it's the n observartion in bin over n=100
+        
+          #Frequencies
+            fxz = make.fxz(data  , n.bin.continuous,  moderation)
+          #As % of the adequate sample size in shade.up.to
+            gr = fxz
+            for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/shade.up.to,1)
+                
+
   #9 Return without plotting if not asking to plot
-      output=namedList(spotlight,floodlight)
+      output=namedList(simple.slopes  ,  floodlight, frequencies=fxz)
       if (draw.simple.slopes==FALSE & draw.floodlight==FALSE) return(output)
           
     
@@ -153,7 +183,12 @@ interprobe_dev <- function(
       if (draw.simple.slopes==TRUE)
         
       {
-       if (nux <= 3) plot.simple.slope.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fx , nbins)
+      if (nux >  3) plot.simple.slope.x_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins,spotlight.labels)
+      if (nux <= 3) plot.simple.slope.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
+        
+        
+       
+      
        
       }
       
