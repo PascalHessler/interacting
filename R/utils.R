@@ -18,7 +18,8 @@
       
   
 #1 Plot line by segments of width and color
- line.seg = function(x,y,lwd,col,g,lty,type='l')
+
+ line.seg = function(x,y,lwd,col,g,lty=1,type='l')
           {
             n=length(x)
             for (k in 1:(n-1)) {
@@ -149,4 +150,25 @@
      
     }
    
-   
+#8 Round2
+  round2 <- function(x, min.d=2, max.d = 3) {
+  # Convert to character to isolate the decimal part
+    x_char <- as.character(x)
+  
+  # Find the first non-zero digit after the decimal
+    fnz <- regexpr("[1-9]", sub(".*\\.", "", x_char))
+  
+  # Decide on the number of digits to round to
+  # Use maxd if the first non-zero digit is beyond maxd digits, or if there are no non-zero digits within maxd places
+    #d_round <- ifelse(fnz > max.d | fnz == -1, max.d, fnz + attr(fnz, "match.length") - 1)
+    d_round = max(min(max.d, fnz), min.d)
+  
+  # Round the number
+    rounded <- round(x, d_round)
+    
+  # force decimal
+    rounded = formatC(rounded, format = "f", digits = min.d)
+    return(rounded)
+  }
+
+  
