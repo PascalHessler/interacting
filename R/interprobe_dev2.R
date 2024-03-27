@@ -138,7 +138,10 @@ interprobe_dev <- function(
         #gr:  How transparent to make the line that is being plotted, it's the n observartion in bin over n=100
         
           #Frequencies
-            fxz = make.fxz(data  , n.bin.continuous,  moderation)
+            fxz.list = make.fxz(data  , n.bin.continuous,  moderation)
+            fxz=fxz.list$fxz
+            
+            
           #As % of the adequate sample size in shade.up.to
             gr = fxz
             for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/shade.up.to,1)
@@ -179,16 +182,20 @@ interprobe_dev <- function(
       
       
   #11 Plot simple slopes     
-      
       if (draw.simple.slopes==TRUE)
         
       {
-      if (nux >  3) plot.simple.slope.x_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins,spotlight.labels)
-      if (nux <= 3) plot.simple.slope.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
-        
-        
+      if (nux >  3) plot.simple.slopes.x_on_axis  (xlab, simple.slopes, histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
+      if (nux <= 3) plot.simple.slopes.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
        
+      }
       
+  #12 Plot Floodlight/Johson-Neyman     
+      if (draw.floodlight==TRUE)
+        
+      {
+      if (nux >  3) plot.simple.slopes.x_on_axis  (xlab, simple.slopes, histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
+      if (nux <= 3) plot.simple.slopes.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
        
       }
       

@@ -66,11 +66,10 @@
                      legend=spotlight.labels)
       
           #Histogram  
-              #if (histogram==TRUE) draw.histogram(moderation, zs, y0, y1, nux, ylim,xlim, fx,cols, nbins,  z_bins)
+              if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation, zs, nux, cols,ylim,xlim)
                               #See draw.histogram.R
 
-                                 
-    }           
+        }           
      
     
     

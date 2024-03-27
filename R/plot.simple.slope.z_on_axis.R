@@ -2,7 +2,7 @@
 
 
     plot.simple.slopes.z_on_axis = function(xlab , simple.slopes , histogram , data ,  ylab1 , spotlights , cols , nux , nuz,  zs ,  fxz)
-                                           (fxz, gr, xlab, )
+                                           #(fxz, gr, xlab, )
       
       {
       
@@ -33,10 +33,9 @@
         plot(zs , simple.slopes[[1]]$estimate , type='n' , xlab=xlab , ylab=ylab1 , las=1 , ylim=ylim , xlim=xlim , yaxt='n',cex.lab=1.3)
         axis(2 , at = pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
         ltys=c(1,1,1)
-j=3
-            
+
     #Loop the 2 or 3 values of x slopes
-        for (j in 1:) {
+        for (j in 1:nux) {
               g=as.numeric(gr[,j])
               g=rep(g,length(zs))
             #Lines

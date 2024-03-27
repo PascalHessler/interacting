@@ -31,29 +31,7 @@
   
   
 #DEBUG
-   x=NULL
-   z=NULL
-   y=NULL
-  data=NULL
-  model=NULL
-  k=NULL
-  zs=NULL
-  spotlights=NULL
-  draw=TRUE
-  histogram=TRUE
-  nbins=NULL
-  shade.up.to = 50  #below this sample size we shade to show few observations
-  xlab='moderator'
-  cols=c('red4','blue4','green4')
-  ylab1='Dependent Variable'
-  ylab2='Marginal Effect'
-  main1="GAM Simple Slopes"
-  main2='GAM Floodlight'
-  force.discrete.freqs=FALSE
-   n.bin.continuous = 10
-  max.unique=11
-  draw.simple.slopes=TRUE
-  draw.floodlight=TRUE
+   
   
 
     #SOURCE
@@ -75,6 +53,8 @@
   k=NULL
   zs=NULL
   spotlights=NULL
+  spotlight.labels=NULL
+  
   draw=TRUE
   histogram=TRUE
   nbins=NULL

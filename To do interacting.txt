@@ -1,5 +1,7 @@
-i am doing lines 116-122 making the fx table make sense in light of a discrete x and continuous z
 
+
+- rename shade.up.to to "n.adequate.threshold=100"
+- find more elegant solution to choosing number of decimals points to show in the spotlights label
 
 interprobe
 - allow linear model as an option, graph headers adjusted accordingly

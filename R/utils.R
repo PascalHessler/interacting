@@ -94,18 +94,15 @@
 #5 Get breaks
   get.breaks=function(cut_var)
   {
-  interval_matrix <- do.call(rbind, strsplit(gsub("\\[|\\]|\\(|\\)", "", intervals), ",", fixed = TRUE))
+  interval_matrix <- do.call(rbind, strsplit(gsub("\\[|\\]|\\(|\\)", "", levels(cut_var)), ",", fixed = TRUE))
   df_intervals <- as.data.frame(interval_matrix, stringsAsFactors = FALSE)
   df_intervals$V1 <- as.numeric(df_intervals$V1)
   df_intervals$V2 <- as.numeric(df_intervals$V2)
   names(df_intervals) <- c("from", "to")
-  return(df)
+  return(df_intervals)
   }
  
   
-  
-  
-
 
 #----------------------------------
   

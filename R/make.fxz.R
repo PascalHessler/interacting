@@ -13,7 +13,8 @@ make.fxz = function(data  , n.bin.continuous,  moderation  )
             nxbins = n.bin.continuous
         
         #Cut x into nbins
-            xbins  = cut(data$x ,nxbins,include.lowest=TRUE,labels=paste0('xbin_',1:(nxbins))) 
+            xbins  = cut(data$x ,nxbins,include.lowest=TRUE,labels=paste0('xbin_',1:(nxbins)))
+            xbins.values  = cut(data$x ,nxbins,include.lowest=TRUE) 
             
         #Cut z into three
             cuts=c()
@@ -25,8 +26,9 @@ make.fxz = function(data  , n.bin.continuous,  moderation  )
             zbins  = cut(data$z, breaks = c(-Inf, cuts, Inf),  labels = paste0("zbin_",1:3), include.lowest = TRUE)
             
         #Compute the cross frequencies
-            fx   = table(xbins,zbins)
-            return(fx)
+            fxz   = table(xbins,zbins)
+            output=namedList(fxz , xbins.values)
+            return(output)
       }
   
 #------------------------------------------------------------
