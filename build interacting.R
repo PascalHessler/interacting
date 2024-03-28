@@ -41,7 +41,7 @@
   
   scripts<-list.files(pkg_path,full.names = TRUE)
   for (scriptk in scripts) {
-    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev2.R','plot.simple.slope.z_on_axis.R')) {
+    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev2.R')) {
     message("next:",basename(scriptk))
     source(scriptk)
     } }
@@ -50,7 +50,7 @@
   
    data=NULL
   model=NULL
-  k=NULL
+  k=3
   zs=NULL
   spotlights=NULL
   spotlight.labels=NULL
@@ -84,6 +84,14 @@
     y=y.raw+e
     
 
+    plot.type='simples.slopes'
+    res=simple.slopes
+
+    
+    plot.type='floodlight'
+    res=floodlight
+    
+    
 #Discrete x, continuous z
     n=200
     x=rep(c(1,2,3),n)

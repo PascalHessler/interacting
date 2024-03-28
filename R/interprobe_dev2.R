@@ -185,8 +185,8 @@ interprobe_dev <- function(
       if (draw.simple.slopes==TRUE)
         
       {
-      if (nux >  3) plot.simple.slopes.x_on_axis  (xlab, simple.slopes, histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
-      if (nux <= 3) plot.simple.slopes.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
+      if (nux >  3) plot.x_on_axis (xlab,main1, simple.slopes , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
+      if (nux <= 3) plot.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
        
       }
       
@@ -194,8 +194,8 @@ interprobe_dev <- function(
       if (draw.floodlight==TRUE)
         
       {
-      if (nux >  3) plot.simple.slopes.x_on_axis  (xlab, simple.slopes, histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
-      if (nux <= 3) plot.simple.slopes.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
+      if (nux >  3) plot.x_on_axis (xlab,main2, floodlight , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
+      if (nux <= 3) plot.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
        
       }
       

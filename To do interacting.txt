@@ -2,6 +2,9 @@
 
 - rename shade.up.to to "n.adequate.threshold=100"
 - find more elegant solution to choosing number of decimals points to show in the spotlights label
+- rename plot.simple.slopes to plot.simple_slopes to keep syntax of single concept is "_". Also make sure plural/singular matches everywhere
+- add checks onf validity of all argmnets in interprobe()
+
 
 interprobe
 - allow linear model as an option, graph headers adjusted accordingly
