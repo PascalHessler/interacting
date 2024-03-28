@@ -122,14 +122,14 @@ interprobe_dev <- function(
   #6 Compute simple slopes        
     
       if (draw.simple.slopes==TRUE) {
-          if (nux  <4)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
-          if (nux >=4)  simple.slopes = compute.slopes.continuous(spotlights, data, xs)
+          if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
+          if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs)
           }
        
   #7 Compute floodlight
       if (draw.floodlight ==TRUE) {
-          if (nux  <4)  floodlight = compute.floodlight.discrete  (ux, zs, model)
-          if (nux >=4)  floodlight = compute.floodlight.continuous(spotlights, data, xs)
+          if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model)
+          if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs)
       }  
     
           
