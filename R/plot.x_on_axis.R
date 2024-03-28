@@ -1,7 +1,7 @@
 
 
 
-    plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
+    plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,nux,max.unique)
     {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -29,39 +29,36 @@
             
           #Loop through the spotlights
               n.lines=length(simple.slopes)
-              j=1
               for (j in 1:n.lines) {
+                 
+               #Color of lines
+                  g1=as.numeric(gr[,j])  #this is based on fxz
+                  if (nux>max.unique)  g = rep(g1 , each=length(zs)/length(g1))
+                  if (nux<=max.unique) g = g1
                   
-                  
-                  g1=as.numeric(gr[,j])
-                  g=rep(g1 , each=length(zs)/length(g1))
-                  
-  
+              
                 #Lines
-                  line.seg(zs,res[[j]]$estimate,lwd=4*g, col=cols[j],g=g) 
+                  line.seg(xs,res[[j]]$estimate,lwd=4*g, col=cols[j],g=g) 
               
                   #Changing both width and tly leads to weird looking lines
               
                 #Confidence regions
-                  polygon(x=c(zs,rev(zs)),
+                  polygon(x=c(xs,rev(xs)),
                         y=c(res[[j]]$conf.high,
                             rev(res[[j]]$conf.low)),
                             col=adjustcolor(cols[j],.1),border = NA)
                   
-               #Dots if we have not binned data
-                  #if (nux <= n.bin.continuous) points(zs,res[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
-                  #only half way though updating for dev2
-                  
+               #Dots within line if we have not binned data for plotting
+                  if (nux <= max.unique) points(xs,res[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
+
                   
               }#End loop nux
               
               
           #Headers
-            
             yline = max(nchar(as.character(pretty(ylim)))) 
             mtext(side=3,line=1.5,font=2,cex=1.5, main)
      
-          
           #Legend
               legend("topleft",inset=.01,bty='n',lwd=3,col=cols[1:n.lines],
                      title='Moderator Value',
@@ -70,7 +67,7 @@
       
           #Histogram  
               if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation, zs, nux, cols,ylim,xlim)
-                              #See draw.histogram.R
+              #See draw.histogram.R
 
         }           
      

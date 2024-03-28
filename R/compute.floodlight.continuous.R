@@ -4,7 +4,6 @@ compute.floodlight.continuous=function(spotlights, data, xs)
       {
           floodlight = list()
           j=1
-          zj=spotlights[1]
           for (zj in spotlights)
           {
           #Make prediction data
@@ -13,7 +12,7 @@ compute.floodlight.continuous=function(spotlights, data, xs)
 
           #Save marginal effects results
             options(warn=-1)
-            floodlight[[j]] = marginaleffects::slopes(model, newdata = ndj, var='x')
+            floodlight[[j]] = data.frame(marginaleffects::slopes(model, newdata = ndj, var='x'))
             floodlight[[j]]$z=zj
 
             options(warn=-0)

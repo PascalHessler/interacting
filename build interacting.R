@@ -47,7 +47,7 @@
     } }
   
   
-  
+  case=2
    data=NULL
   model=NULL
   k=3
@@ -74,8 +74,21 @@
   legend.min.d=2
 
   
-#Continuous x,z
-    x=rnorm(1000)
+#nux>11 , z>3   (continuous,continuous)
+   if (case==1)
+   {
+     x=rnorm(1000)
+    z=rnorm(1000)
+    m1=rnorm(1000,mean=10)
+    m2=rnorm(1000,mean=15)
+    y.raw=x*z+m1+m2
+    e=rnorm(1000,sd=sd(y.raw))
+    y=y.raw+e
+   }
+  
+#nux = 7 , z>3   (continuous K=7  ,  continuous)
+  if (case==2) {  
+  x=sample(1:7,size=1000,replace=TRUE)
     z=rnorm(1000)
     m1=rnorm(1000,mean=10)
     m2=rnorm(1000,mean=15)
@@ -83,14 +96,13 @@
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
     
-
+}
     res=simple.slopes
-
-    
-    plot.type='floodlight'
     res=floodlight
     
-    
+    ylab=ylab1
+    main=main1
+  
 #Discrete x, continuous z
     n=200
     x=rep(c(1,2,3),n)
