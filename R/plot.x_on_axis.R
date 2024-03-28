@@ -1,13 +1,13 @@
 
 
 
-    plot.x_on_axis = function(xlab,main, res , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
+    plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
     {   
-      #res: list with simple.slopes or floodlight results
-    
-
+      #res: list with results from either simple.slopes or floodlight 
       
-        #Default xlabel
+      #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM floodlight
+      
+      #Default xlabel
           if (xlab=='') xlab='X: Focal Predictor '
           
         #Unlist data.frames
@@ -23,7 +23,7 @@
             xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
             
         #Empty plot
-            plot(xs,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab1,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3)
+            plot(xs,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2)
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
          
             

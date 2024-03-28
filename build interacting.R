@@ -84,7 +84,6 @@
     y=y.raw+e
     
 
-    plot.type='simples.slopes'
     res=simple.slopes
 
     
