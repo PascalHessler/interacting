@@ -1,6 +1,6 @@
 
 
-compute.floodlight.continuous=function(spotlights, data, xs)
+compute.floodlight.continuous=function(spotlights, data, xs,model)
       {
           floodlight = list()
           j=1

@@ -1,7 +1,7 @@
 
 
 
-    compute.slopes.continuous=function(spotlights, data, xs)
+    compute.slopes.continuous=function(spotlights, data, xs,model)
     {
     simple.slopes = list()
     j=1

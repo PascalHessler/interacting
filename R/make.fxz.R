@@ -1,6 +1,6 @@
 
 
-make.fxz = function(data  , n.bin.continuous,  moderation  )
+make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights)
 {
   
   
@@ -49,7 +49,8 @@ make.fxz = function(data  , n.bin.continuous,  moderation  )
             
         #Compute the cross frequencies
             fxz   = table(data$x,zbins)
-            output=namedList(fxz , ux)
+            #output=namedList(fxz , ux)
+            output=namedList(fxz)
             return(output)
       }
   
@@ -64,8 +65,7 @@ make.fxz = function(data  , n.bin.continuous,  moderation  )
             fx   = table(data$x,zbins)
             return(fx)
       }
-  hist(data$z)
-  
+
 #------------------------------------------------------------
 #CASE 3  x: discrete z: discrete
       if (nux<=3 & moderation=='discrete') {

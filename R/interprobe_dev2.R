@@ -25,7 +25,7 @@ interprobe_dev <- function(
                     spotlight.labels=NULL,
                     histogram=TRUE,
                     max.unique = 11,
-                    n.bin.continuous = 5,
+                    n.bin.continuous = 10,
                     force.discrete.freqs=FALSE, #Should frequencies be shown for every value of moderator
                     shade.up.to = 50,           #below this sample size we shade to show few observations
                     xlab='',
@@ -82,18 +82,28 @@ interprobe_dev <- function(
           if (nux==1) stop("interprobe says: there is only one observed value for the variable 'x'")
           if (nuz==1) stop("interprobe says: there is only one observed value for the variable 'z'")
           
-        #3.3 Categorize as 'continuous' or 'discrete' moderators
+        #3.3 Categorize as 'continuous', 'discrete', 'categorical' focal predictor
+          if (nux>max.unique)          focal = "continuous"
+          if (nux<=max.unique & nux>3) focal = "discrete"
+          if (nux<=3)                  focal = "categorical"
+         
+        #3.4 Moderator type
           moderation = ifelse(nuz > max.unique, 'continuous', 'discrete')
-          focal      = ifelse(nux > max.unique, 'continuous', 'discrete')
-          
+
       
+        #3.5
+          if (is.null(xlab)) {
+            xlab=ifelse(focal=='categorial','Moderator','Focal Predictor')
+            
+          }
+          
   #4 set moderator values for computing marginal effects
           if (moderation=='discrete')   zs = uz
           if (moderation=='continuous') zs = seq(min(data$z),max(data$z),length.out=100)
           
         #set focal predictor values
-          if (focal=='discrete')   xs = ux
-          if (focal=='continuous') xs = seq(min(data$x),max(data$x),length.out=100)
+          if (focal!='continuous')   xs = ux
+          if (focal=='continuous')   xs = seq(min(data$x),max(data$x),length.out=100)
 
         
   #5 Estimate model (if the user did not provide it as an argument)
@@ -123,13 +133,13 @@ interprobe_dev <- function(
     
       if (draw.simple.slopes==TRUE) {
           if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
-          if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs)
+          if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model)
           }
        
   #7 Compute floodlight
       if (draw.floodlight ==TRUE) {
           if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model)
-          if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs)
+          if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model)
       }  
     
           
@@ -138,7 +148,7 @@ interprobe_dev <- function(
         #gr:  How transparent to make the line that is being plotted, it's the n observartion in bin over n=100
         
           #Frequencies
-            fxz.list = make.fxz(data  , n.bin.continuous,  moderation)
+            fxz.list = make.fxz(data  , n.bin.continuous,  moderation,nux , max.unique ,spotlights )
             fxz=fxz.list$fxz
             
             
@@ -185,8 +195,8 @@ interprobe_dev <- function(
       if (draw.simple.slopes==TRUE)
         
       {
-      if (nux >  3) plot.x_on_axis (xlab,ylab1, main1, simple.slopes , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
-      if (nux <= 3) plot.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
+      if (nux >  3) plot.x_on_axis  (xlab,ylab1,main1, simple.slopes , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
+      if (nux <= 3) plot.z_on_axis  (xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
        
       }
       
@@ -194,13 +204,16 @@ interprobe_dev <- function(
       if (draw.floodlight==TRUE)
         
       {
-      if (nux >  3) plot.x_on_axis (xlab,ylab2, main2, floodlight , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels)
-      if (nux <= 3) plot.z_on_axis.R(xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
-       
+      if (nux >  3) plot.x_on_axis  (xlab,ylab2,main2, floodlight , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
+      if (nux <= 3) plot.z_on_axis  (xlab, floodlight, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
+      
       }
       
       
-          
+  #13 return output for plotting on your own
+      output=namedList(simple.slopes, floodlight, frequencies=fxz)
+
+      invisible(output)          
 
       
-          
+  }      

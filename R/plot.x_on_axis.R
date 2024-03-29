@@ -1,7 +1,6 @@
 
 
-
-    plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,nux,max.unique)
+    plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
     {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -16,7 +15,7 @@
         #Set ylim
             ylim = range(res.df[,c('conf.low','conf.high')]) #Default y-range
             ylim[2]=ylim[2]+.35*diff(ylim)                   #Add at the top for the legend
-            if (histogram==TRUE) ylim[1]=ylim[1]- length(spotlights)*.08*diff(ylim)        #add at the bottom for the histogram
+            if (histogram==TRUE) ylim[1]=ylim[1]- length(spotlights)*.1*diff(ylim)        #add at the bottom for the histogram
           
         #Set x-lim
             xlim=range(data$x)
@@ -28,14 +27,19 @@
          
             
           #Loop through the spotlights
-              n.lines=length(simple.slopes)
+              n.lines=length(res)
               for (j in 1:n.lines) {
                  
                #Color of lines
+                #Based on frequncies
                   g1=as.numeric(gr[,j])  #this is based on fxz
-                  if (nux>max.unique)  g = rep(g1 , each=length(zs)/length(g1))
-                  if (nux<=max.unique) g = g1
+                
+                #If continuous, expand to set of values colored together
+                  if (nux>max.unique)  g = rep(g1 , each=length(xs)/length(g1))
                   
+                #If discrete then just the values once (one line per bin-pair)
+                  if (nux<=max.unique) g = g1
+                    
               
                 #Lines
                   line.seg(xs,res[[j]]$estimate,lwd=4*g, col=cols[j],g=g) 
@@ -49,7 +53,7 @@
                             col=adjustcolor(cols[j],.1),border = NA)
                   
                #Dots within line if we have not binned data for plotting
-                  if (nux <= max.unique) points(xs,res[[j]]$estimate, col=adjustcolor2(cols[j],gr[[j]]),pch=16) 
+                  if (nux <= max.unique) points(xs,res[[j]]$estimate, col=adjustcolor2(cols[j],g),pch=16,cex=1.5) 
 
                   
               }#End loop nux
@@ -60,13 +64,13 @@
             mtext(side=3,line=1.5,font=2,cex=1.5, main)
      
           #Legend
-              legend("topleft",inset=.01,bty='n',lwd=3,col=cols[1:n.lines],
+              legend("top",inset=.01,bty='n',lwd=3,col=cols[1:n.lines],
                      title='Moderator Value',
                      title.font=2,
                      legend=spotlight.labels)
       
           #Histogram  
-              if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation, zs, nux, cols,ylim,xlim)
+              if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation='continuous', xs, zs, ux, nux, cols,ylim,xlim)
               #See draw.histogram.R
 
         }           

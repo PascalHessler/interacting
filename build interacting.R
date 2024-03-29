@@ -74,6 +74,23 @@
   legend.min.d=2
 
   
+  
+  
+
+    #SOURCE
+      rm(list = ls())
+
+  pkg_path <- "c:/git/interacting/r"
+  
+  scripts<-list.files(pkg_path,full.names = TRUE)
+  for (scriptk in scripts) {
+    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev32.R')) {
+    message("next:",basename(scriptk))
+    source(scriptk)
+    } }
+  
+  case=2
+  
 #nux>11 , z>3   (continuous,continuous)
    if (case==1)
    {
@@ -88,21 +105,27 @@
   
 #nux = 7 , z>3   (continuous K=7  ,  continuous)
   if (case==2) {  
-  x=sample(1:7,size=1000,replace=TRUE)
-    z=rnorm(1000)
+  x=sample(c(1,2,3,4,5,5,5,5,5,6,6,6,6,6,7),size=1000,replace=TRUE)
+    z=rnorm(1000,mean=10,sd=5)
     m1=rnorm(1000,mean=10)
     m2=rnorm(1000,mean=15)
     y.raw=x*z+m1+m2
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
     
-}
-    res=simple.slopes
-    res=floodlight
-    
-    ylab=ylab1
-    main=main1
+  }
   
+  
+  points(2,6,col=adjustcolor('red4',1),pch=16,cex=1.3)
+  interprobe_dev(x,z,y,k=3)
+  
+  lines.total=3
+  
+  
+ res=simple.slopes
+  ylab='dv'
+  main='ss'
+  xlab='x'
 #Discrete x, continuous z
     n=200
     x=rep(c(1,2,3),n)
@@ -112,9 +135,6 @@
     y=y.raw+e
     
  
-    
-    
-    
     
     
   g=mgcv::gam(y~s(z,by=x,k=3)+x)
