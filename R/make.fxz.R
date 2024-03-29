@@ -1,5 +1,7 @@
 
 
+#note: namedList() used below in Utils.R
+
 make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights)
 {
   
@@ -56,14 +58,14 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
   
   
 #------------------------------------------------------------
-#CASE 2  x: discrete z: cont
+#CASE 2  x: categorical z: cont
       if (nux<=3 & moderation=='continuous') {
             #zbins  = cut(data$z, breaks = c(-Inf, quantile(data$z,c(1/3,2/3)), Inf),  labels = paste0("zbin_",1:3), include.lowest = TRUE)
             zbins  = cut(data$z, breaks = 10,  labels = paste0("zbin_",1:10), include.lowest = TRUE)
             
         
-            fx   = table(data$x,zbins)
-            return(fx)
+            fxz   = table(zbins,data$x)
+            return(namedList(fxz))  
       }
 
 #------------------------------------------------------------

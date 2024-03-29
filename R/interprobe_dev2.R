@@ -192,19 +192,18 @@ interprobe_dev <- function(
       
       
   #11 Plot simple slopes     
-      if (draw.simple.slopes==TRUE)
-        
-      {
-      if (nux >  3) plot.x_on_axis  (xlab,ylab1,main1, simple.slopes , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
-      if (nux <= 3) plot.z_on_axis  (xlab, simple.slopes, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
-       
-      }
-      
+      if (draw.simple.slopes==TRUE) {
+        make.plot (xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,nux,max.unique,fxz.list)
+        }
   #12 Plot Floodlight/Johson-Neyman     
       if (draw.floodlight==TRUE)
         
       {
-      if (nux >  3) plot.x_on_axis  (xlab,ylab2,main2, floodlight , histogram, data,xs, ylab1,gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
+      make.plot (xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,nux,max.unique,fxz.list)  
+        
+      if (nux >  3) plot.x_on_axis  (xlab,ylab2,main2, floodlight , histogram, data,xs, gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
       if (nux <= 3) plot.z_on_axis  (xlab, floodlight, histogram, data,xs, ylab1, spotlights, cols , nux , zs , bins , fxz , nbins)
       
       }

@@ -1,56 +1,50 @@
 
 
-    plot.z_on_axis = function(plot.type=c('floodlight','simple_slopes'),
-                                           xlab , res , histogram , data ,  ylab1 , spotlights , cols , nux , nuz,  zs ,  fxz)
-                                           
-      {
+    plot.z_on_axis = function(xlab,ylab,main, res , histogram, data,zs, gr,spotlights,cols,spotlight.labels,focal,moderation,nuz,max.unique,fxz.list)
+    {   
+      #res: list with results from either simple.slopes or floodlight 
       
-    #How many z-values do we have frequencies for
-      n.zbins = ncol(fxz)
+      #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM floodlight
       
-   
-    #Default xlabel
-      if (xlab=='') xlab = 'Focal Predic'
-  
-    #is the results of interest a simple slope or a floodlight    
-          res      <- ifelse(plot.type=='floodlight',floodlight, simple.slopes) 
-          main.txt <- ifelse(plot.type=='floodlight',main2, main1)
+      #Default xlabel
+          if (xlab=='') xlab='Moderator '
           
-    #Unlist data.frames for either simple.slopes or floodlight
-      res.df <- do.call(rbind, res)
+        #Unlist data.frames
+           res.df <- do.call(rbind, res)
  
-             #Combines the 2 or 3 dataframes, currently in a list, 
-             #on  each possible x-value in a single dataframe with 
-             #estimate, SE, and conf.int
-      
-
+        #Set ylim
+            ylim = range(res.df[,c('conf.low','conf.high')]) #Default y-range
+            ylim[2]=ylim[2]+.35*diff(ylim)                   #Add at the top for the legend
+            if (histogram==TRUE) ylim[1]=ylim[1]- length(spotlights)*.1*diff(ylim)        #add at the bottom for the histogram
+          
+        #Set x-lim
+            xlim=range(data$z)
+            xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
+            
+        #Empty plot
+            plot(zs,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2)
+            axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two tikcs to give space to the histogram
          
-    #Set ylim
-        ylim = range(res.df[,c('conf.low','conf.high')])     #Default y-range from smallest to larger CI
-        ylim[2]=ylim[2]+.1*diff(ylim)                                  #Add at the top for the legend
-        if (histogram==TRUE) ylim[1]=ylim[1]-nux*.08*diff(ylim)        #add at the bottom for the histogram
             
-    #Set x-lim
-        xlim=range(data$z)
-        xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
-            
-    #Empty plot
-        plot(zs , res[[1]]$estimate , type='n' , xlab=xlab , ylab=ylab1 , las=1 , ylim=ylim , xlim=xlim , yaxt='n',cex.lab=1.3)
-        axis(2 , at = pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
-        ltys=c(1,1,1)
-
-    #Loop the 2 or 3 values of x slopes
-        for (j in 1:nux) {
-              g=as.numeric(gr[,j])
-              g=rep(g,length(zs))
-            #Lines
-              line.seg(zs,res[[j]]$estimate,
-                       lwd=4*gr[,j], 
-                       col=cols[j],
-                       g=g,
-                       lty=ltys[j]) 
+          #Loop through the spotlights
+              n.lines=length(res)
+              for (j in 1:n.lines) {
+                 
+               #Color of lines
+                #Based on frequncies
+                  g1=as.numeric(gr[j,])  #this is based on fxz
+                
+                #If continuous, expand to set of values colored together
+                  if (nuz>max.unique)  g = rep(g1 , each=length(zs)/length(g1))
+                  
+                #If discrete then just the values once (one line per bin-pair)
+                  if (nuz<=max.unique) g = g1
+                    
               
-            #Changing both width and tly leads to weird looking lines
+                #Lines
+                  line.seg(zs,res[[j]]$estimate,lwd=4*g, col=cols[j],g=g) 
+              
+                  #Changing both width and tly leads to weird looking lines
               
                 #Confidence regions
                   polygon(x=c(zs,rev(zs)),
@@ -58,23 +52,30 @@
                             rev(res[[j]]$conf.low)),
                             col=adjustcolor(cols[j],.1),border = NA)
                   
-               #Add dots to line if we are plotting actual frequencies of specific z values, 
-               # which we detect with as many bins of z as there are unique z-values
-                  if (nuz == n.zbins) points(zs,res[[j]]$estimate, col=adjustcolor2(cols[j],g),pch=16) 
-                
+               #Dots within line if we have not binned data for plotting
+                  if (nuz <= max.unique) points(zs,res[[j]]$estimate, col=adjustcolor2(cols[j],g),pch=16,cex=1.5) 
+
+                  
               }#End loop nux
               
               
           #Headers
-              yline = max(nchar(as.character(pretty(ylim)))) 
-              mtext(side=3,line=1.5,font=2,cex=1.5, main.txt)
+            yline = max(nchar(as.character(pretty(ylim)))) 
+            mtext(side=3,line=1.5,font=2,cex=1.5, main)
      
           #Legend
-              legend("topleft",inset=.01,bty='n',lty=ltys[1:nux],lwd=3,col=cols[1:nux],legend=as.character(ux))
+              legend("top",inset=.01,bty='n',lwd=3,col=cols[1:n.lines],
+                     title='Moderator Value',
+                     title.font=2,
+                     legend=spotlight.labels)
       
           #Histogram  
-              if (histogram==TRUE) draw.histogram(moderation, zs, nux, ylim,xlim, fx,cols, nbins,  bins)
-                                            
-                #See draw.histogram.R
-    }
+              if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation='continuous', xs, zs, ux, nux, cols,ylim,xlim)
+              #See draw.histogram.R
+
+        }           
+     
+    
+    
+    
     
