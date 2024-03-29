@@ -167,5 +167,4 @@
     rounded = formatC(rounded, format = "f", digits = min.d)
     return(rounded)
   }
-
   

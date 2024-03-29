@@ -89,7 +89,7 @@
     source(scriptk)
     } }
   
-  case=2
+  case=3
   
 #nux>11 , z>3   (continuous,continuous)
    if (case==1)
@@ -102,6 +102,10 @@
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
    }
+  
+  
+
+  
   
 #nux = 7 , z>3   (continuous K=7  ,  continuous)
   if (case==2) {  
@@ -116,16 +120,35 @@
   }
   
   
-  points(2,6,col=adjustcolor('red4',1),pch=16,cex=1.3)
+#CASE 3 nux = 3 , z>3   (continuous K=7  ,  continuous)
+  if (case==3) {  
+  x=sample(c(1,2,3),size=1000,replace=TRUE)
+    z=rnorm(1000,mean=10,sd=5)
+    m1=rnorm(1000,mean=10)
+    m2=rnorm(1000,mean=15)
+    y.raw=x*z+m1+m2
+    e=rnorm(1000,sd=sd(y.raw))
+    y=y.raw+e
+    
+  }
+  
+  
   interprobe_dev(x,z,y,k=3)
+  
+  
+  
+  
   
   lines.total=3
   
   
  res=simple.slopes
-  ylab='dv'
-  main='ss'
-  xlab='x'
+ 
+ res=floodlight
+  ylab='dydx'
+  main='flooding'
+  xlab='z'
+  x1s=xs
 #Discrete x, continuous z
     n=200
     x=rep(c(1,2,3),n)

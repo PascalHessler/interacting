@@ -11,12 +11,10 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
       
     if (nux>max.unique) {
   
-        #How many bins for x values?
-            nxbins = n.bin.continuous
-        
+
         #Cut x into nbins
-            xbins  = cut(data$x ,nxbins,include.lowest=TRUE,labels=paste0('xbin_',1:(nxbins)))
-            xbins.values  = cut(data$x ,nxbins,include.lowest=TRUE) 
+            xbins   = cut(data$x ,n.bin.continuous , include.lowest=TRUE,labels=paste0('xbin_',1:(n.bin.continuous)))
+            x1bins  = cut(data$x ,n.bin.continuous , include.lowest=TRUE) 
             
         #Cut z into three
             cuts=c()
@@ -29,7 +27,7 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
             
         #Compute the cross frequencies
             fxz   = table(xbins,zbins)
-            output=namedList(fxz , xbins.values)
+            output=namedList(fxz , x1bins)
             return(output)
       }
   
@@ -58,14 +56,14 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
   
   
 #------------------------------------------------------------
-#CASE 2  x: categorical z: cont
+#CASE 3  x: categorical z: cont
       if (nux<=3 & moderation=='continuous') {
-            #zbins  = cut(data$z, breaks = c(-Inf, quantile(data$z,c(1/3,2/3)), Inf),  labels = paste0("zbin_",1:3), include.lowest = TRUE)
-            zbins  = cut(data$z, breaks = 10,  labels = paste0("zbin_",1:10), include.lowest = TRUE)
-            
+            zbins   = cut(data$z ,n.bin.continuous , include.lowest=TRUE,labels=paste0('zbin_',1:(n.bin.continuous)))
+            x1bins  = cut(data$z ,n.bin.continuous , include.lowest=TRUE) 
+      
         
             fxz   = table(zbins,data$x)
-            return(namedList(fxz))  
+            return(namedList(fxz,x1bins))  
       }
 
 #------------------------------------------------------------
