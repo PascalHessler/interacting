@@ -65,6 +65,8 @@
   ylab2='Marginal Effect'
   main1="GAM Simple Slopes"
   main2='GAM Floodlight'
+  focal.label = 'Focal Predictor (x)'
+  
   force.discrete.freqs=FALSE
    n.bin.continuous = 10
   max.unique=11
@@ -94,7 +96,7 @@
 #nux>11 , z>3   (continuous,continuous)
    if (case==1)
    {
-     x=rnorm(1000)
+    age=rnorm(1000)
     z=rnorm(1000)
     m1=rnorm(1000,mean=10)
     m2=rnorm(1000,mean=15)
@@ -103,10 +105,25 @@
     y=y.raw+e
    }
   
+  g1 = mgcv::gam(y~s(x)+s(z)+ti(x,z))
+  t1 = interprobe_dev(model=g1,x='age',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
+
+  names(t1$simple.slopes)
+  t1$simple.slopes
   
+  df2=t1$floodlight
+  df1=t1$simple.slopes.df
+  t1$simple.slopes
+  names(df2)
+  t1$simple.slopes
+  
+  t2=df1[,-c('rowid')]
+      names(t1$simple.slopes.df)
 
   
-  
+  svg("c:/temp/f1.svg",width=12,height=8)  
+    interprobe_dev(model=g1,x='x',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
+dev.off()
 #nux = 7 , z>3   (continuous K=7  ,  continuous)
   if (case==2) {  
   x=sample(c(1,2,3,4,5,5,5,5,5,6,6,6,6,6,7),size=1000,replace=TRUE)
@@ -122,18 +139,18 @@
   
 #CASE 3 nux = 3 , z>3   (continuous K=7  ,  continuous)
   if (case==3) {  
-  x=sample(c(1,2,3),size=1000,replace=TRUE)
+  x=sample(c(0,1),size=1000,replace=TRUE)
     z=rnorm(1000,mean=10,sd=5)
     m1=rnorm(1000,mean=10)
     m2=rnorm(1000,mean=15)
-    y.raw=x*z+m1+m2
+    y.raw=x*z*4
     e=rnorm(1000,sd=sd(y.raw))
     y=y.raw+e
     
   }
   
   
-  interprobe_dev(x,z,y,k=3)
+  interprobe_dev(x,z,y)
   
   
   
@@ -149,6 +166,8 @@
   main='flooding'
   xlab='z'
   x1s=xs
+  
+  type='floodlight'
 #Discrete x, continuous z
     n=200
     x=rep(c(1,2,3),n)

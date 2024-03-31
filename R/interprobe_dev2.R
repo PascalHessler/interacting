@@ -26,7 +26,6 @@ interprobe_dev <- function(
                     histogram=TRUE,
                     max.unique = 11,
                     n.bin.continuous = 10,
-                    force.discrete.freqs=FALSE, #Should frequencies be shown for every value of moderator
                     shade.up.to = 50,           #below this sample size we shade to show few observations
                     xlab='',
                     cols=c('red4','blue4','green4'),
@@ -34,11 +33,9 @@ interprobe_dev <- function(
                     ylab2='Marginal Effect',
                     main1="GAM Simple Slopes",
                     main2='GAM Floodlight' , 
-                    draw.simple.slopes=TRUE,
-                    draw.floodlight=TRUE,
                     legend.max.d = 5,          #maximum number of decimals
                     legend.min.d = 2,
-                    
+                    draw=TRUE,
                     
                     ...)
                     
@@ -126,22 +123,17 @@ interprobe_dev <- function(
        }
           
       #If user set spotlights but not spotlight.labels, assign them
-          if (is.null(spotlight.labels)) spotlight.lables=as.numeric(spotlights)
+          if (is.null(spotlight.labels)) spotlight.labels=as.numeric(spotlights)
           
   
   #6 Compute simple slopes        
-    
-      if (draw.simple.slopes==TRUE) {
-          if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
-          if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model)
-          }
+      if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
+      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model)
        
   #7 Compute floodlight
-      if (draw.floodlight ==TRUE) {
-          if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model)
-          if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model)
-      }  
-    
+      if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model)
+      if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model)
+      
           
   #8 Get fxz and gr
         #fx:  Frequencies of each bin to determine line width and histogram
@@ -157,9 +149,18 @@ interprobe_dev <- function(
             for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/shade.up.to,1)
                 
 
-  #9 Return without plotting if not asking to plot
-      output=namedList(simple.slopes  ,  floodlight, frequencies=fxz)
-      if (draw.simple.slopes==FALSE & draw.floodlight==FALSE) return(output)
+  #9 Prepare output to be returned to enable plotting independently by user 
+      clean <- function(str) gsub("[^A-Za-z]", "", str)
+      df1 <- data.frame(do.call(rbind, simple.slopes))
+      df2 <- data.frame(do.call(rbind, floodlight))
+      df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic")]
+      df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term","predicted_lo",'predicted_hi','predicted')]
+      names(df1) = c('yhat','se.yhat','conf.low','conf.high',clean(z),clean(x))
+      names(df2) = c('dydx','se.dydx','conf.low','conf.high',clean(z),clean(x))
+      df1=df1[,c(6,5,1,2,3,4)]
+      df2=df2[,c(6,5,1,2,3,4)]
+      output=list(simple.slopes = df1, floodlight = df2, frequencies=fxz)
+      if (draw==FALSE) return(output)
           
     
   #10 Prepare the canvas for plotting
@@ -179,37 +180,24 @@ interprobe_dev <- function(
                   }      
           
           #10.2 Choose 1 or 2 plots
-              
-            if (draw.simple.slopes+draw.floodlight==2) {
-                  
-                #Two plots side by side
-                  old_mfrow <- par('mfrow')
-                  par(mfrow=c(1,2))
-                  on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
+            #Two plots side by side
+                old_mfrow <- par('mfrow')
+                par(mfrow=c(1,2))
+                on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
            
-                  }
-            
       
       
   #11 Plot simple slopes     
-      if (draw.simple.slopes==TRUE) {
         make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz)
-        }
+
   #12 Plot Floodlight/Johson-Neyman     
-      if (draw.floodlight==TRUE)
-        
-      {
+     
       make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz)  
-       
-      }
       
       
   #13 return output for plotting on your own
-      output=namedList(simple.slopes, floodlight, frequencies=fxz)
-
+     
       invisible(output)          
-
-      
-  }      
+    }      

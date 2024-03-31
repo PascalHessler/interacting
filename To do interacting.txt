@@ -1,5 +1,7 @@
 
-
+- when providing a model and also x,z.y it gives error as if the user had not provided x and z, it should just ignore y and show a warning
+- make labels in plots more dynamic
+- fix formatting of the histogram
 - rename shade.up.to to "n.adequate.threshold=100"
 - find more elegant solution to choosing number of decimals points to show in the spotlights label
 - rename plot.simple.slopes to plot.simple_slopes to keep syntax of single concept is "_". Also make sure plural/singular matches everywhere
