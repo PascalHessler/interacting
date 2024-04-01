@@ -40,7 +40,7 @@
                               spotlights,spotlight.labels,
                               histogram, 
                               max.unique,n.bin.continuous, shade.up.to ,
-                              xlab,ylab1,ylab2,main1,main2
+                              xlab,ylab1,ylab2,main1,main2,
                               cols,
                               draw)
 
@@ -83,7 +83,7 @@
       
 
    #5 spotlights must be of length 3
-     if (length(spotlights) !=3) {
+     if (!is.null(spotlights) && length(spotlights) !=3) {
           stop("interprobe() says the argument 'spotlights' must be of length 3")
      }
     

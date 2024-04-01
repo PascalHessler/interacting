@@ -5,13 +5,15 @@
 #INSTALL
   
   devtools::document(pkg_path)
-  #devtools::build(pkg_path)
+  devtools::build(pkg_path)
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
 
   
   library('interacting')
   library('mgcv')
 ############
+  
+  interprobe()
   
   
 #------------------------------------------------------------------------------------------------

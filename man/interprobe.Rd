@@ -2,43 +2,95 @@
 % Please edit documentation in R/interprobe.R
 \name{interprobe}
 \alias{interprobe}
-\title{Probe interactions computing Simple Slopes and Floodlight (Johnson-Neyman)}
+\title{Probe Interactions With GAM Simple Slopes and GAM Johnson-Neyman Curves}
 \usage{
 interprobe(
-  model = NULL,
-  x,
-  z,
-  y,
+  x = NULL,
+  z = NULL,
+  y = NULL,
   data = NULL,
-  k = NULL,
-  zs = NULL,
+  model = NULL,
+  k = 3,
   spotlights = NULL,
-  plot = TRUE,
+  spotlight.labels = NULL,
   histogram = TRUE,
-  xlab = "moderator",
-  col1 = "red4",
-  col2 = "dodgerblue",
-  col3 = "purple",
+  max.unique = 11,
+  n.bin.continuous = 10,
+  shade.up.to = 50,
+  xlab = "",
+  cols = c("red4", "blue4", "green4"),
   ylab1 = "Dependent Variable",
   ylab2 = "Marginal Effect",
   main1 = "GAM Simple Slopes",
-  main2 = "GAM Floodlight",
+  main2 = "GAM Johnson-Neyman",
+  legend.max.d = 4,
+  legend.min.d = 1,
+  draw = TRUE,
   ...
 )
 }
 \arguments{
 \item{x}{the predictor of interest (in an experiment, the discrete randomly
-assigned manipulation).}
+assigned manipulation). Can be the name of a variable (e.g., x='treatment')
+or data (e.g., x=c(1,3,1,4)}
 
-\item{z}{the moderator}
+\item{z}{the moderator. Can be the name of variable, or a vector with data}
 
-\item{y}{the dependent variable.}
+\item{y}{the dependent variable. Can be the name of variable, or a vector with data}
 
-\item{col1}{color used when x takes its lowest value}
+\item{data}{an optional data frame with variables used in the model}
 
-\item{col2}{color used when x takes its highest value}
+\item{model}{an optional model which will be probed (can be any model accepted
+by package 'marginaleffects' including lm, glm, gam). If unspecified, a GAM model
+is estimated on the provided data, including flexible main effects for x an z
+and a flexible interaction.}
+
+\item{k}{level of smoothness/flexibility used by mgcv::gam() to fit functions,
+the default used by interprobe() is k=3, increasing it will lead to more wiggly
+functions increasing risk of over-fitting. mgcv::gam() uses a much higher default
+which interprobe opts-out of by specifying it to be k=3. In gam it is gam(y~s(x,k=3)).}
+
+\item{spotlights}{vector with three values of the moderator at which simple slopes
+and Johnsohn-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
+of moderator values in the data.}
+
+\item{spotlight.labels}{labels to use in the legend to indicate the spotlight values}
+
+\item{histogram}{logical on whether sample sizes are depicted under the}
+
+\item{max.unique}{integer with the cutoff at which interprobe() reports frequencies
+for sets rather than individual values in the histogram}
+
+\item{n.bin.continuous}{integer with number of bins to make for histogram}
+
+\item{shade.up.to}{integer with the frequency count at which color signaling
+sample size maxes out and not longer gets darker with bigger samples.}
+
+\item{xlab}{label for the x axis, defaults to be "Focal Predictor" when x is on the x-axis
+and "Moderator" when z is in the x-axis. Users should replace default with a
+clear descriptor of the variables (e.g., "z: age of participants")}
+
+\item{cols}{vector with three colors used in the plot (defaults to blue, red, green)}
+
+\item{ylab1}{label for the y axis of the simple slopes plot (defaults to
+'Dependent Variable').}
+
+\item{ylab2}{label for the y axis of the Johnson-Neyman plot (defaults to
+'Marginal Effect').}
+
+\item{main1}{Header for simple slopes figure (defaults to 'GAM Simple Slopes')}
+
+\item{main2}{Header for Johnson Neyman figure (defaults to 'GAM Johnson-Neyman')}
+
+\item{legend.max.d}{highest number of decimals to show for moderator in legend in figure}
+
+\item{legend.min.d}{lowest  number of decimals to show for moderator in legend in figure}
+
+\item{draw}{TRUE/FALSE for whether to make a plot}
 }
 \description{
-The interaction is probed, by default, as proposed in Simonsohn (2024), estimating a GAM model
-and computing both simple slopes and floodlight/Johnson-Neyman procedure.
+Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
+and computing simple slopes ('spotlight') and Johnson-Neyman ('floodlight')
+curves off the GAM model. While designed for GAM it can be used to probe
+other models including lm()
 }

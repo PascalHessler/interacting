@@ -1,7 +1,9 @@
-#' Probe interactions computing Simple Slopes and Floodlight (Johnson-Neyman) 
+#'Probe Interactions With GAM Simple Slopes and GAM Johnson-Neyman Curves 
 #' 
-#' The interaction is probed, by default, as proposed in Simonsohn (2024), estimating a GAM model
-#' and computing both simple slopes and floodlight/Johnson-Neyman procedure.
+#' Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
+#' and computing simple slopes ('spotlight') and Johnson-Neyman ('floodlight') 
+#' curves off the GAM model. While designed for GAM it can be used to probe
+#' other models including lm()
 #'  
 #'@param x the predictor of interest (in an experiment, the discrete randomly 
 #'assigned manipulation). Can be the name of a variable (e.g., x='treatment') 
@@ -10,7 +12,9 @@
 #'@param y the dependent variable. Can be the name of variable, or a vector with data
 #'@param data an optional data frame with variables used in the model
 #'@param model an optional model which will be probed (can be any model accepted 
-#'by package 'marginaleffects' including lm, glm, gam
+#'by package 'marginaleffects' including lm, glm, gam). If unspecified, a GAM model 
+#'is estimated on the provided data, including flexible main effects for x an z 
+#'and a flexible interaction.
 #'@param k level of smoothness/flexibility used by mgcv::gam() to fit functions, 
 #'the default used by interprobe() is k=3, increasing it will lead to more wiggly
 #' functions increasing risk of over-fitting. mgcv::gam() uses a much higher default
@@ -19,7 +23,6 @@
 #'and Johnsohn-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
 #'of moderator values in the data.
 #'@param spotlight.labels labels to use in the legend to indicate the spotlight values
-#'colors used in the plot (defaults to blue, red, green)
 #'@param histogram logical on whether sample sizes are depicted under the 
 #'@param max.unique integer with the cutoff at which interprobe() reports frequencies
 #'for sets rather than individual values in the histogram
@@ -29,6 +32,7 @@
 #'@param xlab label for the x axis, defaults to be "Focal Predictor" when x is on the x-axis
 #'and "Moderator" when z is in the x-axis. Users should replace default with a
 #'clear descriptor of the variables (e.g., "z: age of participants")
+#'@param cols colors used in the plot (defaults to blue, red, green)
 #'@param ylab1 label for the y axis of the simple slopes plot (defaults to 
 #''Dependent Variable'). 
 #'@param ylab2 label for the y axis of the Johnson-Neyman plot (defaults to
