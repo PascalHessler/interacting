@@ -1,0 +1,120 @@
+
+#Auxiliary
+  is.integer2 = function(x) floor(x)==x
+  
+    #Check if a number has 0 decimals
+    
+  
+#Check if a number is an integer of length k
+  check1 = function(var,varname, length.check, type.check)
+  {
+    
+    #Check legnth
+      if (length(var)!=length.check) {
+          stop("interprobe() says the variable '",varname,"' must be of length '",length.check,"' but it is of length '",length(var),"'")  
+      }
+        
+  
+    #Check type integer
+      if (type.check=='integer')
+        {
+        if (is.integer2(var)==FALSE) stop("interprobe() says the variable '",varname,"' must be an integer, but '",var, "' is not an integer.'")  
+      }
+    
+    #Check type character
+      if (type.check=='character')
+        {
+        if (is.character(var)==FALSE) stop("interprobe() says the variable '",varname,"' must be a character variable, but '",var, "' is not a character variable'")  
+      }
+    
+    
+    
+    }
+
+  
+  
+
+  validate.arguments=function(x, z ,y , 
+                              data, model,
+                              k,
+                              spotlights,spotlight.labels,
+                              histogram, 
+                              max.unique,n.bin.continuous, shade.up.to ,
+                              xlab,ylab1,ylab2,main1,main2
+                              cols,
+                              draw)
+
+  {
+   #1 if x and z are specified they must be of the same length
+          if (!is.null(x) && !is.null(z)) {
+          
+        # Check if they are of the same type 
+          if (typeof(x) != typeof(z))       stop("interprobe says(): x and z must be of the same type")
+    
+        # Check if they have the same length
+          if (length(x) != length(z))      stop("interprobe says(): x and z must have the same length")
+            }
+        
+  
+    
+  #2 If data is specified, check that x,z,y are in it
+      if (!is.null(data))
+      {
+        n1=names(data)
+        if (!x %in% n1) stop("interprobe() says the focal variable x ('",x,    "') is not in the dataset")
+        if (!z %in% n1) stop("interprobe() says the moderator variable z ('",z,"') is not in the dataset")
+        if (!y %in% n1) stop("interprobe() says the dependent variable y ('",y,"') is not in the dataset")
+        }
+   
+    
+  #3 If model is specified, check that x,z are in it
+ 
+   if (!is.null(model))
+      {
+        n2=names(model$model)
+        if (!x %in% n2) stop("interprobe() says the focal variable x ('",x    ,"') is not in the model")
+        if (!z %in% n2) stop("interprobe() says the moderator variable z ('",z,"') is not in the model")
+        }
+    
+    
+  #4 k must have lenght 1 and be an integer
+    if (!is.null(k))     check1(k,'k',1,'integer')
+      
+      
+
+   #5 spotlights must be of length 3
+     if (length(spotlights) !=3) {
+          stop("interprobe() says the argument 'spotlights' must be of length 3")
+     }
+    
+     if (!is.null(spotlight.labels) & length(spotlight.labels) !=3) {
+          stop("interprobe() says the argument 'spotlight.labels' must be  of length 3")
+     }
+    
+  #6 Histogram
+      if(! is.logical(histogram) && length(histogram) == 1) {
+        stop(("interprobe() says, The argument 'histogram' must be TRUE or FALSE and of length 1"))
+      }
+    
+
+    
+  #7  max.unique,n.bin.continuous, shade.up.to ,
+        check1 (max.unique, "max.unique", 1, 'integer')
+        check1 (n.bin.continuous, "n.bin.continuous", 1, 'integer')
+        check1 (shade.up.to, "shade.up.to", 1, 'integer')
+
+  #8 graph axes
+      check1 (xlab, "xlab", 1, 'character')
+      check1 (ylab1, "ylab1", 1, 'character')
+      check1 (ylab2, "ylab2", 1, 'character')
+      check1 (main1, "main1", 1, 'character')
+      check1 (main2, "main2", 1, 'character')
+
+      
+  #9 Colors
+      if (length(cols)!=3)    stop(("interprobe() says the argument 'cols' must be of length 3"))
+      
+  #10 Draw
+      if (!is.logical(draw)) stop(("interprobe() says the argument 'draw' must be either TRUE or FALSE"))
+      
+  }

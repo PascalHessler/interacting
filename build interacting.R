@@ -96,18 +96,31 @@
 #nux>11 , z>3   (continuous,continuous)
    if (case==1)
    {
-    age=rnorm(1000)
-    z=rnorm(1000)
-    m1=rnorm(1000,mean=10)
-    m2=rnorm(1000,mean=15)
-    y.raw=x*z+m1+m2
-    e=rnorm(1000,sd=sd(y.raw))
+    n=10000
+    x=rnorm(n)
+    z=rnorm(n,mean=100,sd=20)
+    m1=rnorm(n,mean=10)
+    m2=rnorm(n,mean=15)
+    y.raw = x*z
+    e=rnorm(n,sd=sd(y.raw))
     y=y.raw+e
    }
   
+      t1 = interprobe_dev(x,y,z)
+      t1 = interprobe_dev(x,y,z,k=6)
+      t1 = interprobe_dev(x=x,y=y,z=z,k=3,spotlights=c(80,100,120),spotlight.labels = c('low','med','high'))
+      t1 = interprobe_dev(x=x,y=y,z=z,k=4)
+t1$simple.slopes
+      plot(z,y.raw)
+  
+  spotlights
   g1 = mgcv::gam(y~s(x)+s(z)+ti(x,z))
   t1 = interprobe_dev(model=g1,x='age',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
+  t2 = interprobe_dev(model=g1,x='age',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary',draw=FALSE)
 
+
+  
+  t2
   names(t1$simple.slopes)
   t1$simple.slopes
   
