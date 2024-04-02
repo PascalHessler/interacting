@@ -39,11 +39,12 @@
 #''Marginal Effect'). 
 #'@param main1 Header for simple slopes figure (defaults to 'GAM Simple Slopes')
 #'@param main2 Header for Johnson Neyman figure (defaults to 'GAM Johnson-Neyman')
-#'@param legend.max.d highest number of decimals to show for moderator in legend in figure
-#'@param legend.min.d lowest  number of decimals to show for moderator in legend in figure
-#'
+#'@param legend.round vector with minimum and maximum number of decimals to round 
+#'in the legend, e.g., c(0,0) forces 0 decimals
 #'@param cols vector with three colors used in the plot (defaults to blue, red, green)
 #'@param draw TRUE/FALSE for whether to make a plot
+#'@param file character with path to file to save the figure to, can be .svg or 
+#'.png file (e.g., file='c:/temp/figure1.svg')
 
 #'@export
 
@@ -66,10 +67,9 @@ interprobe <- function(
                     ylab2='Marginal Effect',
                     main1="GAM Simple Slopes",
                     main2="GAM Johnson-Neyman",
-                    legend.max.d=4,
-                    legend.min.d=1,
-
+                    legend.round=c(1,4),
                     draw=TRUE,
+                    file=NULL,
                     
                     ...)
                     
@@ -86,7 +86,7 @@ interprobe <- function(
   
   #First legnth and type of arguments
     validate.arguments(x, z ,y , data, model, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, shade.up.to ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw)      
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round)      
   
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
@@ -154,7 +154,7 @@ interprobe <- function(
          if (is.null(spotlight.labels)) {
              spotlight.labels=paste0(
                               c("15th percentile (","50th percentile (", "85th percentile (") ,
-                              c(round2(as.numeric(spotlights), max.d=legend.max.d, min.d=legend.min.d )),
+                              c(round2(as.numeric(spotlights), max.d=legend.round[2] , min.d=legend.round[1] )),
                               c(")",")",")"))
          }
             
@@ -204,7 +204,17 @@ interprobe <- function(
           
     
   #10 Prepare the canvas for plotting
-    
+         #10.0 Save to file?
+            if (!is.null(file)) {
+              
+              #Get extension of file name
+                  extension= tools::file_ext(file)
+                  
+              #If .svg file
+                  if (extension=='svg') svg(file,width=14,height=8)
+              }
+      
+      
           #10.1 Remove "GAM" from  figure headers for non-GAM models
             if (v$input.model==TRUE) {
               if (!inherits(model, "gam")) {
@@ -236,6 +246,13 @@ interprobe <- function(
       make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz)  
       
+      
+      
+  #13 Finish file
+      if (!is.null(file)) {
+        message("The figures have been saved. See: '",file,"'")
+        dev.off()
+      }
       
   #13 return output for plotting on your own
      

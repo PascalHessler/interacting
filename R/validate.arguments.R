@@ -1,6 +1,8 @@
 
 #Auxiliary
-  is.integer2 = function(x) floor(x)==x
+  is.integer2 = function(x) all(floor(x)==x)
+  
+  
   
     #Check if a number has 0 decimals
     
@@ -42,7 +44,8 @@
                               max.unique,n.bin.continuous, shade.up.to ,
                               xlab,ylab1,ylab2,main1,main2,
                               cols,
-                              draw)
+                              draw,
+                              legend.round)
 
   {
    #1 if x and z are specified they must be of the same length
@@ -109,6 +112,7 @@
       check1 (ylab2, "ylab2", 1, 'character')
       check1 (main1, "main1", 1, 'character')
       check1 (main2, "main2", 1, 'character')
+      check1 (legend.round, "legend.round", 2, 'integer')
 
       
   #9 Colors
