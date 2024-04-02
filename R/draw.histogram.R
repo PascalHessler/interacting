@@ -58,7 +58,11 @@
                   }} #End nested loop for histogram
             
           #Add sample size values
-            text(rowMeans(breaks) ,y1,rowSums(fxz),pos=3,cex=.8,font=3,col='gray38')
+            rs=rowSums(fxz)
+            rs=ifelse(rs>1000000,paste0(round(rs/1000000,1),"M"),rs)
+            rs=ifelse(rs>1000,paste0(round(rs/1000,1),"k"),rs)
+            
+            text(rowMeans(breaks) ,y1,rs,pos=3,cex=.8,font=3,col='gray38')
        }
              
              
