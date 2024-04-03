@@ -1,39 +1,50 @@
 
-#Auxiliary
-  is.integer2 = function(x) all(floor(x)==x)
-  
-  
-  
-    #Check if a number has 0 decimals
-    
-  
-#Check if a number is an integer of length k
-  check1 = function(var,varname, length.check, type.check)
-  {
-    
-    #Check legnth
-      if (length(var)!=length.check) {
-          stop("interprobe() says the variable '",varname,"' must be of length '",length.check,"' but it is of length '",length(var),"'")  
-      }
-        
-  
-    #Check type integer
-      if (type.check=='integer')
-        {
-        if (is.integer2(var)==FALSE) stop("interprobe() says the variable '",varname,"' must be an integer, but '",var, "' is not an integer.'")  
-      }
-    
-    #Check type character
-      if (type.check=='character')
-        {
-        if (is.character(var)==FALSE) stop("interprobe() says the variable '",varname,"' must be a character variable, but '",var, "' is not a character variable'")  
-      }
-    
-    
-    
-    }
+#1 Auxiliary functions
+#2 Validate function
 
+
+#-----------------------------------------------
+
+
+#1 Auxiliary functions
+  #1.1 Integer?    
+    is.integer2 = function(x) all(floor(x)==x)
   
+    
+  #1.2 Check if a number is an integer of length k
+      check1 = function(var,varname, length.check, type.check)
+      {
+        
+        #Check legnth
+          if (length(var)!=length.check) {
+              exit("interprobe() says the variable '",varname,"' must be of length '",length.check,"' but it is of length '",length(var),"'")  
+          }
+            
+      
+        #Check type integer
+          if (type.check=='integer')
+            {
+            if (is.integer2(var)==FALSE) exit("interprobe() says the variable '",varname,"' must be an integer, but '",var, "' is not an integer.")  
+          }
+        
+        #Check type character
+          if (type.check=='character')
+            {
+            if (is.character(var)==FALSE) exit("interprobe() says the variable '",varname,"' must be a character variable but '",var, "' is not a character variable")  
+          }
+        
+        #Check type numeric
+          if (type.check=='numeric')
+            {
+            if (is.numeric(var)==FALSE) exit("interprobe() says the variable '",varname,"' must be a numeric, but '",var, "' is not numeric")  
+          }
+        
+        
+        }
+
+#----------------------------------------------
+
+#2 Validate function
   
 
   validate.arguments=function(x, z ,y , 
@@ -45,17 +56,18 @@
                               xlab,ylab1,ylab2,main1,main2,
                               cols,
                               draw,
-                              legend.round)
+                              legend.round,
+                              xlim)
 
   {
    #1 if x and z are specified they must be of the same length
           if (!is.null(x) && !is.null(z)) {
           
         # Check if they are of the same type 
-          if (typeof(x) != typeof(z))       stop("interprobe says(): x and z must be of the same type")
+          if (typeof(x) != typeof(z))       exit("interprobe says(): x and z must be of the same type")
     
         # Check if they have the same length
-          if (length(x) != length(z))      stop("interprobe says(): x and z must have the same length")
+          if (length(x) != length(z))      exit("interprobe says(): x and z must have the same length")
             }
         
   
@@ -64,9 +76,9 @@
       if (!is.null(data))
       {
         n1=names(data)
-        if (!x %in% n1) stop("interprobe() says the focal variable x ('",x,    "') is not in the dataset")
-        if (!z %in% n1) stop("interprobe() says the moderator variable z ('",z,"') is not in the dataset")
-        if (!y %in% n1) stop("interprobe() says the dependent variable y ('",y,"') is not in the dataset")
+        if (!x %in% n1) exit("interprobe() says the focal variable x ('",x,    "') is not in the dataset")
+        if (!z %in% n1) exit("interprobe() says the moderator variable z ('",z,"') is not in the dataset")
+        if (!y %in% n1) exit("interprobe() says the dependent variable y ('",y,"') is not in the dataset")
         }
    
     
@@ -75,8 +87,8 @@
    if (!is.null(model))
       {
         n2=names(model$model)
-        if (!x %in% n2) stop("interprobe() says the focal variable x ('",x    ,"') is not in the model")
-        if (!z %in% n2) stop("interprobe() says the moderator variable z ('",z,"') is not in the model")
+        if (!x %in% n2) exit("interprobe() says the focal variable x ('",x    ,"') is not in the model")
+        if (!z %in% n2) exit("interprobe() says the moderator variable z ('",z,"') is not in the model")
         }
     
     
@@ -87,16 +99,16 @@
 
    #5 spotlights must be of length 3
      if (!is.null(spotlights) && length(spotlights) !=3) {
-          stop("interprobe() says the argument 'spotlights' must be of length 3")
+          exit("interprobe() says the argument 'spotlights' must be of length 3")
      }
     
      if (!is.null(spotlight.labels) & length(spotlight.labels) !=3) {
-          stop("interprobe() says the argument 'spotlight.labels' must be  of length 3")
+          exit("interprobe() says the argument 'spotlight.labels' must be  of length 3")
      }
     
   #6 Histogram
       if(! is.logical(histogram) && length(histogram) == 1) {
-        stop(("interprobe() says, The argument 'histogram' must be TRUE or FALSE and of length 1"))
+        exit(("interprobe() says, The argument 'histogram' must be TRUE or FALSE and of length 1"))
       }
     
 
@@ -116,9 +128,12 @@
 
       
   #9 Colors
-      if (length(cols)!=3)    stop(("interprobe() says the argument 'cols' must be of length 3"))
+      if (length(cols)!=3)    exit(("interprobe() says the argument 'cols' must be of length 3"))
       
   #10 Draw
-      if (!is.logical(draw)) stop(("interprobe() says the argument 'draw' must be either TRUE or FALSE"))
-      
-  }
+      if (!is.logical(draw)) exit(("interprobe() says the argument 'draw' must be either TRUE or FALSE"))
+ 
+  #11 xlim
+      check1 (xlim, "xlim", 2, 'numeric')
+
+       }
