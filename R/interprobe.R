@@ -86,7 +86,7 @@ interprobe <- function(
   
   #First legnth and type of arguments
     validate.arguments(x, z ,y , data, model, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, shade.up.to ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim)      
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file)      
   
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
