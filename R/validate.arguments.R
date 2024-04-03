@@ -52,7 +52,7 @@
                               k,
                               spotlights,spotlight.labels,
                               histogram, 
-                              max.unique,n.bin.continuous, shade.up.to ,
+                              max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,
                               cols,
                               draw,
@@ -114,10 +114,10 @@
     
 
     
-  #7  max.unique,n.bin.continuous, shade.up.to ,
+  #7  max.unique,n.bin.continuous, n.max ,
         check1 (max.unique, "max.unique", 1, 'integer')
         check1 (n.bin.continuous, "n.bin.continuous", 1, 'integer')
-        check1 (shade.up.to, "shade.up.to", 1, 'integer')
+        check1 (n.max, "n.max", 1, 'integer')
 
   #8 graph axes
       check1 (xlab, "xlab", 1, 'character')

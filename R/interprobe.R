@@ -27,7 +27,7 @@
 #'@param max.unique integer with the cutoff at which interprobe() reports frequencies
 #'for sets rather than individual values in the histogram
 #'@param n.bin.continuous integer with number of bins to make for histogram
-#'@param shade.up.to integer with the frequency count at which color signaling
+#'@param n.max integer with the frequency count at which color signaling
 #'sample size maxes out and not longer gets darker with bigger samples.
 #'@param xlab label for the x axis, defaults to be "Focal Predictor" when x is on the x-axis
 #'and "Moderator" when z is in the x-axis. Users should replace default with a
@@ -61,7 +61,7 @@ interprobe <- function(
                     histogram=TRUE,
                     max.unique = 11,
                     n.bin.continuous = 10,
-                    shade.up.to = 50,           #below this sample size we shade to show few observations
+                    n.max = 50,           #below this sample size we shade to show few observations
                     xlab='',
                     cols=c('red4','blue4','green4'),
                     ylab1='Dependent Variable',
@@ -85,7 +85,7 @@ interprobe <- function(
   #1 Validate input and determine what was provided, vector, model, or data.frame
   
   #First legnth and type of arguments
-    validate.arguments(x, z ,y , data, model, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, shade.up.to ,
+    validate.arguments(x, z ,y , data, model, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file)      
   
   #Then combination to determine if we were given a model or a dataset or vectors
@@ -184,9 +184,9 @@ interprobe <- function(
             fxz=fxz.list$fxz
             
             
-          #As % of the adequate sample size in shade.up.to
+          #As % of the adequate sample size in n.max
             gr = fxz
-            for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/shade.up.to,1)
+            for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/n.max,1)
                 
 
   #9 Prepare output to be returned to enable plotting independently by user 
