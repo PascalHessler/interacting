@@ -8,20 +8,11 @@
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
   library('interacting')
 
-  interprobe()
   
+  devtools::test()
+
   
 #------------------------------------------------------------------------------------------------
-  
-    n=1000
-    x=rnorm(n)
-    z=rnorm(n,mean=10,sd=2)
-    m1=rnorm(n,mean=10)
-    m2=rnorm(n,mean=15)
-    y.raw = x*z
-    e=rnorm(n,sd=sd(y.raw))
-    y=y.raw+e
-  
 
     #SOURCE
       rm(list = ls())
@@ -67,36 +58,19 @@
     n=1000
     x=rnorm(n)
     z=rnorm(n,mean=10,sd=2)
-    m1=rnorm(n,mean=10)
-    m2=rnorm(n,mean=15)
-    y.raw = x*z
+   y.raw = x*z
     e=rnorm(n,sd=sd(y.raw))
     y=y.raw+e
   
     
-    library('interacting')
-    t1 = interprobe(x=x,y=y,z=z,k=3,xlim=c('a',3))
-    t1 = interprobe(x=x,y=y,z=z,k=3,xlim=c(-2,2))
-
-      
-  plot()
-  t2
-  names(t1$simple.slopes)
-  t1$simple.slopes
-  
-  df2=t1$floodlight
-  df1=t1$simple.slopes.df
-  t1$simple.slopes
-  names(df2)
-  t1$simple.slopes
-  
-  t2=df1[,-c('rowid')]
-      names(t1$simple.slopes.df)
-
-  
-  svg("c:/temp/f1.svg",width=12,height=8)  
-    interprobe(model=g1,x='x',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
-dev.off()
+    lm1=lm(y~x*z)
+    
+    print(lm1)
+    data1=data.frame(x,z,y)
+    interprobe(model=lm1,data=data1,x ,z,y )
+  g=lme4::lmer(y~x+1|s)
+    class(g)
+    class(data.frame(x,z))
 #nux = 7 , z>3   (continuous K=7  ,  continuous)
   if (case==2) {  
   x=sample(c(1,2,3,4,5,5,5,5,5,6,6,6,6,6,7),size=1000,replace=TRUE)
@@ -112,7 +86,7 @@ dev.off()
   
 #CASE 3 nux = 3 , z>3   (continuous K=7  ,  continuous)
   if (case==3) {  
-  x=sample(c(0,1),size=1000,replace=TRUE)
+  x=sample(c(0,1,2),size=1000,replace=TRUE)
     z=rnorm(1000,mean=10,sd=5)
     m1=rnorm(1000,mean=10)
     m2=rnorm(1000,mean=15)
@@ -123,7 +97,7 @@ dev.off()
   }
   
   
-  interprobe(x,z,y)
+  interprobe(x,z,y,file='c:/temp/test1.png')
   
   
   

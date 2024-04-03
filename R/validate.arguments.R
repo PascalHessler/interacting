@@ -48,7 +48,7 @@
   
 
   validate.arguments=function(x, z ,y , 
-                              data, model,
+                              model, data,
                               k,
                               spotlights,spotlight.labels,
                               histogram, 
@@ -61,6 +61,14 @@
                               file)
 
   {
+
+    #0 Model may not be character, dataframe
+    if (class(model) %in% c('logical','integer','numeric','data.frame','factor')) {
+      exit("interprobe() says: There is an error in the arguments provided.\n",
+           "If you are providing a model as input, make sure to reference \n",
+           "it explicitly, for example:\n    lm1=lm(y~x*z)\n    interprobe(model=lm1,x=x,z=z) ")
+            }
+    
    #1 if x and z are specified they must be of the same length
           if (!is.null(x) && !is.null(z)) {
           

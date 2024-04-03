@@ -53,8 +53,8 @@
 
 interprobe <- function(
                     x=NULL,z=NULL,y=NULL,
-                    data=NULL,
                     model=NULL,
+                    data=NULL,
                     k=3,
                     spotlights=NULL,
                     spotlight.labels=NULL,
@@ -74,7 +74,7 @@ interprobe <- function(
                     xlim=NULL)
                     
   {
-  
+ 
   #0 If x is specified and it is in a model/data version of interprobe() treat as string
     if (!is.null(model) | !is.null(data)) {
         x <- deparse(substitute(x))
@@ -82,12 +82,13 @@ interprobe <- function(
         if (!is.null(y)) y <- deparse(substitute(y))
     }
   
+  
   #1 Validate input and determine what was provided, vector, model, or data.frame
   
   #First legnth and type of arguments
-    validate.arguments(x, z ,y , data, model, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file)      
-  
+    validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file)   
+    
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
         

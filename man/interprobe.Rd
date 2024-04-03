@@ -8,15 +8,15 @@ interprobe(
   x = NULL,
   z = NULL,
   y = NULL,
-  data = NULL,
   model = NULL,
+  data = NULL,
   k = 3,
   spotlights = NULL,
   spotlight.labels = NULL,
   histogram = TRUE,
   max.unique = 11,
   n.bin.continuous = 10,
-  shade.up.to = 50,
+  n.max = 50,
   xlab = "",
   cols = c("red4", "blue4", "green4"),
   ylab1 = "Dependent Variable",
@@ -38,12 +38,12 @@ or data (e.g., x=c(1,3,1,4)}
 
 \item{y}{the dependent variable. Can be the name of variable, or a vector with data}
 
-\item{data}{an optional data frame with variables used in the model}
-
 \item{model}{an optional model which will be probed (can be any model accepted
 by package 'marginaleffects' including lm, glm, gam). If unspecified, a GAM model
 is estimated on the provided data, including flexible main effects for x an z
 and a flexible interaction.}
+
+\item{data}{an optional data frame with variables used in the model}
 
 \item{k}{level of smoothness/flexibility used by mgcv::gam() to fit functions,
 the default used by interprobe() is k=3, increasing it will lead to more wiggly
@@ -63,7 +63,7 @@ for sets rather than individual values in the histogram}
 
 \item{n.bin.continuous}{integer with number of bins to make for histogram}
 
-\item{shade.up.to}{integer with the frequency count at which color signaling
+\item{n.max}{integer with the frequency count at which color signaling
 sample size maxes out and not longer gets darker with bigger samples.}
 
 \item{xlab}{label for the x axis, defaults to be "Focal Predictor" when x is on the x-axis

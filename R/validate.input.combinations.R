@@ -25,15 +25,14 @@ validate.input.combinations=function(data, model, x,y,z)
   
    #3 Specified data & model
         if (input.data + input.model==2) {
-              stop("interprobe() says: You may include either a data, or a model statement,\n",
-                   "but you specified both.")
+              exit("interprobe() says: You may include either a data or a model argument, but you included both.")
               }
    
   
      
    #4 Data without xyz
         if (input.data==TRUE & input.xyz==FALSE) {
-          stop("interprobe says: you specified a dataset but not x,y,z, recall that:\n",
+          exit("interprobe says: you specified a dataset but not x,y,z, recall that:\n",
                "x: focal predictor\n",
                "z: moderator\n",
                "y: dependent variable")
