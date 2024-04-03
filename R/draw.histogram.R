@@ -16,7 +16,7 @@
             y0=par('usr')[3]
             x0=par('usr')[1]
             x1=par('usr')[2]
-            yd=y0 + .1* lines.total *diff(ylim)*.85
+            yd=y0 + (.09+lines.total*.07)*diff(ylim)*.85
            
             polygon(x=c(x0,x0,x1,x1),
                     border=NA,

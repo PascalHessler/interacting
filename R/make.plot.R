@@ -40,9 +40,9 @@
            res.df <- do.call(rbind, res)
  
     #3 Set ylim
-            ylim = range(res.df[,c('conf.low','conf.high')]) #Default y-range
-            ylim[2]=ylim[2]+.35*diff(ylim)                   #Add at the top for the legend
-            if (histogram==TRUE) ylim[1]=ylim[1]- n.lines*.1*diff(ylim)        #add at the bottom for the histogram
+            ylim = range(res.df[,c('conf.low','conf.high')])            #Default y-range
+            ylim[2]=ylim[2]+.35*diff(ylim)                              #Add at the top for the legend
+            if (histogram==TRUE) ylim[1]=ylim[1]- (.09 + n.lines*.07)*diff(ylim)        #add at the bottom for the histogram
           
     #4 Set x-lim
             if (is.null(xlim)) xlim = x1.range
