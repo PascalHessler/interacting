@@ -8,11 +8,14 @@ Authors@R: c(
            email = "urisohn@gmail.com",
            comment = c(ORCID = "0000-0002-8601-7211"))
     )
-Description: well, will tell you later
-URL: https://groundhogr.com/, https://github.com/CredibilityLab/groundhog
-BugReports: https://github.com/CredibilityLab/groundhog/issues
+Description: produce GAM Simple Slopes and GAM Johnson-Neyman curves
+URL: https://github.com/urisohn/interacting
+BugReports: https://github.com/urisohn/interacting
 Imports: mgcv
+Suggests: 
+    testthat (>= 3.0.0)
 License: GPL-3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3
+Config/testthat/edition: 3
