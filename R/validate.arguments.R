@@ -57,7 +57,8 @@
                               cols,
                               draw,
                               legend.round,
-                              xlim)
+                              xlim,
+                              file)
 
   {
    #1 if x and z are specified they must be of the same length
@@ -134,6 +135,18 @@
       if (!is.logical(draw)) exit(("interprobe() says the argument 'draw' must be either TRUE or FALSE"))
  
   #11 xlim
-      check1 (xlim, "xlim", 2, 'numeric')
-
-       }
+      if (!is.null(xlim)) check1 (xlim, "xlim", 2, 'numeric')
+      
+  #12 file
+      if (!is.null(file)) {
+              
+          #Get extension of file name
+              extension= tools::file_ext(file)
+                  
+          #Type of figure file
+              if (!extension %in% c('svg','png')) exit("interprobe() says 'file' must be either a png or svg format.")
+      
+              } #End of file check
+      
+      
+  }#End of functiono
