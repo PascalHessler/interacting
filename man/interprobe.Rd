@@ -23,10 +23,10 @@ interprobe(
   ylab2 = "Marginal Effect",
   main1 = "GAM Simple Slopes",
   main2 = "GAM Johnson-Neyman",
-  legend.max.d = 4,
-  legend.min.d = 1,
+  legend.round = c(1, 4),
   draw = TRUE,
-  ...
+  file = NULL,
+  xlim = NULL
 )
 }
 \arguments{
@@ -82,11 +82,15 @@ clear descriptor of the variables (e.g., "z: age of participants")}
 
 \item{main2}{Header for Johnson Neyman figure (defaults to 'GAM Johnson-Neyman')}
 
-\item{legend.max.d}{highest number of decimals to show for moderator in legend in figure}
-
-\item{legend.min.d}{lowest  number of decimals to show for moderator in legend in figure}
+\item{legend.round}{vector with minimum and maximum number of decimals to round
+in the legend, e.g., c(0,0) forces 0 decimals}
 
 \item{draw}{TRUE/FALSE for whether to make a plot}
+
+\item{file}{character with path to file to save the figure to, can be .svg or
+.png file (e.g., file='c:/temp/figure1.svg')}
+
+\item{xlim}{numeric vector of length 2, giving the x coordinates range}
 }
 \description{
 Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
