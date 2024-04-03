@@ -3,7 +3,7 @@
   #  plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
-                             focal , moderation , max.unique , fxz.list,nux,nuz)
+                             focal , moderation , max.unique , fxz.list,nux,nuz,xlim)
           {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -45,9 +45,8 @@
             if (histogram==TRUE) ylim[1]=ylim[1]- n.lines*.1*diff(ylim)        #add at the bottom for the histogram
           
     #4 Set x-lim
-            xlim = x1.range
-            #xlim[1]=xlim[1]-.05*diff(xlim) #add margin to left to put the 'n=' 
-            
+            if (is.null(xlim)) xlim = x1.range
+
     #5 Empty plot
             plot(x1s,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2)
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
