@@ -45,7 +45,8 @@
 #'@param draw TRUE/FALSE for whether to make a plot
 #'@param file character with path to file to save the figure to, can be .svg or 
 #'.png file (e.g., file='c:/temp/figure1.svg')
-
+#'@param xlim numeric vector of length 2, giving the x coordinates range
+#'
 #'@export
 
 
@@ -70,8 +71,7 @@ interprobe <- function(
                     legend.round=c(1,4),
                     draw=TRUE,
                     file=NULL,
-                    
-                    ...)
+                    xlim=NULL)
                     
   {
   
@@ -86,7 +86,7 @@ interprobe <- function(
   
   #First legnth and type of arguments
     validate.arguments(x, z ,y , data, model, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, shade.up.to ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round)      
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim)      
   
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
@@ -200,61 +200,76 @@ interprobe <- function(
       df1=df1[,c(6,5,1,2,3,4)]
       df2=df2[,c(6,5,1,2,3,4)]
       output=list(simple.slopes = df1, floodlight = df2, frequencies=fxz)
-      if (draw==FALSE) return(output)
+      
           
-    
-  #10 Prepare the canvas for plotting
-         #10.0 Save to file?
-            if (!is.null(file)) {
+
+      
+      
+  #10 Remove "GAM" from  figure headers for non-GAM models
+      if (v$input.model==TRUE) {
+        if (!inherits(model, "gam")) {
+          
+          #Pre-print 'linear' if we know it is linear
+            linear.st=''
+            if (inherits(model, "lm")) linear.st='Linear '
+          
+          #Substitute default headers
+            if (main1=="GAM Simple Slopes") main1=paste0(linear.st,"Simple Slopes")
+            if (main2=="GAM Floodlight")    main2=paste0(linear.st,"Floodlight")
+            }
+            }      
+  
+      
+      
+  #11 Plot for saving 
+      if (!is.null(file)) {
               
-              #Get extension of file name
-                  extension= tools::file_ext(file)
+          #Get extension of file name
+              extension= tools::file_ext(file)
                   
-              #If .svg file
-                  if (extension=='svg') svg(file,width=14,height=8)
-              }
-      
-      
-          #10.1 Remove "GAM" from  figure headers for non-GAM models
-            if (v$input.model==TRUE) {
-              if (!inherits(model, "gam")) {
-                
-                #Pre-print 'linear' if we know it is linear
-                  linear.st=''
-                  if (inherits(model, "lm")) linear.st='Linear '
-                
-                #Substitute default headers
-                  if (main1=="GAM Simple Slopes") main1=paste0(linear.st,"Simple Slopes")
-                  if (main2=="GAM Floodlight")    main2=paste0(linear.st,"Floodlight")
-                  }
-                  }      
-          
-          #10.2 Choose 1 or 2 plots
-            #Two plots side by side
+          #Type of figure file
+              if (extension=='svg') svg(file,width=14,height=8)
+              if (extension=='png') png(file,width=14000,height=8000,res=1200)
+
+          #Two plots side by side
                 old_mfrow <- par('mfrow')
                 par(mfrow=c(1,2))
                 on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
            
-      
-      
-  #11 Plot simple slopes     
-        make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz)
+          #Plot simple slopes (spotlight)
+            make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)
 
-  #12 Plot Floodlight/Johson-Neyman     
+          #Plot Johson-Neyman (floodlight)
      
-      make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz)  
+           make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)  
       
+          #End
+            message("The figures have been saved to '",file,"'")
+            dev.off()        
+      }          
+                  
+  
+#12 Plot on screen
+    if (draw==TRUE)
+    {
+    #12.1 #Two plots side by side
+                old_mfrow <- par('mfrow')
+                par(mfrow=c(1,2))
+                on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
+           
+    #12.2 Plot simple slopes     
+        make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)
+
+    #12.3 Plot Floodlight/Johson-Neyman     
+     
+       make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)  
       
-      
-  #13 Finish file
-      if (!is.null(file)) {
-        message("The figures have been saved. See: '",file,"'")
-        dev.off()
-      }
-      
-  #13 return output for plotting on your own
+    } 
+#13 return output for plotting on your own
      
       invisible(output)          
     }      
