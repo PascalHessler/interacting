@@ -3,37 +3,24 @@
   
   
 #INSTALL
-  
   devtools::document(pkg_path)
-  devtools::build(pkg_path)
+  #devtools::build(pkg_path)
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
-
-  
   library('interacting')
-  library('mgcv')
-############
-  
+
   interprobe()
   
   
 #------------------------------------------------------------------------------------------------
-  #SOURCE
   
-  
-  pkg_path <- "c:/git/interacting/r"
-  
-  scripts<-list.files(pkg_path,full.names = TRUE)
-  for (scriptk in scripts) {
-    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R')) {
-    message("next:",basename(scriptk))
-    source(scriptk)
-    } }
-  
-  
-  
-  
-#DEBUG
-   
+    n=1000
+    x=rnorm(n)
+    z=rnorm(n,mean=10,sd=2)
+    m1=rnorm(n,mean=10)
+    m2=rnorm(n,mean=15)
+    y.raw = x*z
+    e=rnorm(n,sd=sd(y.raw))
+    y=y.raw+e
   
 
     #SOURCE
@@ -43,13 +30,11 @@
   
   scripts<-list.files(pkg_path,full.names = TRUE)
   for (scriptk in scripts) {
-    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev2.R')) {
+    if (!basename(scriptk) %in% c('interprobe___.R','interprobe___.R','interprobe2.R')) {
     message("next:",basename(scriptk))
     source(scriptk)
     } }
   
-  
-  case=2
    data=NULL
   model=NULL
   k=3
@@ -74,54 +59,27 @@
   max.unique=11
   draw.simple.slopes=TRUE
   draw.floodlight=TRUE
-  legend.max.d=5
-  legend.min.d=2
+  legend.round=c(2,4)
 
   
-  
-  
 
-    #SOURCE
-      rm(list = ls())
-
-  pkg_path <- "c:/git/interacting/r"
-  
-  scripts<-list.files(pkg_path,full.names = TRUE)
-  for (scriptk in scripts) {
-    if (!basename(scriptk) %in% c('interprobe.R','interprobe_dev.R','interprobe_dev32.R')) {
-    message("next:",basename(scriptk))
-    source(scriptk)
-    } }
-  
-  case=3
-  
 #nux>11 , z>3   (continuous,continuous)
-   if (case==1)
-   {
-    n=10000
+    n=1000
     x=rnorm(n)
-    z=rnorm(n,mean=100,sd=20)
+    z=rnorm(n,mean=10,sd=2)
     m1=rnorm(n,mean=10)
     m2=rnorm(n,mean=15)
     y.raw = x*z
     e=rnorm(n,sd=sd(y.raw))
     y=y.raw+e
-   }
   
-      t1 = interprobe_dev(x,y,z)
-      t1 = interprobe_dev(x,y,z,k=6)
-      t1 = interprobe_dev(x=x,y=y,z=z,k=3,spotlights=c(80,100,120),spotlight.labels = c('low','med','high'))
-      t1 = interprobe_dev(x=x,y=y,z=z,k=4)
-t1$simple.slopes
-      plot(z,y.raw)
-  
-  spotlights
-  g1 = mgcv::gam(y~s(x)+s(z)+ti(x,z))
-  t1 = interprobe_dev(model=g1,x='age',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
-  t2 = interprobe_dev(model=g1,x='age',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary',draw=FALSE)
+    
+    library('interacting')
+    t1 = interprobe(x=x,y=y,z=z,k=3,xlim=c('a',3))
+    t1 = interprobe(x=x,y=y,z=z,k=3,xlim=c(-2,2))
 
-
-  
+      
+  plot()
   t2
   names(t1$simple.slopes)
   t1$simple.slopes
@@ -137,7 +95,7 @@ t1$simple.slopes
 
   
   svg("c:/temp/f1.svg",width=12,height=8)  
-    interprobe_dev(model=g1,x='x',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
+    interprobe(model=g1,x='x',z='z',xlab="Years of Experience",ylab1='Salary',ylab2='Effect on Salary')
 dev.off()
 #nux = 7 , z>3   (continuous K=7  ,  continuous)
   if (case==2) {  
@@ -165,7 +123,7 @@ dev.off()
   }
   
   
-  interprobe_dev(x,z,y)
+  interprobe(x,z,y)
   
   
   
@@ -196,17 +154,17 @@ dev.off()
     
   g=mgcv::gam(y~s(z,by=x,k=3)+x)
   lm1=lm(y~x*z)
-  interprobe_dev(model=g)
-  interprobe_dev(model=g,x='x',z='z')
-  interprobe_dev(model=g,x='x',z='z')
-  interprobe_dev(model=lm1,x='x',z='z')
+  interprobe(model=g)
+  interprobe(model=g,x='x',z='z')
+  interprobe(model=g,x='x',z='z')
+  interprobe(model=lm1,x='x',z='z')
 
   x='x'
   z='z'
   y=NULL
   
   
-  i1=interprobe_dev(x=x,z=z,y=y,k=3)
+  i1=interprobe(x=x,z=z,y=y,k=3)
   i1$fx
   df=i1$simple.slopes
   
