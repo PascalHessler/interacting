@@ -25,7 +25,7 @@
     message("next:",basename(scriptk))
     source(scriptk)
     } }
-  
+  y=NULL
    data=NULL
   model=NULL
   k=3
@@ -36,7 +36,7 @@
   draw=TRUE
   histogram=TRUE
   nbins=NULL
-  shade.up.to = 50  #below this sample size we shade to show few observations
+  n.max = 50  #below this sample size we shade to show few observations
   xlab='moderator'
   cols=c('red4','blue4','green4')
   ylab1='Dependent Variable'
@@ -44,30 +44,65 @@
   main1="GAM Simple Slopes"
   main2='GAM Floodlight'
   focal.label = 'Focal Predictor (x)'
-  
+  xlim=NULL
   force.discrete.freqs=FALSE
    n.bin.continuous = 10
   max.unique=11
   draw.simple.slopes=TRUE
   draw.floodlight=TRUE
   legend.round=c(2,4)
-
-  
+  file=NULL
+  library('interacting')
 
 #nux>11 , z>3   (continuous,continuous)
     n=1000
+    x1=rnorm(n)
+    z1=rnorm(n,mean=10,sd=2)
+    y.raw = x1*z1
+    e=rnorm(n,sd=sd(y.raw))
+    y1=y.raw+e
+  
+    
+    x=x1
+    z=z1
+    
+    lm1=lm(y1~x1*z1)
+    model=lm1
+    data1=data.frame(x1,z1,y1)
+    interprobe(x=x1 ,z=z1,y=y1 )
+    
+    interprobe(model=lm1,x=x1 ,z=z1)
+    
+    
+    
+    
+    
+    
+    n=1000
     x=rnorm(n)
     z=rnorm(n,mean=10,sd=2)
-   y.raw = x*z
+    y.raw = x*z
     e=rnorm(n,sd=sd(y.raw))
     y=y.raw+e
   
     
-    lm1=lm(y~x*z)
+    lm2=lm(y~x*z)
+    #model=lm2
+    data1=data.frame(x1,z1,y1)
+    interprobe(x=x ,z=z,y=y )
     
-    print(lm1)
-    data1=data.frame(x,z,y)
-    interprobe(model=lm1,data=data1,x ,z,y )
+    interprobe(model=lm2,x=x ,z=z)
+    
+    
+    
+    traceback()
+debug(interprobe)
+
+undebug(interprobe)
+    x=x1
+    z=z1
+    model=lm1
+    
   g=lme4::lmer(y~x+1|s)
     class(g)
     class(data.frame(x,z))
