@@ -48,7 +48,15 @@ groundhog.library(pkgs,date)
     t1=interprobe(model=g1,x='x1',z='z1',file=fig1)
     
     
-    
-    
+#4 Discrete (BUG PRESENT!)
+    n=1200
+    x1=sample(c(1,2,3),n/3,replace=TRUE)
+    z1=rnorm(n,mean=10,sd=2)
+    y.raw = x1*z1
+    e=rnorm(n,sd=sd(y.raw))
+    y1=y.raw+e
+    data1=data.frame(x1,y1,z1)
+    interprobe(x='x1',z='z1',y='y1')
+
     
     
