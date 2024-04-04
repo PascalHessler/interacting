@@ -96,13 +96,18 @@ interprobe <- function(
     
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
-        
+      
   #2 Create data
     #Extract if provided
-      if (v$input.data==FALSE & v$input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
+      if (v$input.data==FALSE & v$input.xyz==TRUE)  {
+        data.text = paste0("data = data.frame(",xvar,",", zvar,",", yvar,")")
+        data=eval2(data.text)
+        
+        }
+        
       if (v$input.model==TRUE)                      data = model$model
              
-
+    
   #3 Number of unique x & z values
         #3.1 Count
           ux  = sort(unique(data[,xvar]))
@@ -131,6 +136,9 @@ interprobe <- function(
             
           }
           
+            
+  
+
   #4 set moderator values for computing marginal effects
           if (moderation=='discrete')   zs = uz
           if (moderation=='continuous') zs = seq(min(data[,zvar]),max(data[,zvar]),length.out=100)
@@ -164,7 +172,6 @@ interprobe <- function(
           
   
   #6 Compute simple slopes        
-        
       if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model,xvar,zvar)
       if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model,xvar,zvar)
        
