@@ -1,6 +1,6 @@
 
 
-compute.slopes.discrete=function(ux, zs, model)
+compute.slopes.discrete=function(ux, zs, model,xvar,zvar)
   {
   simple.slopes = list()
   j=1

@@ -3,7 +3,7 @@
   #  plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
-                             focal , moderation , max.unique , fxz.list,nux,nuz,xlim)
+                             focal , moderation , max.unique , fxz.list,nux,nuz,xlim,xvar,zvar)
           {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -15,7 +15,7 @@
             if ( focal!='categorical') {
               if (xlab=='') xlab='Focal Predictor'
               n.lines=length(spotlights)
-              x1.range = range(data$x)
+              x1.range = range(data[,xvar])
               x1s=xs
               nux1=nux
               x1.axis='x'
@@ -28,7 +28,7 @@
             if (type=='simple slopes') n.lines=nux
             if (type=='floodlight')    n.lines=nux-1
                   #for categorical, the dy/dx is the diff in xs so 1 fewer line than x values
-            x1.range = range(data$z)
+            x1.range = range(data[,zvar])
             x1s=zs
             nux1=nuz
             x1.axis='z'

@@ -168,3 +168,14 @@
     return(rounded)
   }
   
+  
+#9 eval2
+  eval2 <- function(s)  eval(parse(text=s),  parent.frame()) 
+
+  
+#10 Clean string
+   clean_string <- function(input_string) {
+      #Remove everything except letters, numbers, and underscores
+      cleaned_string <- gsub("[^A-Za-z0-9_]", "", input_string)
+  return(cleaned_string)
+  }

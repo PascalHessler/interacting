@@ -1,27 +1,49 @@
 
-  estimate.model = function(nux,data,k)
+  estimate.model = function(nux,data,k,xvar,zvar,yvar)
   { 
+    
+  #First figure out if we will add k
+      k_if_specified = ifelse(is.null(k), "" , paste0(",k=",k))
+                  
     
   #DISCRETE
       if (nux <=3)
-               {
-             #Make xvar a factor to estimate GAM with it
-                  data$x = factor(data$x)
+            {
+             #Setup model statement with variable names entered by user
+                #Make the statement
+                    model.text=paste0('try(mgcv::gam(' , yvar, '~' , 's(', zvar, ',by=', xvar , k_if_specified,')', '+' , xvar,", data=data),silent=TRUE)")
+             
                     
-             #Estimate model, with /without k
-                  if (!is.null(k)) model = try(mgcv::gam(y~s(z,by=x,k=k)+x, data=data),silent=TRUE )
-                  if ( is.null(k)) model = try(mgcv::gam(y~s(z,by=x)+x, data=data),    silent=TRUE )
-                  check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
-              } #End nux<4
+               #Ensure xvar is a factor
+                  data[,xvar] = factor(data[,xvar])
+                    
+             #Run model
+                 model = eval2(model.text)
+                    
+              #Check for possible error
+                 check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
+                 
+              } #End nux<=3
             
   #CONTINUOUS 
       if (nux>=4)
             {
-            if (!is.null(k)) model = try(mgcv::gam(y~s(z,k=k)+s(x,k=k)+ti(x,z,k=k),data=data),silent=TRUE) 
-            if ( is.null(k)) model = try(mgcv::gam(y~s(z)  +s(x)    +ti(x,z),data=data),silent=TRUE) 
-            check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
+            #Make the model statement in text
+                model.text=paste0('try(mgcv::gam(' , yvar, '~' , 
+                                        's(', zvar, k_if_specified,')', '+' ,
+                                        's(', xvar, k_if_specified,')', '+' , 
+                                        'ti(',xvar, ',' , zvar, k_if_specified,'),data=data),silent=TRUE)') 
+            
+            #message(model.text)  
+            #exit()
+            #Run model
+                 model = eval2(model.text)
+                               
+            #Check  errors
+                check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
 
-      }
+            }
   return(model)  
   }
   
+ 

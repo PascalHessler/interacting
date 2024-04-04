@@ -75,19 +75,24 @@ interprobe <- function(
                     
   {
  
-  #0 If x is specified and it is in a model/data version of interprobe() treat as string
-    if (!is.null(model) | !is.null(data)) {
-        x <- deparse(substitute(x))
-        z <- deparse(substitute(z))
-        if (!is.null(y)) y <- deparse(substitute(y))
-    }
   
+ 
+  #0 If x is specified and it is in a model/data version of interprobe() treat as string
+        xvar <- clean_string(deparse(substitute(x)))
+        zvar <- clean_string(deparse(substitute(z)))
+      #Y if it exists
+        
+        yvar=NULL
+        if (!is.null(y)) yvar <- clean_string(deparse(substitute(y)))
+        
+        
+       
   
   #1 Validate input and determine what was provided, vector, model, or data.frame
   
-  #First legnth and type of arguments
+  #First length and type of arguments
     validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file)   
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar)   
     
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
@@ -96,29 +101,20 @@ interprobe <- function(
     #Extract if provided
       if (v$input.data==FALSE & v$input.xyz==TRUE)  data = data.frame(x=x,z=z,y=y)
       if (v$input.model==TRUE)                      data = model$model
-      
-    #Combine vectors otherwise
-        if (v$input.data==FALSE & v$input.xyz==TRUE)
-        {
-          #Put vectors into dataframe
-            data=data.frame(x, z, y)
-          #Rename variables to refer to variable names
-            x='x'
-            z='z'
-            y='y'
-        }
              
 
   #3 Number of unique x & z values
         #3.1 Count
-          ux  = sort(unique(data$x))
-          uz  = sort(unique(data$z))
+          ux  = sort(unique(data[,xvar]))
+          uz  = sort(unique(data[,zvar]))
           nux = length(ux)     #nux number of unique x values
           nuz = length(uz)     #nuz number of unique z values
           
+    
+          
         #3.2 Check if only 1 value
-          if (nux==1) stop("interprobe says: there is only one observed value for the variable 'x'")
-          if (nuz==1) stop("interprobe says: there is only one observed value for the variable 'z'")
+          if (nux==1) exit("interprobe says: there is only one observed value for the focal (x) variable, '"    ,xvar,"'")
+          if (nuz==1) exit("interprobe says: there is only one observed value for the moderator (z) variable, '",zvar,"'")
           
         #3.3 Categorize as 'continuous', 'discrete', 'categorical' focal predictor
           if (nux>max.unique)          focal = "continuous"
@@ -137,21 +133,21 @@ interprobe <- function(
           
   #4 set moderator values for computing marginal effects
           if (moderation=='discrete')   zs = uz
-          if (moderation=='continuous') zs = seq(min(data$z),max(data$z),length.out=100)
+          if (moderation=='continuous') zs = seq(min(data[,zvar]),max(data[,zvar]),length.out=100)
           
         #set focal predictor values
           if (focal!='continuous')   xs = ux
-          if (focal=='continuous')   xs = seq(min(data$x),max(data$x),length.out=100)
+          if (focal=='continuous')   xs = seq(min(data[,xvar]),max(data[,xvar]),length.out=100)
 
         
   #5 Estimate model (if the user did not provide it as an argument)
-          if (v$input.model==FALSE) model = estimate.model(nux,data,k)
+          if (v$input.model==FALSE) model = estimate.model(nux,data,k,xvar,zvar,yvar)
 
   
   #6 Set spotlight values and labels
         
        if (is.null(spotlights)) {
-         spotlights=quantile(data$z,c(.15,.5,.85),type=3)
+         spotlights=quantile(data[,zvar],c(.15,.5,.85),type=3)
          if (is.null(spotlight.labels)) {
              spotlight.labels=paste0(
                               c("15th percentile (","50th percentile (", "85th percentile (") ,
@@ -168,12 +164,14 @@ interprobe <- function(
           
   
   #6 Compute simple slopes        
-      if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model)
-      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model)
+        
+      if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model,xvar,zvar)
+      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model,xvar,zvar)
        
+
   #7 Compute floodlight
-      if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model)
-      if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model)
+      if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model,xvar,zvar)
+      if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model,xvar,zvar)
       
           
   #8 Get fxz and gr
@@ -181,26 +179,29 @@ interprobe <- function(
         #gr:  How transparent to make the line that is being plotted, it's the n observartion in bin over n=100
         
           #Frequencies
-            fxz.list = make.fxz(data  , n.bin.continuous,  moderation,nux , max.unique ,spotlights )
+            fxz.list = make.fxz(data  , n.bin.continuous,  moderation,nux , max.unique ,spotlights ,xvar,zvar)
             fxz=fxz.list$fxz
             
             
           #As % of the adequate sample size in n.max
             gr = fxz
             for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/n.max,1)
-                
 
+            
   #9 Prepare output to be returned to enable plotting independently by user 
-      clean <- function(str) gsub("[^A-Za-z]", "", str)
+      #clean <- function(str) gsub("[^A-Za-z]", "", str)
       df1 <- data.frame(do.call(rbind, simple.slopes))
       df2 <- data.frame(do.call(rbind, floodlight))
       df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic")]
       df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term","predicted_lo",'predicted_hi','predicted')]
-      names(df1) = c('yhat','se.yhat','conf.low','conf.high',clean(z),clean(x))
-      names(df2) = c('dydx','se.dydx','conf.low','conf.high',clean(z),clean(x))
+      names(df1) = c('yhat','se.yhat','conf.low','conf.high',zvar,xvar)
+      names(df2) = c('dydx','se.dydx','conf.low','conf.high',zvar,xvar)
       df1=df1[,c(6,5,1,2,3,4)]
       df2=df2[,c(6,5,1,2,3,4)]
       output=list(simple.slopes = df1, floodlight = df2, frequencies=fxz)
+      
+          
+      
       
           
 
@@ -239,12 +240,12 @@ interprobe <- function(
            
           #Plot simple slopes (spotlight)
             make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)
 
           #Plot Johson-Neyman (floodlight)
      
            make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)  
       
           #End
             message("The figures have been saved to '",file,"'")
@@ -262,12 +263,12 @@ interprobe <- function(
            
     #12.2 Plot simple slopes     
         make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)
 
     #12.3 Plot Floodlight/Johson-Neyman     
      
        make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)  
       
     } 
 #13 return output for plotting on your own

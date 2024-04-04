@@ -58,7 +58,8 @@
                               draw,
                               legend.round,
                               xlim,
-                              file)
+                              file,
+							  xvar,zvar,yvar)
 
   {
 
@@ -85,9 +86,10 @@
       if (!is.null(data))
       {
         n1=names(data)
-        if (!x %in% n1) exit("interprobe() says the focal variable x ('",x,    "') is not in the dataset")
-        if (!z %in% n1) exit("interprobe() says the moderator variable z ('",z,"') is not in the dataset")
-        if (!y %in% n1) exit("interprobe() says the dependent variable y ('",y,"') is not in the dataset")
+        
+        if (!xvar %in% n1) exit("interprobe() says the focal variable x ('",xvar,    "') is not in the dataset")
+        if (!zvar %in% n1) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the dataset")
+        if (!yvar %in% n1) exit("interprobe() says the dependent variable y ('",yvar,"') is not in the dataset")
         }
    
     
@@ -96,8 +98,8 @@
    if (!is.null(model))
       {
         n2=names(model$model)
-        if (!x %in% n2) exit("interprobe() says the focal variable x ('",x    ,"') is not in the model")
-        if (!z %in% n2) exit("interprobe() says the moderator variable z ('",z,"') is not in the model")
+        if (!xvar %in% n2) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model")
+        if (!zvar %in% n2) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model")
         }
     
     

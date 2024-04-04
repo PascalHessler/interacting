@@ -62,14 +62,8 @@
     e=rnorm(n,sd=sd(y.raw))
     y1=y.raw+e
   
-    
-    x=x1
-    z=z1
-    
     lm1=lm(y1~x1*z1)
-    model=lm1
-    data1=data.frame(x1,z1,y1)
-    interprobe(x=x1 ,z=z1,y=y1 )
+  #  interprobe(x=x1 ,z=z1,y=y1)
     
     interprobe(model=lm1,x=x1 ,z=z1)
     

@@ -1,5 +1,5 @@
   
-    compute.floodlight.discrete=function(ux, zs, model)
+    compute.floodlight.discrete=function(ux, zs, model,xvar,zvar)
         
       {
       floodlight = list()
@@ -10,7 +10,7 @@
         {
          #Make prediction data
           ndj = expand.grid(z=zs,x=c(as.character(ux[1]),xj))
-          
+          names(ndj)[1:2]=c(zvar,xvar)
         #Save marginal effects results
           options(warn=-1)
           floodlight[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
