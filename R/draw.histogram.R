@@ -67,8 +67,8 @@
              
              
 #------------------------------------------
-#Case 2 - x: discrete 
-    if (focal=='discrete')
+#Case 2 - Discrete x-axis
+    if (nux1<=max.unique)
       {
         #Adjust y coordinates to be bottom of figure
             y0=par('usr')[3]
@@ -91,33 +91,7 @@
        }
                      
              
-             
-#------------------------------------------
-#Case 3 - x: categorical            
-             
-       #DISCRETE 
-        if (moderation=='discrete')
-          {
-          #Width in plot between zs
-            bin.width=zs[2]-zs[1]
-
-          #Set coordinates for top/bottom of bars
-            y0=par('usr')[3]                   #bottom of graph
-            y1=y0+.05*nux*diff(ylim)           #10 or 15% of vertical distance for this
-            h = y0+(fx/max(fx))*.1*diff(ylim)  #height of bars based on their frequency (fx)
-            
-          #Loop plotting them
-            for (j in 1:nux) segments(x0=zs + (j-1)*.08*bin.width -.04*bin.width,
-                                  x1=zs + (j-1)*.08*bin.width -.04*bin.width,
-                                  y0=y0,y1=h[j,],col=cols[j],lwd=4)
-          
-          #Add sample size values
-            text(zs,y1,colSums(fxz),              cex=.8,font=3,col='gray38')
-            text(min(zs)-.05*diff(xlim),y1,'n = ',cex=.8,font=3,col='gray38')
-          
-          } #End if discrete
-
-
+  
     
 #------------------------------------------------------------------
     

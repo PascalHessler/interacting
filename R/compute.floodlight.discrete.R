@@ -13,8 +13,9 @@
           names(ndj)[1:2]=c(zvar,xvar)
         #Save marginal effects results
           options(warn=-1)
-          floodlight[[j]] = marginaleffects::predictions(model, newdata = ndj,by='z')
+          floodlight[[j]] = marginaleffects::predictions(model, newdata = ndj,by=zvar)
           floodlight[[j]]$x=xj
+          names(floodlight[[j]])[ncol(floodlight[[j]])]=xvar
           options(warn=-0)
          
             #Note: suppress warnings because `marginaleffects` warns about k as a missing variable

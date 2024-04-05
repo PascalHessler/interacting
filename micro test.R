@@ -16,6 +16,8 @@ groundhog.library(pkgs,date)
   library('interacting')
 
   
+  
+  
    n=1000
     x1=rnorm(n)
     z1=rnorm(n,mean=10,sd=2)
@@ -39,18 +41,18 @@ groundhog.library(pkgs,date)
     g1=mgcv::gam(y1~x1*z1,data=data1)
     interprobe(model=g1,x='x1',z='z1')
     
-#2 SAVE
+#2 Ouput results to variable
     t1=interprobe(model=g1,x='x1',z='z1')
     print(t1)
     
 #3 Make figure
-    fig1=file.path(this.dir(),"Example 3.svg")
+    fig1=file.path(this.path::this.dir(),"Example 3.svg")
     t1=interprobe(model=g1,x='x1',z='z1',file=fig1)
     
     
-#4 Discrete (BUG PRESENT!)
+#4 Discrete X continuous z
     n=1200
-    x1=sample(c(1,2,3),n/3,replace=TRUE)
+    x1=sample(c(1,2,3),n,replace=TRUE)
     z1=rnorm(n,mean=10,sd=2)
     y.raw = x1*z1
     e=rnorm(n,sd=sd(y.raw))
@@ -58,5 +60,23 @@ groundhog.library(pkgs,date)
     data1=data.frame(x1,y1,z1)
     interprobe(x='x1',z='z1',y='y1')
 
+#5 Discrete X discrete z    
+    n=1200
+    x1=sample(c(1,2,3),n,replace=TRUE)
+    z1=sample(c(1,2,2,2,3,3,4,4,5,6,6,6,6,6,6,6,7,7,7),n,replace=TRUE)
+    y.raw = x1*z1
+    e=rnorm(n,sd=sd(y.raw))
+    y1=y.raw+e
+    data1=data.frame(x1,y1,z1)
+    interprobe(x='x1',z='z1',y='y1')
+
     
-    
+#5 Continuous X discrete z    
+    n=1200
+    x1=rnorm(n,100,10)
+    z1=sample(c(1,2,2,2,3,3,4,4,5,6,6,6,6,6,6,6,7,7,7),n,replace=TRUE)
+    y.raw = x1*z1
+    e=rnorm(n,sd=sd(y.raw))
+    y1=y.raw+e
+    data1=data.frame(x1,y1,z1)
+    interprobe(x='x1',z='z1',y='y1')

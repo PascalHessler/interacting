@@ -69,8 +69,8 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
 #------------------------------------------------------------
 #CASE 3  x: discrete z: discrete
       if (nux<=3 & moderation=='discrete') {
-            fx   = table(data[,xvar],data[,zvar])
-            return(fx)
+            fxz   = t(table(data[,xvar],data[,zvar]))
+            return(list(fxz=fxz))
       }
   
 }
