@@ -68,7 +68,9 @@ groundhog.library(pkgs,date)
     e=rnorm(n,sd=sd(y.raw))
     y1=y.raw+e
     data1=data.frame(x1,y1,z1)
-    interprobe(x='x1',z='z1',y='y1')
+    
+    
+    interprobe(x='x1',z='z1',y='y1',file='c:/temp/f1.svg')
 
     
 #5 Continuous X discrete z    

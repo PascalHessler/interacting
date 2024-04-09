@@ -12,7 +12,7 @@
   devtools::test()
 
   
-#------------------------------------------------------------------------------------------------
+###################################################################
 
     #SOURCE
       rm(list = ls())
@@ -52,132 +52,25 @@
   draw.floodlight=TRUE
   legend.round=c(2,4)
   file=NULL
-  library('interacting')
+  
 
-#nux>11 , z>3   (continuous,continuous)
-    n=1000
-    x1=rnorm(n)
-    z1=rnorm(n,mean=10,sd=2)
+  
+ 
+  n=1200
+    x1=sample(c(1,2,3),n,replace=TRUE)
+    z1=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
     y.raw = x1*z1
     e=rnorm(n,sd=sd(y.raw))
     y1=y.raw+e
-  
-    lm1=lm(y1~x1*z1)
-  #  interprobe(x=x1 ,z=z1,y=y1)
+    data1=data.frame(x=x1,y=y1,z=z1)
     
-    interprobe(model=lm1,x=x1 ,z=z1)
-    
-    
-    
-    
-    
-    
-    n=1000
-    x=rnorm(n)
-    z=rnorm(n,mean=10,sd=2)
-    y.raw = x*z
-    e=rnorm(n,sd=sd(y.raw))
-    y=y.raw+e
-  
-    
-    lm2=lm(y~x*z)
-    #model=lm2
-    data1=data.frame(x1,z1,y1)
-    interprobe(x=x ,z=z,y=y )
-    
-    interprobe(model=lm2,x=x ,z=z)
-    
-    
-    
-    traceback()
-debug(interprobe)
-
-undebug(interprobe)
     x=x1
     z=z1
-    model=lm1
-    
-  g=lme4::lmer(y~x+1|s)
-    class(g)
-    class(data.frame(x,z))
-#nux = 7 , z>3   (continuous K=7  ,  continuous)
-  if (case==2) {  
-  x=sample(c(1,2,3,4,5,5,5,5,5,6,6,6,6,6,7),size=1000,replace=TRUE)
-    z=rnorm(1000,mean=10,sd=5)
-    m1=rnorm(1000,mean=10)
-    m2=rnorm(1000,mean=15)
-    y.raw=x*z+m1+m2
-    e=rnorm(1000,sd=sd(y.raw))
-    y=y.raw+e
-    
-  }
-  
-  
-#CASE 3 nux = 3 , z>3   (continuous K=7  ,  continuous)
-  if (case==3) {  
-  x=sample(c(0,1,2),size=1000,replace=TRUE)
-    z=rnorm(1000,mean=10,sd=5)
-    m1=rnorm(1000,mean=10)
-    m2=rnorm(1000,mean=15)
-    y.raw=x*z*4
-    e=rnorm(1000,sd=sd(y.raw))
-    y=y.raw+e
-    
-  }
-  
-  
-  interprobe(x,z,y,file='c:/temp/test1.png')
-  
-  
-  
-  
-  
-  lines.total=3
-  
-  
- res=simple.slopes
- 
- res=floodlight
-  ylab='dydx'
-  main='flooding'
-  xlab='z'
-  x1s=xs
-  
-  type='floodlight'
-#Discrete x, continuous z
-    n=200
-    x=rep(c(1,2,3),n)
-    z=rnorm(3*n)
-    y.raw=x*z
-    e=rnorm(length(y.raw),sd=sd(y.raw))
-    y=y.raw+e
-    
- 
+    y=y1
+    main='tests'
+     type='simple slopes'
+  res=simple.slopes
+  ylab=ylab1
     
     
-  g=mgcv::gam(y~s(z,by=x,k=3)+x)
-  lm1=lm(y~x*z)
-  interprobe(model=g)
-  interprobe(model=g,x='x',z='z')
-  interprobe(model=g,x='x',z='z')
-  interprobe(model=lm1,x='x',z='z')
-
-  x='x'
-  z='z'
-  y=NULL
-  
-  
-  i1=interprobe(x=x,z=z,y=y,k=3)
-  i1$fx
-  df=i1$simple.slopes
-  
-  data
-  
-  svg("c:/temp/f1.svg")
-  dev.off()
-
-  
-  
-    
-  
-  rsvg::rsvg_png("c:/temp/f1.svg", "c:/temp/f1.svg.png")
+    reds=interprobe(x=x1,z=z1,y=y1)
