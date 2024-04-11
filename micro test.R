@@ -20,18 +20,20 @@ groundhog.library(pkgs,date)
   
    n=1000
     x1=rnorm(n)
-    z1=rnorm(n,mean=10,sd=2)
-    y.raw = x1*z1
+    z1=rnorm(n,mean=150,sd=30)
+    y.raw = x1*sqrt(z1)
     e=rnorm(n,sd=sd(y.raw))
     y1=y.raw+e
-    data1=data.frame(x1,y1,z1)
+    data1=data.frame(x2=x1,y2=y1,z2=z1)
   
+    
+    sqrt(120)
 #1 INPUT SYNTAX
   #1.1 x,z,y
     interprobe(x1,z1,y1)
     
   #1.2 data
-    interprobe(x1,z1,y1,data=data1)
+    interprobe(x2,z2,y2,data=data1)
   
   #1.3 model linear
     lm1=lm(y1~x1*z1,data=data1)

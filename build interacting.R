@@ -9,8 +9,30 @@
   library('interacting')
 
   
-  devtools::test()
+  #devtools::test()
 
+  n=1200
+    x1=sample(c(1,2,3),n,replace=TRUE)
+    z1=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
+    y.raw = x1*sqrt(z1)
+    e=rnorm(n,sd=sd(y.raw))
+    y1=y.raw+e
+    data1=data.frame(x2=x1,y2=y1,z2=z1)
+    
+    #interprobe("x2","y2","z2",data=data1)
+    #interprobe(x=x2,y=y2,z=z2,data=data1)
+    x=x1
+    z=z1
+    y=y1
+    
+     interprobe(x,z,y)
+
+    
+    main='tests'
+     type='floodlight'
+  res=floodlight
+  ylab=ylab1
+    dev.off()
   
 ###################################################################
 
@@ -59,18 +81,30 @@
   n=1200
     x1=sample(c(1,2,3),n,replace=TRUE)
     z1=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
-    y.raw = x1*z1
+    y.raw = x1*sqrt(z1)
     e=rnorm(n,sd=sd(y.raw))
     y1=y.raw+e
-    data1=data.frame(x=x1,y=y1,z=z1)
+    
+    
+    data=data.frame(x=x1,z=z1,y=y1)
+    x='x1'
+    z='z1'
+    y='y1'
     
     x=x1
     z=z1
     y=y1
-    main='tests'
-     type='simple slopes'
-  res=simple.slopes
+    
+    
+    
+  main='tests'
+  type='floodlight'
+  res=floodlight
   ylab=ylab1
     
+  interprobe(x,z,y)
+  
+  interprobe(x=x1,z=z1,y=y1)
+  data1=data.frame(x=x2,y=y2,z=z2)
+      
     
-    reds=interprobe(x=x1,z=z1,y=y1)

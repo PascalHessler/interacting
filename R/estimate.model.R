@@ -28,13 +28,13 @@ estimate.model = function(nux,data,k,xvar,zvar,yvar)
              
                     
                #Ensure xvar is a factor
-                  data[,xvar] = factor(data[,xvar])
+                    data[,xvar] = factor(data[,xvar])
                     
              #Run model
-                 model = eval2(model.text)
+                   model = eval2(model.text)
                     
               #Check for possible error
-                 check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
+                   check.gam.error(model) #check.gam.error.R - stops if gam gave an error msg
                  
               } #End nux<=3
             

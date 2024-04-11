@@ -14,6 +14,7 @@ validate.input.combinations=function(data, model, x,y,z)
           y=NULL
           message("interprobe() says: You specified both 'model' and 'y', will ignore 'y' and use DV in the model.")
         }
+
         
   #2 Determine type of input submitted
           if (!is.null(data))                           input.data=TRUE

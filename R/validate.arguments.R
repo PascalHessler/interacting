@@ -70,8 +70,13 @@
            "it explicitly, for example:\n    lm1=lm(y~x*z)\n    interprobe(model=lm1,x=x,z=z) ")
             }
     
+      if (!exists(xvar)) eval2("x=data[,xvar]")
+      if (!exists(zvar)) eval2("z=data[,zvar]")
+      if (!exists(yvar)) eval2("y=data[,yvar]")
+    
+    
    #1 if x and z are specified they must be of the same length
-          if (!is.null(x) && !is.null(z)) {
+          if (!is.null(x) && !is.null(z) && exists(xvar) && exists(zvar)) {
           
         # Check if they are of the same type 
           if (typeof(x) != typeof(z))       exit("interprobe says(): x and z must be of the same type")

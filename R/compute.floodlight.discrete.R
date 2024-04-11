@@ -13,11 +13,10 @@
           names(ndj)[1:2]=c(zvar,xvar)
         #Save marginal effects results
           options(warn=-1)
-          floodlight[[j]] = marginaleffects::predictions(model, newdata = ndj,by=zvar)
-          floodlight[[j]]$x=xj
-          names(floodlight[[j]])[ncol(floodlight[[j]])]=xvar
+          floodlight[[j]] = data.frame(marginaleffects::slopes(model, newdata = ndj,by=zvar))
+          floodlight[[j]][,xvar]=xj
           options(warn=-0)
-         
+         floodlight[[j]]=subset(floodlight[[j]] ,term==xvar)
             #Note: suppress warnings because `marginaleffects` warns about k as a missing variable
             #SEE https://github.com/vincentarelbundock/marginaleffects/issues/1031
           j=j+1 

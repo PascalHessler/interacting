@@ -9,7 +9,7 @@
       
       #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM floodlight
       
-      
+
     #1 Adjustments based on x or z on the x1 axis
         #X on AXIS    
             if ( focal!='categorical') {
@@ -21,7 +21,6 @@
               x1.axis='x'
             }
              
-      
       #Z on Axis 
           if (focal=='categorical') {
             if (xlab=='') xlab='Moderator'
@@ -39,6 +38,7 @@
     #2 Unlist data.frames
            res.df <- do.call(rbind, res)
  
+
     #3 Set ylim
             ylim = range(res.df[,c('conf.low','conf.high')])            #Default y-range
             ylim[2]=ylim[2]+.35*diff(ylim)                              #Add at the top for the legend
@@ -61,7 +61,6 @@
                  #If floodlighting a categoricall predictor, drop the first color for that's baseline
                
               for (j in 1:n.lines) {
-                 
                #Color of lines
                 #Based on frequencies
                   g1=as.numeric(gr[,j])  #this is based on fxz
@@ -111,7 +110,6 @@
             
               
               }
-            
             
           #Histogram  
               if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation='continuous', x1s, ux1, nux1, cols,ylim,xlim,max.unique)

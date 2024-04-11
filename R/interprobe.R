@@ -77,26 +77,26 @@ interprobe <- function(
  
   
  
-  #0 If x is specified and it is in a model/data version of interprobe() treat as string
+  #0 Get var names
         xvar <- clean_string(deparse(substitute(x)))
         zvar <- clean_string(deparse(substitute(z)))
-      #Y if it exists
+        yvar <- clean_string(deparse(substitute(y)))
         
-        yvar=NULL
-        if (!is.null(y)) yvar <- clean_string(deparse(substitute(y)))
-        
-        
-       
+      
   
   #1 Validate input and determine what was provided, vector, model, or data.frame
   
   #First length and type of arguments
     validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar)   
-    
+
+
+        
   #Then combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
-      
+
+
+          
   #2 Create data
     #Extract if provided
       if (v$input.data==FALSE & v$input.xyz==TRUE)  {
@@ -116,7 +116,6 @@ interprobe <- function(
           nuz = length(uz)     #nuz number of unique z values
           
     
-          
         #3.2 Check if only 1 value
           if (nux==1) exit("interprobe says: there is only one observed value for the focal (x) variable, '"    ,xvar,"'")
           if (nuz==1) exit("interprobe says: there is only one observed value for the moderator (z) variable, '",zvar,"'")
@@ -180,6 +179,7 @@ interprobe <- function(
       if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model,xvar,zvar)
       if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model,xvar,zvar)
       
+
           
   #8 Get fxz and gr
         #fx:  Frequencies of each bin to determine line width and histogram
@@ -260,6 +260,7 @@ interprobe <- function(
       }          
                   
   
+      
 #12 Plot on screen
     if (draw==TRUE)
     {
@@ -273,7 +274,7 @@ interprobe <- function(
                    focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)
 
     #12.3 Plot Floodlight/Johson-Neyman     
-     
+      
        make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)  
       
