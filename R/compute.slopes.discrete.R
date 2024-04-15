@@ -10,8 +10,9 @@ compute.slopes.discrete=function(ux, zs, model,xvar,zvar)
     #Make prediction data for this particular value of x
       ndj = expand.grid(z=zs,x=xj)
       names(ndj)=c(zvar,xvar)
+      data=model$model
+      ndj = add.covariates.at.mean(ndj, data)  #utils.R  #Function #7
 
-                  
     #Save marginal effects results
       options(warn=-1)
       simple.slopes[[j]] = marginaleffects::predictions(model, newdata = ndj,by=zvar)

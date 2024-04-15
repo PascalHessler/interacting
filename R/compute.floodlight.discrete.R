@@ -11,9 +11,11 @@
          #Make prediction data
           ndj = expand.grid(z=zs,x=c(as.character(ux[1]),xj))
           names(ndj)[1:2]=c(zvar,xvar)
+          data=model$model
+          ndj = add.covariates.at.mean(ndj, data)  #utils.R  #Function #7
         #Save marginal effects results
           options(warn=-1)
-          floodlight[[j]] = data.frame(marginaleffects::slopes(model, newdata = ndj,by=zvar))
+          floodlight[[j]] = data.frame(marginaleffects::slopes(model=model, newdata = ndj,by=zvar))
           floodlight[[j]][,xvar]=xj
           options(warn=-0)
          floodlight[[j]]=subset(floodlight[[j]] ,term==xvar)

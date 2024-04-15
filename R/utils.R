@@ -130,22 +130,49 @@
    
    
 #7 Add all vars at means
-   add.covariates.at.mean=function(newdata, data)
-   {
-     #Add any variables missing at their mean
-        missing_vars <- setdiff(names(data), names(newdata))
-                   
-    #Get means
-        mean_values <- sapply(data[missing_vars], function(x) mean(x, na.rm = TRUE))
-
-    #add them
-        for(var in names(mean_values)) {
-            newdata[[var]] <- mean_values[var]
-            }
-                   
-    return(newdata)
-     
+   sync_factors = function(data, ndj) {
+    # Loop through each column in 'data'
+    for(var in names(data)) {
+        # Check if the variable is a factor
+        if(is.factor(data[[var]])) {
+            # Convert the corresponding variable in 'ndj' to a factor with the same levels
+            ndj[[var]] <- factor(ndj[[var]], levels = levels(data[[var]]))
+        }
     }
+    return(ndj)
+}
+
+   
+   
+   
+   add.covariates.at.mean = function(newdata, data) {
+    # Identify variables present in 'data' but missing in 'newdata'
+    missing_vars <- setdiff(names(data), names(newdata))
+    
+    # Initialize a list to store mean values or the first factor level
+    mean_values <- list()
+    
+    # Loop over each missing variable
+    for(var in missing_vars) {
+      
+        # Check if the variable is numeric
+        if (is.numeric(data[[var]])) {
+            mean_values[[var]] <- mean(data[[var]], na.rm = TRUE)
+        } 
+        # Check if the variable is a factor
+        else 
+            mean_values[[var]] <- as.character(data[[var]][1])
+        }
+    
+    # Add the calculated values to 'newdata'
+    for(var in names(mean_values)) {
+        newdata[[var]] <- mean_values[[var]]
+    }
+    
+    return(newdata)
+}
+
+   
    
 #8 Round2
   round2 <- function(x, min.d=2, max.d = 3) {
