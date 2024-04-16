@@ -18,7 +18,7 @@ interprobe(
   n.bin.continuous = 10,
   n.max = 50,
   xlab = "",
-  cols = c("red4", "blue4", "green4"),
+  cols = c("red4", "dodgerblue", "green4"),
   ylab1 = "Dependent Variable",
   ylab2 = "Marginal Effect",
   main1 = "GAM Simple Slopes",

@@ -9,31 +9,6 @@
   library('interacting')
 
   
-  #devtools::test()
-
-  n=1200
-    x1=sample(c(1,2,3),n,replace=TRUE)
-    z1=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
-    y.raw = x1*sqrt(z1)
-    e=rnorm(n,sd=sd(y.raw))
-    y1=y.raw+e
-    data1=data.frame(x2=x1,y2=y1,z2=z1)
-    
-    #interprobe("x2","y2","z2",data=data1)
-    #interprobe(x=x2,y=y2,z=z2,data=data1)
-    x=x1
-    z=z1
-    y=y1
-    
-     interprobe(x,z,y)
-
-    
-    main='tests'
-     type='floodlight'
-  res=floodlight
-  ylab=ylab1
-    dev.off()
-  
 ###################################################################
 
     #SOURCE
@@ -55,9 +30,9 @@
   spotlights=NULL
   spotlight.labels=NULL
   
-  draw=TRUE
-  histogram=TRUE
-  nbins=NULL
+  draw = TRUE
+  histogram = TRUE
+  nbins = NULL
   n.max = 50  #below this sample size we shade to show few observations
   xlab='moderator'
   cols=c('red4','blue4','green4')
@@ -75,36 +50,74 @@
   legend.round=c(2,4)
   file=NULL
   
-
   
- 
-  n=1200
-    x1=sample(c(1,2,3),n,replace=TRUE)
-    z1=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
-    y.raw = x1*sqrt(z1)
+  
+  #devtools::test()
+
+  library('interacting')
+    n=1200
+    x=sample(c(1,2,3),n,replace=TRUE)
+    z=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
+    y.raw = x*sqrt(z)
     e=rnorm(n,sd=sd(y.raw))
-    y1=y.raw+e
+    y=y.raw+e
+    
+    type='floodlight'
+    res=floodlight
+    ylab='dydx'
+    interprobe(x=x,z=z,y=y)
     
     
-    data=data.frame(x=x1,z=z1,y=y1)
-    x='x1'
-    z='z1'
-    y='y1'
     
+    
+str(ndj)
+    
+    xj=ux[2]
+    
+    ndj
+    ndj
+    ndj$z2=factor(ndj$z2)
+    
+    marginaleffects::slopes(model)
+    marginaleffects::slopes(g1)
+    nd=
+    marginaleffects::slopes(model,newdata=ndj[1,])
+    marginaleffects::slopes(model,newdata=ndj.hand[1,])
+    ndj.hand=data.frame(z=1,x=1,y=4.25,z2='aa')
+    str(ndj)
+    str(ndj.hand)
+    ndj$x=as.numeric(ndj$x)
+    ndj$z2=as.character(ndj$z2)
+    ndj
+    names(ndj)
+    names(ndj.hand)
+    ndj==ndj.hand
+    summary(ndj)
+    ndj=data.frame(ndj)
+    d=data.frame(z=1,x=1,y=4.25,z2='aa')
+    ndj[1,]
+    d[1,]=ndj[1,]
+    
+    names(d)
+    names(ndj)
+    d2=data.frame(z=1,x=1,y=0,z2='aa')
+    model$model
+    d=model$model
+    d=d[,-1]
+    predict
+    ndj  
+      insight::get_data(model)
+    
+    
+    
+    
+    interprobe(x=x2,y=y2,z=z2,data=data1)
     x=x1
     z=z1
     y=y1
     
-    
-    
-  main='tests'
-  type='floodlight'
-  res=floodlight
-  ylab=ylab1
-    
-  interprobe(x,z,y)
+     interprobe(x,z,y)
+
+
   
-  interprobe(x=x1,z=z1,y=y1)
-  data1=data.frame(x=x2,y=y2,z=z2)
-      
     

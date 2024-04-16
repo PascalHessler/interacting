@@ -1,5 +1,1 @@
-add ablineh=0
-make lines dodgerblue and red1
-make them wider
-reduce vertical space for legend (already lowered .35 to .3, maybe it's enough, check)
 increaes "resolution" of the .svg

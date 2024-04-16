@@ -13,12 +13,17 @@
           names(ndj)[1:2]=c(zvar,xvar)
           data=model$model
           ndj = add.covariates.at.mean(ndj, data)  #utils.R  #Function #7
+          
+
         #Save marginal effects results
           options(warn=-1)
           floodlight[[j]] = data.frame(marginaleffects::slopes(model=model, newdata = ndj,by=zvar))
           floodlight[[j]][,xvar]=xj
           options(warn=-0)
+
          floodlight[[j]]=subset(floodlight[[j]] ,term==xvar)
+         
+
             #Note: suppress warnings because `marginaleffects` warns about k as a missing variable
             #SEE https://github.com/vincentarelbundock/marginaleffects/issues/1031
           j=j+1 
@@ -26,3 +31,4 @@
         
         return(floodlight)
     }
+    

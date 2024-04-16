@@ -63,7 +63,7 @@ interprobe <- function(
                     n.bin.continuous = 10,
                     n.max = 50,           #below this sample size we shade to show few observations
                     xlab='',
-                    cols=c('red4','blue4','green4'),
+                    cols=c('red4','dodgerblue','green4'),
                     ylab1='Dependent Variable',
                     ylab2='Marginal Effect',
                     main1="GAM Simple Slopes",
@@ -199,20 +199,14 @@ interprobe <- function(
       #clean <- function(str) gsub("[^A-Za-z]", "", str)
       df1 <- data.frame(do.call(rbind, simple.slopes))
       df2 <- data.frame(do.call(rbind, floodlight))
-      df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic")]
-      df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term","predicted_lo",'predicted_hi','predicted')]
-      names(df1) = c('yhat','se.yhat','conf.low','conf.high',zvar,xvar)
-      names(df2) = c('dydx','se.dydx','conf.low','conf.high',zvar,xvar)
-      df1=df1[,c(6,5,1,2,3,4)]
-      df2=df2[,c(6,5,1,2,3,4)]
+      #df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic")]
+      #df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term","predicted_lo",'predicted_hi','predicted')]
+      #names(df1) = c('yhat','se.yhat','conf.low','conf.high',zvar,xvar)
+      #names(df2) = c('dydx','se.dydx','conf.low','conf.high',zvar,xvar)
+      #df1=df1[,c(6,5,1,2,3,4)]
+      #df2=df2[,c(6,5,1,2,3,4)]
       output=list(simple.slopes = df1, floodlight = df2, frequencies=fxz)
-      
-          
-      
-      
-          
-
-      
+    
       
   #10 Remove "GAM" from  figure headers for non-GAM models
       if (v$input.model==TRUE) {
@@ -237,7 +231,7 @@ interprobe <- function(
               extension= tools::file_ext(file)
                   
           #Type of figure file
-              if (extension=='svg') svg(file,width=14,height=8)
+              if (extension=='svg') svg(file,width=14,height=7)
               if (extension=='png') png(file,width=14000,height=8000,res=1200)
 
           #Two plots side by side

@@ -40,9 +40,33 @@
  
 
     #3 Set ylim
-            ylim = range(res.df[,c('conf.low','conf.high')])            #Default y-range
-            ylim[2]=ylim[2]+.35*diff(ylim)                              #Add at the top for the legend
-            if (histogram==TRUE) ylim[1]=ylim[1]- (.09 + n.lines*.07)*diff(ylim)        #add at the bottom for the histogram
+           #Start with range of the CI
+              ylim = range(res.df[,c('conf.low','conf.high')])            #Default y-range
+              
+            #Assign to constant to dynamically add 0 below after changing ylim values
+              ylim1=ylim[1]
+              ylim2=ylim[2]
+
+
+          #Expand to include 0 if it is marginal effects
+              if (type=='floodlight') {
+                
+                #If it does not cover 0 currently
+                    if (ylim1*ylim2>0)
+                    {
+                      #If positive, start at 0
+                        if (ylim1>0) ylim[1]=0 - .02*diff(ylim)
+                      #If negative, end at 0
+                        if (ylim1<0) ylim[2]=0 + .02*diff(ylim)
+                    }
+                
+                  }
+          
+          #Top space for legend
+            ylim[2]=ylim[2]+.3*diff(ylim)                              
+            
+         #Bottom space for histogram
+            if (histogram==TRUE) ylim[1]=ylim[1]- (.15 + n.lines*.07)*diff(ylim)        #add at the bottom for the histogram
           
     #4 Set x-lim
             if (is.null(xlim)) xlim = x1.range
@@ -51,6 +75,8 @@
             plot(x1s,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2)
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
          
+    #5.5 LIne at 0 for floodlight
+            if (type=='floodlight') abline(h=0,lty=2,col='gray77')
             
     #6 Loop making the 2 or 3 lines
                j=1
@@ -97,7 +123,7 @@
           #Legend
             if (x1.axis=='x')
               {
-              legend("top",inset=.01,bty='n',lwd=3,col=cols[1:n.lines],
+              legend("top",inset=.01,bty='n',lwd=8,col=cols[1:n.lines],
                      title='Moderator Value',
                      title.font=2,
                      legend=spotlight.labels)
