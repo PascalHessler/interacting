@@ -27,14 +27,14 @@ groundhog.library(pkgs,date)
     data1=data.frame(x2=x1,y2=y1,z2=z1)
   
     
-    sqrt(120)
 #1 INPUT SYNTAX
   #1.1 x,z,y
     interprobe(x1,z1,y1)
     
   #1.2 data
-    interprobe(x2,z2,y2,data=data1)
-  
+    interprobe('x2','z2','y2',data=data1)
+      interprobe(x2,z2,y2,data=data1)
+
   #1.3 model linear
     lm1=lm(y1~x1*z1,data=data1)
     interprobe(model=lm1,x=x1,z=z1)

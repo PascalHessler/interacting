@@ -110,7 +110,7 @@
                             col=adjustcolor(col.seg[j],.1),border = NA)
                   
                #Dots within line if we have not binned data for plotting
-                  if (nux1 <= max.unique) points(x1s,res[[j]]$estimate, col=adjustcolor2(col.seg[j],g),pch=16,cex=1.5) 
+                  if (nux1 <= max.unique) points(x1s,res[[j]]$estimate, col=adjustcolor2(col.seg[j],pmax(g,.2)),pch=16,cex=1.5) 
 
                   
               }#End loop nux

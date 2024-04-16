@@ -1,53 +1,8 @@
 
-#1 Auxiliary functions
-#2 Validate function
-
-
-#-----------------------------------------------
-
-
-#1 Auxiliary functions
-  #1.1 Integer?    
-    is.integer2 = function(x) all(floor(x)==x)
-  
-    
-  #1.2 Check if a number is an integer of length k
-      check1 = function(var,varname, length.check, type.check)
-      {
-        
-        #Check legnth
-          if (length(var)!=length.check) {
-              exit("interprobe() says the variable '",varname,"' must be of length '",length.check,"' but it is of length '",length(var),"'")  
-          }
-            
-      
-        #Check type integer
-          if (type.check=='integer')
-            {
-            if (is.integer2(var)==FALSE) exit("interprobe() says the variable '",varname,"' must be an integer, but '",var, "' is not an integer.")  
-          }
-        
-        #Check type character
-          if (type.check=='character')
-            {
-            if (is.character(var)==FALSE) exit("interprobe() says the variable '",varname,"' must be a character variable but '",var, "' is not a character variable")  
-          }
-        
-        #Check type numeric
-          if (type.check=='numeric')
-            {
-            if (is.numeric(var)==FALSE) exit("interprobe() says the variable '",varname,"' must be a numeric, but '",var, "' is not numeric")  
-          }
-        
-        
-        }
-
-#----------------------------------------------
-
-#2 Validate function
+# Validate function
   
 
-  validate.arguments=function(x, z ,y , 
+ validate.arguments=function(x, z ,y , 
                               model, data,
                               k,
                               spotlights,spotlight.labels,
@@ -62,67 +17,85 @@
 							  xvar,zvar,yvar)
 
   {
+    
+    
+     #Case 1: data
+        if (!is.null(data)) {
+          
+          
+          #1 Create local variable with name of the dataframe for error messages
+            dataname = deparse(substitute(data))
+            
+          #2 Is data a data.frame()
+                if (class(data)!='data.frame') exit("interprobe says(): the 'data' argument must be a data.frame, but , '",
+                                                    dataname,"' is not a data.frame.")
+            
+            
 
-    #0 Model may not be character, dataframe
-    if (
+          #3 Are x,z,y in the dataset
+            n1=names(data)
+            if (!xvar %in% n1) exit("interprobe() says the focal variable x ('",xvar,    "') is not in the dataset '",dataname,"'.")
+            if (!zvar %in% n1) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the dataset '",dataname,"'.")
+            if (!yvar %in% n1) exit("interprobe() says the dependent variable y ('",yvar,"') is not in the dataset '",dataname,"'.")
+  
+          
+          }    
+   
+return(TRUE)
+    
+    #1.1 Model was entered by default into x,z,y or data instead of model=
+        if (
           any(class(model) %in% c('logical','integer','numeric','data.frame','factor')) | 
           any(class(x) %in% c("lm","glm","gam")) |
           any(class(z) %in% c("lm","glm","gam")) |
           any(class(y) %in% c("lm","glm","gam"))
           )
       
-      {
-        exit(
-           "interprobe() says:\n",
-           "There is a problem with the set of arguments provided to the function.\n",
-           "If you are providing a model as input, make sure to reference \n",
-           "it explicitly and to enter the variable names in quotes.\n",
-            "\n   For example:\n      lm1=lm(y~x*z)\n      interprobe(model=lm1,x='x',z='z') "
-           )
-      }
+          {
+            exit(
+               "interprobe() says:\n",
+               "There is a problem with the set of arguments provided to the function.\n",
+               "If you are providing a model as input, make sure to reference it explictly\n",
+               "and to enter the variable names in quotes.\n",
+                "\n   For example:\n      lm1=lm(y~cond*age)\n      interprobe(model=lm1,x='cond',z='age') "
+               )
+          }
     
-      if (!exists(xvar)) eval2("x=data[,xvar]")
-      if (!exists(zvar)) eval2("z=data[,zvar]")
-      if (!exists(yvar)) eval2("y=data[,yvar]")
-    
-    
-   #1 if x and z are specified they must be of the same length
-          if (!is.null(x) && !is.null(z) && exists(xvar) && exists(zvar)) {
-          
-        # Check if they are of the same type 
-          #if (typeof(x) != typeof(z))       exit("interprobe says(): x and z must be of the same type")
-          #BAD: becausae we can have a factor x and a numeric z
-            
-        # Check if they have the same length
-            #message("validate.arguments #86")
-            #message('length of x is ',length(x),"and legnth of z is ",length(z))
-          if (length(x) != length(z))      exit("interprobe says(): x and z must have the same length")
-            }
+  #---------------------------------------------------------------------------------
+  #Cases
+    #Case #1: x,z,y
         
-  
-    
-  #2 If data is specified, check that x,z,y are in it
-      if (!is.null(data))
-      {
-        n1=names(data)
-        
-        if (!xvar %in% n1) exit("interprobe() says the focal variable x ('",xvar,    "') is not in the dataset")
-        if (!zvar %in% n1) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the dataset")
-        if (!yvar %in% n1) exit("interprobe() says the dependent variable y ('",yvar,"') is not in the dataset")
+        if (is.null(model) & is.null(data)) 
+            {
+            #Same length  
+              if (length(x) != length(z)) exit("interprobe says(): x and z must have the same length")
         }
-   
     
-  #3 If model is specified, check that it is a moel and that x,z are in it
- 
+    #-------------------------------------------------------------
+    
+   
+      
+  #-------------------------------------------------------------
+  
+  #Case 3: Model        
    if (!is.null(model))
       {
+        modelname = deparse(substitute(model))
+
+     
         if (! any(class(model) %in% c("lm","glm","gam"))) exit("interprobe() says you provided a model but it is not lm, glm, or gam")
         n2=names(model$model)
-        if (!xvar %in% n2) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model")
-        if (!zvar %in% n2) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model")
+        if (!xvar %in% n2) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model '", modelname,"'")
+        if (!zvar %in% n2) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model '", modelname,"'")
         }
+      
     
-    
+          
+#-------------------------------------------------------------
+          
+  #Other arguments        
+  
+          
   #4 k must have lenght 1 and be an integer
     if (!is.null(k))     check1(k,'k',1,'integer')
       
@@ -159,7 +132,8 @@
 
       
   #9 Colors
-      if (length(cols)!=3)    exit(("interprobe() says the argument 'cols' must be of length 3"))
+      #if (length(cols)!=3)    exit(("interprobe() says the argument 'cols' must be of length 3"))
+      check1 (cols, "cols", 3, 'character')
       
   #10 Draw
       if (!is.logical(draw)) exit(("interprobe() says the argument 'draw' must be either TRUE or FALSE"))
@@ -174,9 +148,9 @@
               extension= tools::file_ext(file)
                   
           #Type of figure file
-              if (!extension %in% c('svg','png')) exit("interprobe() says 'file' must be either a png or svg format.")
+              if (!extension %in% c('svg','png')) exit("interprobe() says 'file' must be either a .png or .svg format.")
       
               } #End of file check
       
       
-  }#End of functiono
+  }#End of function
