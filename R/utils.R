@@ -21,6 +21,7 @@
 
  line.seg = function(x,y,lwd,col,g,lty=1,type='l')
           {
+            g=pmax(g,.15)
             n=length(x)
             for (k in 1:(n-1)) {
                 lines(x=c(x[k],x[k+1]),y=c(y[k],y[k+1]),type=type,lwd=lwd[k],col=adjustcolor2(col,(g[k]+g[k+1])/2),lty=lty)

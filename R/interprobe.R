@@ -75,21 +75,26 @@ interprobe <- function(
                     
   {
  
-  
  
+  
   #0 Get var names
         xvar <- clean_string(deparse(substitute(x)))
         zvar <- clean_string(deparse(substitute(z)))
         yvar <- clean_string(deparse(substitute(y)))
         
-      
-  
-  #1 Validate input and determine what was provided, vector, model, or data.frame
-  
-  #First length and type of arguments
+   #First length and type of arguments
     validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar)   
 
+      
+  #What will be done
+        message(paste0("Probing the interaction with:\n",
+                "   - Focal predictor : ",xvar,"\n",
+                "   - Moderator : " ,zvar,"\n"))
+  
+  #1 Validate input and determine what was provided, vector, model, or data.frame
+  
+ 
 
         
   #Then combination to determine if we were given a model or a dataset or vectors

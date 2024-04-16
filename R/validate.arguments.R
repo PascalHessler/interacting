@@ -64,11 +64,22 @@
   {
 
     #0 Model may not be character, dataframe
-    if (any(class(model) %in% c('logical','integer','numeric','data.frame','factor'))) {
-      exit("interprobe() says: There is an error in the arguments provided.\n",
+    if (
+          any(class(model) %in% c('logical','integer','numeric','data.frame','factor')) | 
+          any(class(x) %in% c("lm","glm","gam")) |
+          any(class(z) %in% c("lm","glm","gam")) |
+          any(class(y) %in% c("lm","glm","gam"))
+          )
+      
+      {
+        exit(
+           "interprobe() says:\n",
+           "There is a problem with the set of arguments provided to the function.\n",
            "If you are providing a model as input, make sure to reference \n",
-           "it explicitly, for example:\n    lm1=lm(y~x*z)\n    interprobe(model=lm1,x=x,z=z) ")
-            }
+           "it explicitly and to enter the variable names in quotes.\n",
+            "\n   For example:\n      lm1=lm(y~x*z)\n      interprobe(model=lm1,x='x',z='z') "
+           )
+      }
     
       if (!exists(xvar)) eval2("x=data[,xvar]")
       if (!exists(zvar)) eval2("z=data[,zvar]")
@@ -79,9 +90,12 @@
           if (!is.null(x) && !is.null(z) && exists(xvar) && exists(zvar)) {
           
         # Check if they are of the same type 
-          if (typeof(x) != typeof(z))       exit("interprobe says(): x and z must be of the same type")
-    
+          #if (typeof(x) != typeof(z))       exit("interprobe says(): x and z must be of the same type")
+          #BAD: becausae we can have a factor x and a numeric z
+            
         # Check if they have the same length
+            #message("validate.arguments #86")
+            #message('length of x is ',length(x),"and legnth of z is ",length(z))
           if (length(x) != length(z))      exit("interprobe says(): x and z must have the same length")
             }
         
@@ -98,10 +112,11 @@
         }
    
     
-  #3 If model is specified, check that x,z are in it
+  #3 If model is specified, check that it is a moel and that x,z are in it
  
    if (!is.null(model))
       {
+        if (! any(class(model) %in% c("lm","glm","gam"))) exit("interprobe() says you provided a model but it is not lm, glm, or gam")
         n2=names(model$model)
         if (!xvar %in% n2) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model")
         if (!zvar %in% n2) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model")

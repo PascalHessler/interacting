@@ -1,9 +1,11 @@
-  pkg_path <- "c:/git/interacting/r"
+  
+rm(list = ls())
+pkg_path <- "c:/git/interacting/r"
   #pkg_path <- "/Users/andres/Documents/[2] projects/[7] interacting/interacting/R" #in Andres's computer
   
   
 #INSTALL
-  devtools::document(pkg_path)
+  #devtools::document(pkg_path)
   #devtools::build(pkg_path)
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
   library('interacting')
@@ -55,17 +57,45 @@
   #devtools::test()
 
   library('interacting')
-    n=1200
+    n=100
     x=sample(c(1,2,3),n,replace=TRUE)
     z=sample(c(1,2,3,4,5,6,6,6,7,7,7),replace=TRUE,size=n)
     y.raw = x*sqrt(z)
     e=rnorm(n,sd=sd(y.raw))
+    z1=sample(c(44,55,66),n,r=T)
     y=y.raw+e
+    
+    
+    
+    z1=factor(z1)
+    x=factor(x)
+    
+    
+    g1=mgcv::gam(y~s(z,by=x,k=3))
+    interprobe(x,z,y)
+    interprobe(g1,x='x',z='z')
+    interprobe(g1,x,z)
+    class(model)
+    
+    
+    x=g1
+    x=z
+    z=y
+
+    class(g1)
+    class(arguments$y)
+    
+    
+       r1= interprobe(x=x,z=z,y=y)
+       floodlight=fl
+       fl[[1]]
+       
+d=r1$simple.slopes
+d2=r1$floodlight
     
     type='floodlight'
     res=floodlight
     ylab='dydx'
-    interprobe(x=x,z=z,y=y)
     
     
     

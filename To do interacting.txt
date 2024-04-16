@@ -1,1 +1,3 @@
-increaes "resolution" of the .svg
+-legend colors should match darkest color within the graph
+-put floor on how gray the lines are
+
