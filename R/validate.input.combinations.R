@@ -5,7 +5,6 @@ validate.input.combinations=function(data, model, x,y,z)
 
 
 {
-  message('combinations #8')
 
         input.xz = input.data = input.xyz = input.model <- FALSE
           
@@ -15,7 +14,6 @@ validate.input.combinations=function(data, model, x,y,z)
           y=NULL
           message("interprobe() says: You specified both 'model' and 'y', will ignore 'y' and use DV in the model.")
         }
-message('combinations #17')
 
         
   #2 Determine type of input submitted
@@ -24,7 +22,6 @@ message('combinations #17')
           if (!is.null(x) & !is.null(z) & !is.null(y))  input.xyz=TRUE
           if (!is.null(x) & !is.null(z) & is.null(y))   input.xz=TRUE
       
-message('combinations #25')
   
    #3 Specified data & model
         if (input.data + input.model==2) {

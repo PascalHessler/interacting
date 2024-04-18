@@ -3,7 +3,7 @@
   #  plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
-                             focal , moderation , max.unique , fxz.list,nux,nuz,xlim,xvar,zvar)
+                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
           {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -41,7 +41,7 @@
 
     #3 Set ylim
            #Start with range of the CI
-              ylim = range(res.df[,c('conf.low','conf.high')])            #Default y-range
+              if (is.null(ylim)) ylim = range(res.df[,c('conf.low','conf.high')])            #Default y-range
               
             #Assign to constant to dynamically add 0 below after changing ylim values
               ylim1=ylim[1]

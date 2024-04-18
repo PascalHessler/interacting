@@ -71,7 +71,8 @@ interprobe <- function(
                     legend.round=c(1,4),
                     draw=TRUE,
                     file=NULL,
-                    xlim=NULL)
+                    xlim=NULL,
+                    ylim=NULL)
                     
   {
  
@@ -254,12 +255,12 @@ interprobe <- function(
            
           #Plot simple slopes (spotlight)
             make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
 
           #Plot Johson-Neyman (floodlight)
      
            make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)  
       
           #End
             message("The figures have been saved to '",file,"'")
@@ -278,12 +279,12 @@ interprobe <- function(
            
     #12.2 Plot simple slopes     
         make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
 
     #12.3 Plot Floodlight/Johson-Neyman     
       
        make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xlim,xvar,zvar)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)  
       
     } 
 #13 return output for plotting on your own

@@ -10,9 +10,10 @@ pkg_path <- "c:/git/interacting/r"
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
   library('interacting')
 
-  
+  install.package(path, repos=NULL)
 ###################################################################
 
+  
     #SOURCE
       rm(list = ls())
 
@@ -54,6 +55,21 @@ pkg_path <- "c:/git/interacting/r"
   
   
   
+  
+  
+   n=1000
+    x1=rnorm(n)
+    z1=rnorm(n,mean=150,sd=30)
+    y.raw = x1*sqrt(z1)
+    e=rnorm(n,sd=sd(y.raw))
+    y1=y.raw+e
+    data1=data.frame(x2=x1,y2=y1,z2=z1)
+  
+    
+  
+  interprobe('x2','z2','y2',data=data1)
+    interprobe(x2,z2,y2,data=data1)
+
   #devtools::test()
 
   library('interacting')
