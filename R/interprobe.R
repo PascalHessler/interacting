@@ -235,13 +235,14 @@ interprobe <- function(
       #clean <- function(str) gsub("[^A-Za-z]", "", str)
       df1 <- data.frame(do.call(rbind, simple.slopes))
       df2 <- data.frame(do.call(rbind, floodlight))
-      #df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic")]
-      #df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term","predicted_lo",'predicted_hi','predicted')]
+      df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic",yvar)]
+      df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term",
+                              "predicted_lo",'predicted_hi','predicted',yvar)]
       #names(df1) = c('yhat','se.yhat','conf.low','conf.high',zvar,xvar)
       #names(df2) = c('dydx','se.dydx','conf.low','conf.high',zvar,xvar)
       #df1=df1[,c(6,5,1,2,3,4)]
       #df2=df2[,c(6,5,1,2,3,4)]
-      output=list(simple.slopes = df1, floodlight = df2, frequencies=fxz)
+      output=list(simple.slopes = df1, johnson.neyman = df2, frequencies=fxz)
     
       
   #10 Remove "GAM" from  figure headers for non-GAM models
@@ -321,4 +322,4 @@ interprobe <- function(
 #13 return output for plotting on your own
      
       invisible(output)          
-    }      
+}      
