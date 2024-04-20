@@ -18,7 +18,6 @@
 
   {
     
-    
      #Case 1: data
         if (!is.null(data)) {
           
@@ -41,8 +40,7 @@
           
           }    
    
-return(TRUE)
-    
+
     #1.1 Model was entered by default into x,z,y or data instead of model=
         if (
           any(class(model) %in% c('logical','integer','numeric','data.frame','factor')) | 
@@ -141,7 +139,6 @@ return(TRUE)
         exit("interprobe() says that the argument 'draw' must be one of three values:\n  - 'both'\n  - 'simple slopes'\n  - 'jn'")
         }
 
- 
   #11 xlim
       if (!is.null(xlim)) check1 (xlim, "xlim", 2, 'numeric')
       
