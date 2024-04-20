@@ -49,7 +49,6 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
             
         #Compute the cross frequencies
             fxz   = table(data[,xvar],zbins)
-            #output=namedList(fxz , ux)
             output=namedList(fxz)
             return(output)
       }

@@ -68,6 +68,10 @@
 #'Default is NULL, in which case the figure is not saved, only shown on screen.
 #'@param xlim numeric vector of length 2, giving the x coordinates range
 #'@param ylim numeric vector of length 2, giving the y coordinates range
+#'@param legend.simple.slopes text to place on legend title (e.g., "Moderator 
+#'Values") in Simple Slopes plot
+#'@param legend.johnson.neyman text to place on legend title (e.g., 
+#'"Effect of focal predictor") in Johnson Neyman plot 
 #'
 #'@export
 
@@ -94,7 +98,9 @@ interprobe <- function(
                     draw="both",
                     file=NULL,
                     xlim=NULL,
-                    ylim=NULL)
+                    ylim=NULL,
+                    legend.simple.slopes  = NULL,
+                    legend.johnson.neyman = NULL)
                     
   {
  
@@ -225,7 +231,6 @@ interprobe <- function(
             fxz.list = make.fxz(data  , n.bin.continuous,  moderation,nux , max.unique ,spotlights ,xvar,zvar)
             fxz=fxz.list$fxz
             
-            
           #As % of the adequate sample size in n.max
             gr = fxz
             for (j in 1:ncol(fxz)) gr[,j] = pmin(fxz[,j]/n.max,1)
@@ -235,14 +240,23 @@ interprobe <- function(
       #clean <- function(str) gsub("[^A-Za-z]", "", str)
       df1 <- data.frame(do.call(rbind, simple.slopes))
       df2 <- data.frame(do.call(rbind, floodlight))
+    
+    #Drop 
       df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic",yvar)]
       df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term",
                               "predicted_lo",'predicted_hi','predicted',yvar)]
-      #names(df1) = c('yhat','se.yhat','conf.low','conf.high',zvar,xvar)
-      #names(df2) = c('dydx','se.dydx','conf.low','conf.high',zvar,xvar)
-      #df1=df1[,c(6,5,1,2,3,4)]
-      #df2=df2[,c(6,5,1,2,3,4)]
-      output=list(simple.slopes = df1, johnson.neyman = df2, frequencies=fxz)
+
+    #Rename      
+      names(df1)[names(df1) == "estimate"] <- "y.hat"
+      names(df2)[names(df2) == "estimate"] <- "marginal.effect"
+
+      
+    #Frequencies
+     if (ncol(fxz)==2)  frequencies=data.frame(bin=rownames(fxz), f1=fxz[,1],f2=fxz[,2],row.names = NULL)
+     if (ncol(fxz)==3)  frequencies=data.frame(bin=rownames(fxz), f1=fxz[,1],f2=fxz[,2],f3=fxz[,3],row.names = NULL)
+
+      
+      output=list(simple.slopes = df1, johnson.neyman = df2, frequencies=frequencies)
     
       
   #10 Remove "GAM" from  figure headers for non-GAM models
@@ -254,8 +268,8 @@ interprobe <- function(
             if (inherits(model, "lm")) linear.st='Linear '
           
           #Substitute default headers
-            if (main1=="GAM Simple Slopes") main1=paste0(linear.st,"Simple Slopes")
-            if (main2=="GAM Floodlight")    main2=paste0(linear.st,"Floodlight")
+            if (main1=="GAM Simple Slopes")   main1=paste0(linear.st,"Simple Slopes")
+            if (main2=="GAM Johnson-Neyman")  main2=paste0(linear.st,"Johnson-Neyman")
             }
             }      
   
@@ -278,12 +292,12 @@ interprobe <- function(
            
           #Plot simple slopes (spotlight)
             make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)
 
           #Plot Johson-Neyman (floodlight)
      
            make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
       
           #End
             message("The figures have been saved to '",file,"'")
@@ -306,8 +320,8 @@ interprobe <- function(
         
         if (draw=='both' | draw %in% c('simple slopes','simple_slopes','simple','simple.slopes'))
           {
-          make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
+          output.simple.slopes = make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)  
           }
       
       
@@ -315,11 +329,18 @@ interprobe <- function(
       if (draw=='both' | draw %in% c('johnson', 'jn','johnson-neyman','johnsonneyamn','floodlight'))
       {
 
-       make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)  
+       output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
       }
-  
+#12 Add histogram bins (NULL for discrete x1axis)
+      if (draw %in% c('both','simple.slopes')) breaks=output.simple.slopes
+      if (draw %in% c('johnson.neyman'))       breaks=output.johnson.neyman
+     # output$frequencies = cbind(output$frequencies,breaks)
 #13 return output for plotting on your own
-     
+      if (!is.null(breaks))
+      {
+      output$frequencies$bin_from=breaks$from
+      output$frequencies$bin_to  =breaks$to
+      }
       invisible(output)          
 }      

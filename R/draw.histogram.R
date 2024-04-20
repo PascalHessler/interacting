@@ -3,6 +3,10 @@
     draw.histogram = function(fxz.list, focal, moderation, x1s, ux1, nux1, cols,ylim,xlim,max.unique)
           {
         
+      #If we do an actual histogram we will compute breaks and thhen report them in output
+      #forusers of interprobe tto be able to access them
+        breaks=NULL
+      
       #1 preliminaries
         #Get frequencies
              fxz=fxz.list$fxz 
@@ -94,7 +98,7 @@
   
     
 #------------------------------------------------------------------
-    
+     return(breaks)
              
             
     } #End function

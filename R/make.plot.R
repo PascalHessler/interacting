@@ -3,7 +3,7 @@
   #  plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
-                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
+                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title)
           {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -76,8 +76,10 @@
             axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
          
     #5.5 LIne at 0 for floodlight
-            if (type=='floodlight') abline(h=0,lty=2,col='gray77')
-            
+            if (type=='floodlight') {
+              axis(2,at=0,las=1)
+              abline(h=0,lty=2,col='gray77')
+              }
     #6 Loop making the 2 or 3 lines
                j=1
   
@@ -123,24 +125,32 @@
           #Legend
             if (x1.axis=='x')
               {
+              if (is.null(legend.title)) legend.title=paste0("Moderator ('",zvar,"')")
+
               legend("top",inset=.01,bty='n',lwd=8,col=cols[1:n.lines],
-                     title='Moderator Value',
+                     title=legend.title,
                      title.font=2,
                      legend=spotlight.labels)
             }
             
             if (x1.axis=='z')
               {
-              if (type=='simple slopes') legend("top",inset=.01,bty='n',lwd=5,col=cols[1:n.lines],title='Focal Predictor Value',title.font=2,legend=xs)
-              if (type=='floodlight')    legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],title='Constrasted Focal Predictor',title.font=2,legend=paste0(xs[-1]," vs. ",xs[1]))
+                  if (is.null(legend.title)) legend.title=paste0("Focal predictor ('",xvar,"')")
+
+                  #Actual legend
+                  if (type=='simple slopes') legend("top",inset=.01,bty='n',lwd=5,col=cols[1:n.lines],title=legend.title,title.font=2,legend=xs)
+                  if (type=='floodlight')    legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],       title=legend.title,title.font=2,legend=paste0(xs[-1]," vs. ",xs[1]))
             
               
               }
             
           #Histogram  
-              if (histogram==TRUE) draw.histogram(fxz.list, focal, moderation='continuous', x1s, ux1, nux1, cols,ylim,xlim,max.unique)
+              breaks=NULL #these are the x-axis bins for histograms
+              if (histogram==TRUE) breaks=draw.histogram(fxz.list, focal, moderation='continuous', x1s, ux1, nux1, cols,ylim,xlim,max.unique)
               #See draw.histogram.R
-
+            
+          #Return braks
+              return(breaks)
         }           
      
     
