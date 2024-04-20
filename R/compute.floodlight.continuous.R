@@ -14,8 +14,8 @@ compute.floodlight.continuous=function(spotlights, data, xs,model,xvar,zvar)
           #Save marginal effects results
             options(warn=-1)
             floodlight[[j]] = data.frame(marginaleffects::slopes(model, newdata = ndj, var=xvar))
-            floodlight[[j]]$z=zj
-
+            floodlight[[j]][,zvar]=zj
+          
             options(warn=-0)
                 #Note: suppress warnings because `marginaleffects` warns about k as a missing variable when it is specified
            
