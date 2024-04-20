@@ -24,47 +24,61 @@ interprobe(
   main1 = "GAM Simple Slopes",
   main2 = "GAM Johnson-Neyman",
   legend.round = c(1, 4),
-  draw = TRUE,
+  draw = "both",
   file = NULL,
-  xlim = NULL
+  xlim = NULL,
+  ylim = NULL
 )
 }
 \arguments{
-\item{x}{the predictor of interest (in an experiment, the discrete randomly
-assigned manipulation). Can be the name of a variable (e.g., x='treatment')
-or data (e.g., x=c(1,3,1,4)}
+\item{x}{the focal predictor of interest (in an experiment, the discrete randomly
+assigned manipulation). Can be the name of a variable (e.g., x='treatment') when
+providing a data or a model argument, or a vector with values when the data are
+not passed as a dataframe.}
 
-\item{z}{the moderator. Can be the name of variable, or a vector with data}
+\item{z}{the moderator. Same options as for \code{x}}
 
-\item{y}{the dependent variable. Can be the name of variable, or a vector with data}
+\item{y}{the dependent variable. Same options as for \code{x}.
+Does not need to be specified when specifying a pre-existing \code{model} object.}
 
-\item{model}{an optional model which will be probed (can be any model accepted
-by package 'marginaleffects' including lm, glm, gam). If unspecified, a GAM model
-is estimated on the provided data, including flexible main effects for x an z
-and a flexible interaction.}
+\item{model}{an optional model output object, containing an interaction to be probed.
+Any model accepted by the package 'marginaleffects' including lm, glm, and gam
+is accepted. If unspecified, a GAM model is estimated on  provided data. If specified
+x (focal predictor) and z (the moderator) must also be specified, with variable names.}
 
-\item{data}{an optional data frame with variables used in the model}
+\item{data}{an optional data frame containing the focal predictor, moderator and
+dependent variable. If \code{data} is specified, \code{x}, \code{z} and \code{y} must be names of
+variables in that dataframe. \code{model} and \code{data} may not be both specified in
+a given \code{interprobe()} call (because model objects (e.g. \code{lm1} in
+\code{lm1=lm(y~x*z,data=df)}) include the data on which they are based.}
 
 \item{k}{level of smoothness/flexibility used by mgcv::gam() to fit functions,
 the default used by interprobe() is k=3, increasing it will lead to more wiggly
 functions increasing risk of over-fitting. mgcv::gam() uses a much higher default
-which interprobe opts-out of by specifying it to be k=3. In gam it is gam(y~s(x,k=3)).}
+which interprobe opts-out of by specifying it to be k=3. e.g., gam(y~s(x,k=3)).}
 
 \item{spotlights}{vector with three values of the moderator at which simple slopes
-and Johnsohn-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
+and Johnson-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
 of moderator values in the data.}
 
 \item{spotlight.labels}{labels to use in the legend to indicate the spotlight values}
 
-\item{histogram}{logical on whether sample sizes are depicted under the}
+\item{histogram}{logical on whether sample sizes are depicted under the figure (default: TRUE)}
 
-\item{max.unique}{integer with the cutoff at which interprobe() reports frequencies
-for sets rather than individual values in the histogram}
+\item{max.unique}{the sample size can be depicted for each possible value in the x
+axis or aggregating frequencies within a ranges of values (e.g., showing the
+aggregate frequency of values between 100 and 200 or showing the frequency of
+100, 101, 102... separately). When the number of unique values in the data
+is bigger than 'max.unique' the frequencies are aggregated.}
 
-\item{n.bin.continuous}{integer with number of bins to make for histogram}
+\item{n.bin.continuous}{integer with number of bins in histogram (alters figure
+only if frequencies are aggregated, see \code{max.unique}).}
 
-\item{n.max}{integer with the frequency count at which color signaling
-sample size maxes out and not longer gets darker with bigger samples.}
+\item{n.max}{in the figure, lines get wider and darker for bigger sample sizes up to a
+point. n.max is the point at which lines do not get any darker/wider as sample
+size get larger (e.g., with the default of \code{nmax}=50, whether there are 50 or
+100 observations with x=3, the line depicting the estimated functional form will
+be equally dark and wide around x=3).}
 
 \item{xlab}{label for the x axis, defaults to be "Focal Predictor" when x is on the x-axis
 and "Moderator" when z is in the x-axis. Users should replace default with a
@@ -82,15 +96,23 @@ clear descriptor of the variables (e.g., "z: age of participants")}
 
 \item{main2}{Header for Johnson Neyman figure (defaults to 'GAM Johnson-Neyman')}
 
-\item{legend.round}{vector with minimum and maximum number of decimals to round
-in the legend, e.g., c(0,0) forces 0 decimals}
+\item{legend.round}{numeric vector of size two with the minimun and maximum
+number of decimals to show on the legend.}
 
-\item{draw}{TRUE/FALSE for whether to make a plot}
+\item{draw}{which plots to draw?
+\itemize{
+\item \code{"both"}: Draws both Simple Slopes and Johnson-Neyman
+\item \code{"simple slopes"}: Only Simple Slopes
+\item \code{"jn"}: Only Johnson-Neyman
+}}
 
-\item{file}{character with path to file to save the figure to, can be .svg or
-.png file (e.g., file='c:/temp/figure1.svg')}
+\item{file}{name of file to save figure to. Extension of the file name determines
+whether figure is a .svg or a .png file (e.g., file='c:/temp/figure1.svg').
+Default is NULL, in which case the figure is not saved, only shown on screen.}
 
 \item{xlim}{numeric vector of length 2, giving the x coordinates range}
+
+\item{ylim}{numeric vector of length 2, giving the y coordinates range}
 }
 \description{
 Probe interaction as proposed in Simonsohn (2024), estimating a GAM model

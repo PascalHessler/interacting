@@ -136,7 +136,11 @@ return(TRUE)
       check1 (cols, "cols", 3, 'character')
       
   #10 Draw
-      if (!is.logical(draw)) exit(("interprobe() says the argument 'draw' must be either TRUE or FALSE"))
+      check1 (draw, "draw", 1, 'character')
+      if (!draw %in% c('both','simple slopes','jn')) {
+        exit("interprobe() says that the argument 'draw' must be one of three values:\n  - 'both'\n  - 'simple slopes'\n  - 'jn'")
+        }
+
  
   #11 xlim
       if (!is.null(xlim)) check1 (xlim, "xlim", 2, 'numeric')
@@ -152,5 +156,7 @@ return(TRUE)
       
               } #End of file check
       
+      
+  #13 d
       
   }#End of function

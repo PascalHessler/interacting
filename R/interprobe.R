@@ -5,30 +5,43 @@
 #' curves off the GAM model. While designed for GAM it can be used to probe
 #' other models including lm()
 #'  
-#'@param x the predictor of interest (in an experiment, the discrete randomly 
-#'assigned manipulation). Can be the name of a variable (e.g., x='treatment') 
-#'or data (e.g., x=c(1,3,1,4)
-#'@param z the moderator. Can be the name of variable, or a vector with data
-#'@param y the dependent variable. Can be the name of variable, or a vector with data
-#'@param data an optional data frame with variables used in the model
-#'@param model an optional model which will be probed (can be any model accepted 
-#'by package 'marginaleffects' including lm, glm, gam). If unspecified, a GAM model 
-#'is estimated on the provided data, including flexible main effects for x an z 
-#'and a flexible interaction.
+#'@param x the focal predictor of interest (in an experiment, the discrete randomly 
+#'assigned manipulation). Can be the name of a variable (e.g., x='treatment') when 
+#'providing a data or a model argument, or a vector with values when the data are 
+#'not passed as a dataframe. 
+#'@param z the moderator. Same options as for `x`
+#'@param y the dependent variable. Same options as for `x`.
+#'Does not need to be specified when specifying a pre-existing `model` object.
+#'@param data an optional data frame containing the focal predictor, moderator and 
+#'dependent variable. If `data` is specified, `x`, `z` and `y` must be names of 
+#'variables in that dataframe. `model` and `data` may not be both specified in 
+#'a given `interprobe()` call (because model objects (e.g. `lm1` in 
+#'`lm1=lm(y~x*z,data=df)`) include the data on which they are based.
+#'@param model an optional model output object, containing an interaction to be probed.
+#'Any model accepted by the package 'marginaleffects' including lm, glm, and gam
+#'is accepted. If unspecified, a GAM model is estimated on  provided data. If specified
+#'x (focal predictor) and z (the moderator) must also be specified, with variable names.
 #'@param k level of smoothness/flexibility used by mgcv::gam() to fit functions, 
 #'the default used by interprobe() is k=3, increasing it will lead to more wiggly
 #' functions increasing risk of over-fitting. mgcv::gam() uses a much higher default
-#' which interprobe opts-out of by specifying it to be k=3. In gam it is gam(y~s(x,k=3)).
+#' which interprobe opts-out of by specifying it to be k=3. e.g., gam(y~s(x,k=3)).
 #'@param spotlights vector with three values of the moderator at which simple slopes 
-#'and Johnsohn-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
+#'and Johnson-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
 #'of moderator values in the data.
 #'@param spotlight.labels labels to use in the legend to indicate the spotlight values
-#'@param histogram logical on whether sample sizes are depicted under the 
-#'@param max.unique integer with the cutoff at which interprobe() reports frequencies
-#'for sets rather than individual values in the histogram
-#'@param n.bin.continuous integer with number of bins to make for histogram
-#'@param n.max integer with the frequency count at which color signaling
-#'sample size maxes out and not longer gets darker with bigger samples.
+#'@param histogram logical on whether sample sizes are depicted under the figure (default: TRUE)
+#'@param max.unique the sample size can be depicted for each possible value in the x 
+#'axis or aggregating frequencies within a ranges of values (e.g., showing the 
+#'aggregate frequency of values between 100 and 200 or showing the frequency of 
+#'100, 101, 102... separately). When the number of unique values in the data 
+#'is bigger than 'max.unique' the frequencies are aggregated.
+#'@param n.bin.continuous integer with number of bins in histogram (alters figure
+#'only if frequencies are aggregated, see `max.unique`).
+#'@param n.max in the figure, lines get wider and darker for bigger sample sizes up to a 
+#'point. n.max is the point at which lines do not get any darker/wider as sample 
+#'size get larger (e.g., with the default of `nmax`=50, whether there are 50 or 
+#'100 observations with x=3, the line depicting the estimated functional form will
+#'be equally dark and wide around x=3).
 #'@param xlab label for the x axis, defaults to be "Focal Predictor" when x is on the x-axis
 #'and "Moderator" when z is in the x-axis. Users should replace default with a
 #'clear descriptor of the variables (e.g., "z: age of participants")
@@ -42,10 +55,19 @@
 #'@param legend.round vector with minimum and maximum number of decimals to round 
 #'in the legend, e.g., c(0,0) forces 0 decimals
 #'@param cols vector with three colors used in the plot (defaults to blue, red, green)
-#'@param draw TRUE/FALSE for whether to make a plot
-#'@param file character with path to file to save the figure to, can be .svg or 
-#'.png file (e.g., file='c:/temp/figure1.svg')
+#'@param legend.round numeric vector of size two with the minimun and maximum 
+#'number of decimals to show on the legend.
+#'@param draw which plots to draw?  
+#'   \itemize{
+#'     \item \code{"both"}: Draws both Simple Slopes and Johnson-Neyman
+#'     \item \code{"simple slopes"}: Only Simple Slopes
+#'     \item \code{"jn"}: Only Johnson-Neyman
+#'   }
+#'@param file name of file to save figure to. Extension of the file name determines
+#'whether figure is a .svg or a .png file (e.g., file='c:/temp/figure1.svg'). 
+#'Default is NULL, in which case the figure is not saved, only shown on screen.
 #'@param xlim numeric vector of length 2, giving the x coordinates range
+#'@param ylim numeric vector of length 2, giving the y coordinates range
 #'
 #'@export
 
@@ -69,7 +91,7 @@ interprobe <- function(
                     main1="GAM Simple Slopes",
                     main2="GAM Johnson-Neyman",
                     legend.round=c(1,4),
-                    draw=TRUE,
+                    draw="both",
                     file=NULL,
                     xlim=NULL,
                     ylim=NULL)
@@ -270,23 +292,32 @@ interprobe <- function(
   
       
 #12 Plot on screen
-    if (draw==TRUE)
-    {
+      if (draw=='both')
+        {
     #12.1 #Two plots side by side
                 old_mfrow <- par('mfrow')
                 par(mfrow=c(1,2))
                 on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
-           
-    #12.2 Plot simple slopes     
-        make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
-
-    #12.3 Plot Floodlight/Johson-Neyman     
+        } 
       
+      
+    #12.2 Plot simple slopes     
+        
+        if (draw=='both' | draw %in% c('simple slopes','simple_slopes','simple','simple.slopes'))
+          {
+          make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)
+          }
+      
+      
+    #12.3 Plot Floodlight/Johson-Neyman     
+      if (draw=='both' | draw %in% c('johnson', 'jn','johnson-neyman','johnsonneyamn','floodlight'))
+      {
+
        make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim)  
-      
-    } 
+      }
+  
 #13 return output for plotting on your own
      
       invisible(output)          
