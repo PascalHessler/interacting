@@ -30,7 +30,7 @@ groundhog.library(pkgs,date)
     
 #1 INPUT SYNTAX
   #1.1 x,z,y
-    interprobe(x1,z1,y1,xlim=c(90,110))
+    interprobe(x1,z1,y1)
     
   #1.2 data
     interprobe('x2','z2','y2',data=data1)
