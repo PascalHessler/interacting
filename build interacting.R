@@ -5,11 +5,10 @@ pkg_path <- "c:/git/interacting/r"
   
   
 #INSTALL
-  #devtools::document(pkg_path)
+  devtools::document(pkg_path)
   #devtools::build(pkg_path)
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
   library('interacting')
-
   install.package(path, repos=NULL)
 ###################################################################
 
@@ -33,7 +32,7 @@ pkg_path <- "c:/git/interacting/r"
   spotlights=NULL
   spotlight.labels=NULL
   
-  draw = TRUE
+  draw = 'both'
   histogram = TRUE
   nbins = NULL
   n.max = 50  #below this sample size we shade to show few observations
@@ -48,17 +47,33 @@ pkg_path <- "c:/git/interacting/r"
   force.discrete.freqs=FALSE
    n.bin.continuous = 10
   max.unique=11
-  draw.simple.slopes=TRUE
-  draw.floodlight=TRUE
   legend.round=c(2,4)
   file=NULL
   
   
+  library('interacting')
+   df=rio::import("C:/Users/Uri/Dropbox (Penn)/research/GAM Floodlight/RB/data/8015 Study1A_Data.dta")
+   sub=sample(nrow(df),replace=FALSE, size=5000)
+   df=df[sub,]
+
+   df$vice_effect=factor(df$vice_effect)
+  g1 <- mgcv::gam(fv2_wns~s(hour2,by=vice_effect)+factor(df$photo), family=mgcv::nb(),data=df)
+    
+  interprobe(model=g1,x='vice_effect',z='hour2')
+  x='vice_effect'
+  z='hour2'
+  model=g1
   
+
+  xvar='vice_effect'
+  zvar='hour2'
+  
+  model$model
   
   
    n=1000
-    x1=rnorm(n)
+    #x1=rnorm(n)
+    x1=sample(c(2,1,0),size=n,r=T)
     z1=rnorm(n,mean=150,sd=30)
     y.raw = x1*sqrt(z1)
     e=rnorm(n,sd=sd(y.raw))
@@ -66,10 +81,25 @@ pkg_path <- "c:/git/interacting/r"
     data1=data.frame(x2=x1,y2=y1,z2=z1)
   
     
+    x=x1
+    z=z1
+    y=y1
   
-  interprobe('x2','z2','y2',data=data1)
-    interprobe(x2,z2,y2,data=data1)
+   res1= interprobe('x2','z2','y2',data=data1)
+  res1$frequencies
+res1$breaks   
 
+merge(res1$frequencies,res1$br)
+
+f1=res1$frequencies
+f2=data.frame(bin=rownames(f1), v0=f1[,1],v1=f1[,2],row.names = NULL)
+cbind(f2,res1$breaks)
+data.frame(f1)
+data.frame(res1$frequencies)
+   res1=  interprobe(x2,z2,y2,data=data1)
+
+  res1$
+  
   #devtools::test()
 
   library('interacting')

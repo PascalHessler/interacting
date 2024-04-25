@@ -22,16 +22,20 @@ groundhog.library(pkgs,date)
    n=10000
     x1=rnorm(n,mean=100,sd=5)
     z1=rnorm(n,mean=.8,sd=1)
-    y.raw = ifelse(z1>0, x1,0)
+    y.raw = ifelse(z1>0, z1*x1,0)
     e=rnorm(n,sd=.2*sd(y.raw))
     y1=y.raw+e
     data1=data.frame(x2=x1,y2=y1,z2=z1)
   
     
+    hist(y1)
 #1 INPUT SYNTAX
   #1.1 x,z,y
-    interprobe(x1,z1,y1)
+    r1=interprobe(x1,z1,y1,k=6)
+    r1$johnson.neyman
     
+    sig=r1$johnson.neyman[r1$johnson.neyman$conf.low*r1$johnson.neyman$conf.high>0,]
+    sig
   #1.2 data
     interprobe('x2','z2','y2',data=data1)
     interprobe(x2 , z2 , y2 , data=data1)

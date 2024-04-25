@@ -6,6 +6,7 @@
 
       #Marginal effect for condition 2 - 1, or both 3-1 and 2-1, so we exclude from loop 1, and add to all
         j=1
+        
         for (xj in ux[-1])
         {
          #Make prediction data
@@ -14,7 +15,6 @@
           data=model$model
           ndj = add.covariates.at.mean(ndj, data)  #utils.R  #Function #7
           
-
         #Save marginal effects results
           options(warn=-1)
           floodlight[[j]] = data.frame(marginaleffects::slopes(model=model, newdata = ndj,by=zvar))

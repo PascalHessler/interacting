@@ -27,7 +27,9 @@ interprobe(
   draw = "both",
   file = NULL,
   xlim = NULL,
-  ylim = NULL
+  ylim = NULL,
+  legend.simple.slopes = NULL,
+  legend.johnson.neyman = NULL
 )
 }
 \arguments{
@@ -113,6 +115,12 @@ Default is NULL, in which case the figure is not saved, only shown on screen.}
 \item{xlim}{numeric vector of length 2, giving the x coordinates range}
 
 \item{ylim}{numeric vector of length 2, giving the y coordinates range}
+
+\item{legend.simple.slopes}{text to place on legend title (e.g., "Moderator
+Values") in Simple Slopes plot}
+
+\item{legend.johnson.neyman}{text to place on legend title (e.g.,
+"Effect of focal predictor") in Johnson Neyman plot}
 }
 \description{
 Probe interaction as proposed in Simonsohn (2024), estimating a GAM model

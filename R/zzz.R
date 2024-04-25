@@ -14,7 +14,7 @@
         
       #While developing:
          packageStartupMessage ("#######################################################\n",
-                                "interacting v.0.1.0  DEV version: 2024 04 18 [727 - BCN]")
+                                "interacting v.0.1.0  DEV version: 2024 04 23 [403 - BCN]")
 
   } #End on attach
     

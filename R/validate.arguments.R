@@ -154,6 +154,34 @@
               } #End of file check
       
       
-  #13 d
+  #13 If submitted a model, and x is categorical, it must be a factor
+      
+      
+      if (!is.null(model))
+        {
+        #13.1 Focal predictor must be a factor if nux<=3
+            x = model$model[,xvar]
+            nux = length(unique(x))
+            model_txt = clean_string(deparse(substitute(model)))
+
+            if (nux<=3 & class(x)!='factor') {
+            exit(paste0("ERROR.\n   ",
+                  "interprobe() says the focal predictor x ('", xvar,"') has only \n   ",
+                 nux, " possible valuess. Make sure to define it as a factor before\n   ",
+                 "estimating the model '",model_txt,"'. You  can do that by running\n   ",
+                 "df$",xvar," <- factor(df$",xvar,"), where df is the name of the \n   ",
+                 "data frame containing  '",xvar,"'."))
+            }
+            
+        #13.2 No factors in formula
+            formula.txt = paste0(as.character(model$call),collapse=' ')
+            if (as.numeric(regexpr('factor\\(', formula.txt)) >0) {
+              exit("interprobe() says: you defined a variable as factor\n   ",
+                   "within the '",model_txt,"' call. This creates problems.\n   ",
+                   "Please define the factor variables as factors in \n   ",
+                   "the data before estimating the model \n   e.g., df$x <- factor(df$x)).")
+            }
+              
+      }
       
   }#End of function
