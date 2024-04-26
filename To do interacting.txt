@@ -1,3 +1,45 @@
--legend colors should match darkest color within the graph
--put floor on how gray the lines are
+-either ban or deal with squared terms
+-report numbers in the figure to allow checking reproducibility
+- include in interprobe output the range of values ofr which the effects are p<.05 pos / neg
+possibly a paragraph
+
+
+
+
+X-in 
+
+Output
+Simple Slopes:
+ At 15,50th and 85th percentile of what's i the x-axis, what is y-hat for the focal predictor
+ 
+JN
+  1) At 15,50th and 85th percentile of what's i the x-axis, what is effect for the focal predictor
+  
+  2) Range where significantly positive/negative
+  
+
+For each line {  
+	If there is one region of significance, report the numbers\
+	If more than one, say, "more than one region detected, 
+		Region 1: min to -4.2: significantly negative
+		Region 2: 4.2 to 5.8:  not significant 
+		Region 3:  5.8 to max significantly positive	
+	}
+	
+	When moderator is at 50th 
+		Region 1: min to -4.2: significantly negative
+		Region 2: 4.2 to 5.8:  not significant 
+		Region 3:  5.8 to max significantly positive	
+	}
+	
+	
+	When moderator is at 85th 
+	If more than one, say, "more than one region detected, 
+		Region 1: min to -4.2: significantly negative
+		Region 2: 4.2 to 5.8:  not significant 
+		Region 3:  5.8 to max significantly positive	
+	}
+	
+  
+  
 

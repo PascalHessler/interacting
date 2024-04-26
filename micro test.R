@@ -19,14 +19,21 @@ groundhog.library(pkgs,date)
   #x is excerize
   #z is temperature
   
-   n=10000
-    x1=rnorm(n,mean=100,sd=5)
-    z1=rnorm(n,mean=.8,sd=1)
-    y.raw = ifelse(z1>0, z1*x1,0)
+   n=1000
+    x=rnorm(n,mean=100,sd=5)
+    z=rnorm(n,mean=0,sd=1)
+    y.raw=x*z
     e=rnorm(n,sd=.2*sd(y.raw))
-    y1=y.raw+e
-    data1=data.frame(x2=x1,y2=y1,z2=z1)
+    y=y.raw+e
   
+    
+   r= interprobe(x,z,y)
+   j=r$johnson.neyman
+    xvar='condition'
+    zvar='age'
+    
+    
+    message(get.regions.jn(j,xvar,zvar))
     
     hist(y1)
 #1 INPUT SYNTAX

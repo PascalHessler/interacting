@@ -254,9 +254,12 @@ interprobe <- function(
     #Frequencies
      if (ncol(fxz)==2)  frequencies=data.frame(bin=rownames(fxz), f1=fxz[,1],f2=fxz[,2],row.names = NULL)
      if (ncol(fxz)==3)  frequencies=data.frame(bin=rownames(fxz), f1=fxz[,1],f2=fxz[,2],f3=fxz[,3],row.names = NULL)
+      
+    #Assign  name to jn
+     jn=df2
 
       
-      output=list(simple.slopes = df1, johnson.neyman = df2, frequencies=frequencies)
+      output=list(simple.slopes = df1, johnson.neyman = jn, frequencies=frequencies)
     
       
   #10 Remove "GAM" from  figure headers for non-GAM models
@@ -326,21 +329,36 @@ interprobe <- function(
       
       
     #12.3 Plot Floodlight/Johson-Neyman     
-      if (draw=='both' | draw %in% c('johnson', 'jn','johnson-neyman','johnsonneyamn','floodlight'))
+      if (draw=='both' | draw == "johnson neyman")
       {
 
        output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
       }
 #12 Add histogram bins (NULL for discrete x1axis)
-      if (draw %in% c('both','simple.slopes')) breaks=output.simple.slopes
+      if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes
       if (draw %in% c('johnson.neyman'))       breaks=output.johnson.neyman
      # output$frequencies = cbind(output$frequencies,breaks)
+
+      
+#13 REport JN points (sort of jn points) unless only simple slopes requested
+
+      regions.jn = 'N/A'
+       if (draw!='simple slopes') {
+        regions.jn = get.regions.jn(jn , xvar , zvar)
+        
+       }
+      class(regions.jn) = 'formatted_message'
+      output$regions.jn = regions.jn
 #13 return output for plotting on your own
       if (!is.null(breaks))
       {
       output$frequencies$bin_from=breaks$from
       output$frequencies$bin_to  =breaks$to
       }
+      
+      
+#14 Resort the list
+      output=output[c(4,1,2,3)]
       invisible(output)          
 }      

@@ -1,6 +1,12 @@
 #Functions
 
+#1 adjustcolor2():     Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
+#2 line.seg()    :     Plot lines by segments of differnet color and width
+
+#11 Print formatted message when called directly
     
+
+#1 adjustcolor2():     Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
  #Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
     adjustcolor2 <- function(col, dark) {
       new_cols=c()
@@ -17,7 +23,7 @@
 
       
   
-#1 Plot line by segments of width and color
+#2 line.seg()    :     Plot lines by segments of differnet color and width
 
  line.seg = function(x,y,lwd,col,g,lty=1,type='l')
           {
@@ -206,4 +212,10 @@
       #Remove everything except letters, numbers, and underscores
       cleaned_string <- gsub("[^A-Za-z0-9_]", "", input_string)
   return(cleaned_string)
-  }
+   }
+   
+   
+#11 Print formatted message when called directly
+    print.formatted_message <- function(x) {
+      cat(x, "\n")
+      }
