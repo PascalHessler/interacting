@@ -215,7 +215,3 @@
    }
    
    
-#11 Print formatted message when called directly
-    print.formatted_message <- function(x) {
-      cat(x, "\n")
-      }

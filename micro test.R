@@ -20,37 +20,30 @@ groundhog.library(pkgs,date)
   #z is temperature
   
    n=1000
-    x=rnorm(n,mean=100,sd=5)
-    z=rnorm(n,mean=0,sd=1)
-    y.raw=x*z
-    e=rnorm(n,sd=.2*sd(y.raw))
-    y=y.raw+e
-  
-    
-   r= interprobe(x,z,y)
-   j=r$johnson.neyman
-    xvar='condition'
-    zvar='age'
-    
-    
-    message(get.regions.jn(j,xvar,zvar))
-    
-    hist(y1)
+    x1=rnorm(n,mean=100,sd=5)
+    z1=rnorm(n,mean=0,sd=1)
+    y1.raw=x1*z1
+    e=rnorm(n,sd=.2*sd(y1.raw))
+    y1=y1.raw+e
+
+    data1=data.frame(x1,z1,y1)
+    r=interprobe(x1,z1,y1)
+     
 #1 INPUT SYNTAX
   #1.1 x,z,y
     r1=interprobe(x1,z1,y1,k=6)
-    r1$johnson.neyman
     
-    sig=r1$johnson.neyman[r1$johnson.neyman$conf.low*r1$johnson.neyman$conf.high>0,]
-    sig
+    
   #1.2 data
-    interprobe('x2','z2','y2',data=data1)
-    interprobe(x2 , z2 , y2 , data=data1)
+    interprobe('x1','z1','y1',data=data1)
+    interprobe(x1 , z1 , y1 , data=data1)
 
   #1.3 model linear
     lm1=lm(y1~x1*z1,data=data1)
     interprobe(model=lm1,x=x1,z=z1)
-    interprobe(model=lm1,x='x1',z='z1')
+    r2=interprobe(model=lm1,x='x1',z='z1')
+    
+    r2$regions.jn
 
   #1.4 model gam
     g1=mgcv::gam(y1~x1*z1,data=data1)

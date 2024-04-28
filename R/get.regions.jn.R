@@ -48,8 +48,8 @@ get.regions.jn=function(j,xvar,zvar)
       k=k+1
       xr=xs[rowk,]
       output=paste0(output, 
-                  "\n", k ,") When '",zvar,"' = ",round(zk,2),", the effect of '",xvar,"' is ",xr$sign.text,
-                  " in the range of '",xvar,"': [",round(xr$from.x,2)," to ", round(xr$to.x,2),"]")
+                   k ,") When '",zvar,"' = ",round(zk,2),", the effect of '",xvar,"' is ",xr$sign.text,
+                  " in the range of '",xvar,"': [",round(xr$from.x,2)," to ", round(xr$to.x,2),"]\n")
       }
 
     }

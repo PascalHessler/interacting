@@ -123,7 +123,7 @@ interprobe <- function(
     }
     
   #What will be done
-        message(paste0("Probing the interaction with:\n",
+        cat(paste0("Probing the interaction with:\n",
                 "   - Focal predictor : ",xvar,"\n",
                 "   - Moderator : " ,zvar,"\n"))
   
@@ -346,10 +346,10 @@ interprobe <- function(
       regions.jn = 'N/A'
        if (draw!='simple slopes') {
         regions.jn = get.regions.jn(jn , xvar , zvar)
-        
+        cat(regions.jn)  
        }
-      class(regions.jn) = 'formatted_message'
-      output$regions.jn = regions.jn
+     
+      
 #13 return output for plotting on your own
       if (!is.null(breaks))
       {
