@@ -41,5 +41,19 @@ For each line {
 	}
 	
   
-  
+ 
+ 
 
+###############################################################
+
+
+
+Added by Andres after 2024/04/29: 
+1a. Allow changing the legend titles (right now-> "Focal Predictor Value" for simple slopes and "Contrasted Focal Predictor" for JN)
+1b. Allow changing the legend labels (e.g. 0->"Attitudinal", 1->"Behavioral"). For some reason, recoding the labels to meaningful character labels and refitting the model changes the simple slopes figure (even though I made sure the reference group is correct)
+2. Give a bit space between ylab1 text and left end of plot (looks too right right now)
+3. Allow single x-axis for both plots (to avoid repetition, given that its identical)
+4. If provided model is fitted with lm(), default to: main2="Linear Johnson-Neyman"
+5. It would be nice, but not essential, if there was a way to modify the size of the plot to adjust resolution etc.
+6. The lines showing where there is more or less data still feel a bit small, see "8011 interprobe figure linear.svg" in RB/Other folder for instance.
+7. Could be useful to display "k=#" in figures with GAM for transparency
