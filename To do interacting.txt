@@ -48,12 +48,16 @@ For each line {
 
 
 
-Added by Andres after 2024/04/29: 
-1a. Allow changing the legend titles (right now-> "Focal Predictor Value" for simple slopes and "Contrasted Focal Predictor" for JN)
-1b. Allow changing the legend labels (e.g. 0->"Attitudinal", 1->"Behavioral"). For some reason, recoding the labels to meaningful character labels and refitting the model changes the simple slopes figure (even though I made sure the reference group is correct)
-2. Give a bit space between ylab1 text and left end of plot (looks too right right now)
-3. Allow single x-axis for both plots (to avoid repetition, given that its identical)
-4. If provided model is fitted with lm(), default to: main2="Linear Johnson-Neyman"
-5. It would be nice, but not essential, if there was a way to modify the size of the plot to adjust resolution etc.
-6. The lines showing where there is more or less data still feel a bit small, see "8011 interprobe figure linear.svg" in RB/Other folder for instance.
-7. Could be useful to display "k=#" in figures with GAM for transparency
+Added by Andres:
+-Give a bit space between ylab1 text and left end of plot (looks too right right now)
+-The lines showing where there is more or less data still feel a bit small, see "8011 interprobe figure linear.svg" in RB/Other folder for instance. But maybe this is not a bug but a feature? The sample size is quite small in the mentioned case
+-Could be useful to (automatically) display "k=#" in figures with GAM for transparency
+-at some point, we discussed the idea of automatically generating multiple visualizations with different ks. It might be nice to display and generate k=3, and then generate k=5,k=7, etc automatically so it forces users to look at them.
+- when you do "draw='simple slopes'"->it correctly displays only the SS figure in rstudio, but it draws both figures 
+- would be really useful to be able to set ylim separately for left and right plot. But fixing the previous issue might be enough (that is, you can generate the left and right plots separately)
+
+Specific to 8015:
+- interprobe does not work with the negative binomial or GAM negative binomial. 
+- I worry that requiring categorical variables with 2 levels to be factors is too restrictive. It basically forces researchers to use dummy coding. But researchers may want to use contrast coding instead (+1,-1 or +.5,-.5) that allows them to interpret other effects in their models as main effects rather than simple effects. 8015 exemplifies this: if the key categorical predictor is entered as a factor, the interaction results differ even more from the original results (compared to using 1 or -1, which the authors used), so it's not really possible to model the analysis that is closest to the one used by the authors with interprobe.
+
+
