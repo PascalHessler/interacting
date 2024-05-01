@@ -55,9 +55,7 @@ Added by Andres:
 -at some point, we discussed the idea of automatically generating multiple visualizations with different ks. It might be nice to display and generate k=3, and then generate k=5,k=7, etc automatically so it forces users to look at them.
 - when you do "draw='simple slopes'"->it correctly displays only the SS figure in rstudio, but it draws both figures 
 - would be really useful to be able to set ylim separately for left and right plot. But fixing the previous issue might be enough (that is, you can generate the left and right plots separately)
-
-Specific to 8015:
-- interprobe does not work with the negative binomial or GAM negative binomial. 
+- interprobe does not work with the negative binomial (8015)
 - I worry that requiring categorical variables with 2 levels to be factors is too restrictive. It basically forces researchers to use dummy coding. But researchers may want to use contrast coding instead (+1,-1 or +.5,-.5) that allows them to interpret other effects in their models as main effects rather than simple effects. 8015 exemplifies this: if the key categorical predictor is entered as a factor, the interaction results differ even more from the original results (compared to using 1 or -1, which the authors used), so it's not really possible to model the analysis that is closest to the one used by the authors with interprobe.
 
 
