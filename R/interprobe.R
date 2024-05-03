@@ -105,7 +105,6 @@ interprobe <- function(
   {
  
  
-  
   #0 Get var names
         xvar <- clean_string(deparse(substitute(x)))
         zvar <- clean_string(deparse(substitute(z)))
@@ -285,23 +284,41 @@ interprobe <- function(
               extension= tools::file_ext(file)
                   
           #Type of figure file
-              if (extension=='svg') svg(file,width=14,height=7)
-              if (extension=='png') png(file,width=14000,height=8000,res=1200)
-
-          #Two plots side by side
-                old_mfrow <- par('mfrow')
+              
+              if (draw=='both')
+              {
+                if (extension=='svg') svg(file,width=14,height=7)
+                if (extension=='png') png(file,width=14000,height=7000,res=1000)
                 par(mfrow=c(1,2))
-                on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
-           
-          #Plot simple slopes (spotlight)
-            make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)
+                par(oma=c(0,1,0,0))
+                
+                
 
+                
+
+              } else {
+                
+                if (extension=='svg') svg(file,width=7,height=7)
+                if (extension=='png') png(file,width=7000,height=7000,res=1000)
+                par(oma=c(0,1,0,0))
+                
+              }     
+              
+              
+            
+          #Plot simple slopes (spotlight)
+            if (draw %in% c("both","simple slopes"))
+              {
+              make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)
+              }
           #Plot Johson-Neyman (floodlight)
-     
-           make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
-      
+             if (draw %in% c("both","jn"))
+               {
+                make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                     focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
+               }
+              
           #End
             message("The figures have been saved to '",file,"'")
             dev.off()        
@@ -310,18 +327,23 @@ interprobe <- function(
   
       
 #12 Plot on screen
-      if (draw=='both')
+      old_par = par(no.readonly = TRUE)
+      par(oma=c(0,1,0,0))
+      
+        if (draw=='both')
         {
     #12.1 #Two plots side by side
-                old_mfrow <- par('mfrow')
+                #old_mfrow <- par('mfrow')
+                old_par = par(no.readonly = TRUE)
                 par(mfrow=c(1,2))
-                on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
+                on.exit(par(old_par)) 
+                #on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
         } 
       
       
     #12.2 Plot simple slopes     
         
-        if (draw=='both' | draw %in% c('simple slopes','simple_slopes','simple','simple.slopes'))
+        if (draw %in% c('simple slopes','both'))
           {
           output.simple.slopes = make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
                    focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)  
@@ -329,7 +351,7 @@ interprobe <- function(
       
       
     #12.3 Plot Floodlight/Johson-Neyman     
-      if (draw=='both' | draw == "johnson neyman")
+      if (draw %in% c('jn','both'))
       {
 
        output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
@@ -337,7 +359,7 @@ interprobe <- function(
       }
 #12 Add histogram bins (NULL for discrete x1axis)
       if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes
-      if (draw %in% c('johnson.neyman'))       breaks=output.johnson.neyman
+      if (draw %in% c('jn'))                   breaks=output.johnson.neyman
      # output$frequencies = cbind(output$frequencies,breaks)
 
       
