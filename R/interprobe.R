@@ -67,7 +67,8 @@
 #'whether figure is a .svg or a .png file (e.g., file='c:/temp/figure1.svg'). 
 #'Default is NULL, in which case the figure is not saved, only shown on screen.
 #'@param xlim numeric vector of length 2, giving the x coordinates range
-#'@param ylim numeric vector of length 2, giving the y coordinates range
+#'@param ylim1 numeric vector of length 2, giving the y coordinates range for Simple Slopes plot
+#'@param ylim2 numeric vector of length 2, giving the y coordinates range for Johnson-Neyman (jn) plot
 #'@param legend.simple.slopes text to place on legend title (e.g., "Moderator 
 #'Values") in Simple Slopes plot
 #'@param legend.johnson.neyman text to place on legend title (e.g., 
@@ -98,7 +99,8 @@ interprobe <- function(
                     draw="both",
                     file=NULL,
                     xlim=NULL,
-                    ylim=NULL,
+                    ylim1=NULL,
+                    ylim2=NULL,
                     legend.simple.slopes  = NULL,
                     legend.johnson.neyman = NULL)
                     
@@ -310,13 +312,13 @@ interprobe <- function(
             if (draw %in% c("both","simple slopes"))
               {
               make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes)
               }
           #Plot Johson-Neyman (floodlight)
              if (draw %in% c("both","jn"))
                {
                 make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                     focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
+                     focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim2,legend.title=legend.johnson.neyman)  
                }
               
           #End
@@ -346,7 +348,7 @@ interprobe <- function(
         if (draw %in% c('simple slopes','both'))
           {
           output.simple.slopes = make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.simple.slopes)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes)  
           }
       
       
@@ -355,7 +357,7 @@ interprobe <- function(
       {
 
        output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title=legend.johnson.neyman)  
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim2,legend.title=legend.johnson.neyman)  
       }
 #12 Add histogram bins (NULL for discrete x1axis)
       if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes

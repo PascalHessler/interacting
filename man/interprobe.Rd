@@ -27,7 +27,8 @@ interprobe(
   draw = "both",
   file = NULL,
   xlim = NULL,
-  ylim = NULL,
+  ylim1 = NULL,
+  ylim2 = NULL,
   legend.simple.slopes = NULL,
   legend.johnson.neyman = NULL
 )
@@ -114,7 +115,9 @@ Default is NULL, in which case the figure is not saved, only shown on screen.}
 
 \item{xlim}{numeric vector of length 2, giving the x coordinates range}
 
-\item{ylim}{numeric vector of length 2, giving the y coordinates range}
+\item{ylim1}{numeric vector of length 2, giving the y coordinates range for Simple Slopes plot}
+
+\item{ylim2}{numeric vector of length 2, giving the y coordinates range for Johnson-Neyman (jn) plot}
 
 \item{legend.simple.slopes}{text to place on legend title (e.g., "Moderator
 Values") in Simple Slopes plot}
