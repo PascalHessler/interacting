@@ -3,7 +3,7 @@
   #  plot.x_on_axis = function(xlab,ylab,main, res , histogram, data,xs, gr,spotlights,cols,spotlight.labels,focal,moderation,nux,max.unique,fxz.list)
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
-                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title)
+                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title,x.ticks)
           {   
       #res: list with results from either simple.slopes or floodlight 
       
@@ -68,12 +68,24 @@
          #Bottom space for histogram
             if (histogram==TRUE) ylim[1]=ylim[1]- (.15 + n.lines*.07)*diff(ylim)        #add at the bottom for the histogram
           
-    #4 Set x-lim
-            if (is.null(xlim)) xlim = x1.range
-
+    #4 Set x options
+            #xlim
+             if (is.null(xlim)) xlim = x1.range
+            
+            #draw x ticks?
+              xaxt = 's'                         #assume yet
+              if (!is.null(x.ticks)) xaxt = 'n'  #but not if x.ticks isn't null
+          
     #5 Empty plot
-            plot(x1s,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2)
-            axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
+              plot(x1s,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2,xaxt=xaxt)
+              axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
+            
+      #Add custom xaxt if necessary
+              if (!is.null(x.ticks)) {
+                if (!is.data.frame(x.ticks)) axis(side=1,at=x.ticks)
+                if (is.data.frame(x.ticks))  axis(side=1,at=x.ticks[,1], x.ticks[,2])
+              }
+            
          
     #5.5 LIne at 0 for floodlight
             if (type=='floodlight') {
