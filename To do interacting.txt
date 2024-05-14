@@ -1,61 +1,12 @@
--either ban or deal with squared terms
--report numbers in the figure to allow checking reproducibility
-- include in interprobe output the range of values ofr which the effects are p<.05 pos / neg
-possibly a paragraph
-
-
-
-
-X-in 
-
-Output
-Simple Slopes:
- At 15,50th and 85th percentile of what's i the x-axis, what is y-hat for the focal predictor
- 
-JN
-  1) At 15,50th and 85th percentile of what's i the x-axis, what is effect for the focal predictor
-  
-  2) Range where significantly positive/negative
-  
-
-For each line {  
-	If there is one region of significance, report the numbers\
-	If more than one, say, "more than one region detected, 
-		Region 1: min to -4.2: significantly negative
-		Region 2: 4.2 to 5.8:  not significant 
-		Region 3:  5.8 to max significantly positive	
-	}
-	
-	When moderator is at 50th 
-		Region 1: min to -4.2: significantly negative
-		Region 2: 4.2 to 5.8:  not significant 
-		Region 3:  5.8 to max significantly positive	
-	}
-	
-	
-	When moderator is at 85th 
-	If more than one, say, "more than one region detected, 
-		Region 1: min to -4.2: significantly negative
-		Region 2: 4.2 to 5.8:  not significant 
-		Region 3:  5.8 to max significantly positive	
-	}
-	
-  
- 
- 
-
-###############################################################
-
-
-
-Added by Andres:
--Give a bit space between ylab1 text and left end of plot (looks too right right now)
--The lines showing where there is more or less data still feel a bit small, see "8011 interprobe figure linear.svg" in RB/Other folder for instance. But maybe this is not a bug but a feature? The sample size is quite small in the mentioned case
+jn output not being shown 
+Andres:
 -Could be useful to (automatically) display "k=#" in figures with GAM for transparency
--at some point, we discussed the idea of automatically generating multiple visualizations with different ks. It might be nice to display and generate k=3, and then generate k=5,k=7, etc automatically so it forces users to look at them.
-- when you do "draw='simple slopes'"->it correctly displays only the SS figure in rstudio, but it draws both figures 
-- would be really useful to be able to set ylim separately for left and right plot. But fixing the previous issue might be enough (that is, you can generate the left and right plots separately)
-- interprobe does not work with the negative binomial (8015)
-- I worry that requiring categorical variables with 2 levels to be factors is too restrictive. It basically forces researchers to use dummy coding. But researchers may want to use contrast coding instead (+1,-1 or +.5,-.5) that allows them to interpret other effects in their models as main effects rather than simple effects. 8015 exemplifies this: if the key categorical predictor is entered as a factor, the interaction results differ even more from the original results (compared to using 1 or -1, which the authors used), so it's not really possible to model the analysis that is closest to the one used by the authors with interprobe.
+-at some point, we discussed the idea of automatically generating multiple visualizations with different ks. 
+		It might be nice to display and generate k=3, and then generate k=5,k=7, etc automatically so it forces users to look at them.
+
+- I worry that requiring categorical variables with 2 levels to be factors is too restrictive. It basically forces researchers to use dummy coding. 
+		But researchers may want to use contrast coding instead (+1,-1 or +.5,-.5) that allows them to interpret other effects in their models as main effects rather than simple effects. 
+		8015 exemplifies this: if the key categorical predictor is entered as a factor, the interaction results differ even more from the original results (compared to using 1 or -1, which the authors used),
+		 so it's not really possible to model the analysis that is closest to the one used by the authors with interprobe.
 
 
