@@ -73,7 +73,11 @@
 #'Values") in Simple Slopes plot
 #'@param legend.johnson.neyman text to place on legend title (e.g., 
 #'"Effect of focal predictor") in Johnson Neyman plot 
-#'
+#'@param x.ticks values to use for ticks in x-axis, either a vector or numeric values
+#'or a dataframe with two columns. The first column contains x-axis variable values, the second
+#'the labels to show in the x-axis for those values, e.g., x.ticks=data.frame(values=c(1,4,7),
+#'labels=c("Against","Neutral","Favor")).  
+#'@param quiet if TRUE interprobe() does not print output on the console as it runs.
 #'@export
 
 
@@ -103,7 +107,8 @@ interprobe <- function(
                     ylim2=NULL,
                     legend.simple.slopes  = NULL,
                     legend.johnson.neyman = NULL,
-                    x.ticks=NULL)
+                    x.ticks=NULL,
+                    quiet=FALSE)
                     
   {
  
@@ -113,8 +118,8 @@ interprobe <- function(
         zvar <- clean_string(deparse(substitute(z)))
         yvar <- clean_string(deparse(substitute(y)))
 
-   #First length and type of arguments
-    validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
+  #1 Validate input and determine what was provided, vector, model, or data.frame
+        validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar)   
 
       
@@ -125,22 +130,16 @@ interprobe <- function(
     }
     
   #What will be done
+        if (quiet==FALSE)
+        {
         cat(paste0("Probing the interaction with:\n",
                 "   - Focal predictor : ",xvar,"\n",
                 "   - Moderator : " ,zvar,"\n"))
+        }
   
-  #1 Validate input and determine what was provided, vector, model, or data.frame
-  
- 
-
-
-
-  #Then combination to determine if we were given a model or a dataset or vectors
+  #Validte combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
 
-
-
-          
   #2 Create data
     #Extract if provided
       if (v$input.data==FALSE & v$input.xyz==TRUE)  {
@@ -336,11 +335,9 @@ interprobe <- function(
         if (draw=='both')
         {
     #12.1 #Two plots side by side
-                #old_mfrow <- par('mfrow')
-                old_par = par(no.readonly = TRUE)
-                par(mfrow=c(1,2))
-                on.exit(par(old_par)) 
-                #on.exit(par(mfrow=old_mfrow)) # Ensure original par settings are restored on function exit
+            old_par = par(no.readonly = TRUE)
+            par(mfrow=c(1,2))
+            on.exit(par(old_par)) 
         } 
       
       
@@ -366,12 +363,12 @@ interprobe <- function(
      # output$frequencies = cbind(output$frequencies,breaks)
 
       
-#13 REport JN points (sort of jn points) unless only simple slopes requested
+#13 REport JN points unless only simple slopes requested or quiet==TRUE
 
       regions.jn = 'N/A'
-       if (draw!='simple slopes') {
-        regions.jn = get.regions.jn(jn , xvar , zvar)
-        cat(regions.jn)  
+       if (draw!='simple slopes' & quiet==FALSE) {
+        regions.jn = get.regions.jn(jn , xvar , zvar ,focal)
+         cat(regions.jn)  
        }
      
       

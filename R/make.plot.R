@@ -80,25 +80,25 @@
               plot(x1s,res[[1]]$estimate,type='n',xlab=xlab,ylab=ylab,las=1,ylim=ylim,xlim=xlim,yaxt='n',cex.lab=1.3,font.lab=2,xaxt=xaxt)
               axis(2,at=pretty(ylim)[c(-1,-2)],las=1) #y-axis missing lower two ticks to give space to the histogram
             
-      #Add custom xaxt if necessary
+    #6 Add custom x axis ticks if requested
               if (!is.null(x.ticks)) {
                 if (!is.data.frame(x.ticks)) axis(side=1,at=x.ticks)
                 if (is.data.frame(x.ticks))  axis(side=1,at=x.ticks[,1], x.ticks[,2])
               }
             
          
-    #5.5 LIne at 0 for floodlight
+    #7 Line at 0 for floodlight
             if (type=='floodlight') {
               axis(2,at=0,las=1)
               abline(h=0,lty=2,col='gray77')
               }
-    #6 Loop making the 2 or 3 lines
+    #8 Loop making the 2 or 3 lines
                j=1
   
                col.seg = cols
                if (focal=='categorical' & type=='floodlight') col.seg=col.seg[-1]  
                
-                 #If floodlighting a categoricall predictor, drop the first color for that's baseline
+              #If floodlighting a categorical predictor, drop the first color for that's baseline
                
               for (j in 1:n.lines) {
                #Color of lines

@@ -49,43 +49,33 @@ pkg_path <- "c:/git/interacting/r"
   max.unique=11
   legend.round=c(2,4)
   file=NULL
-  
-  
-  library('interacting')
-   df=rio::import("C:/Users/Uri/Dropbox (Penn)/research/GAM Floodlight/RB/data/8015 Study1A_Data.dta")
-   sub=sample(nrow(df),replace=FALSE, size=5000)
-   df=df[sub,]
+  ylim1=NULL  
+  ylim2=NULL
+  x.ticks=NULL
+  legend.simple.slopes  = NULL
+legend.johnson.neyman = NULL
 
-   df$vice_effect=factor(df$vice_effect)
-  g1 <- mgcv::gam(fv2_wns~s(hour2,by=vice_effect)+factor(df$photo), family=mgcv::nb(),data=df)
-    
-  interprobe(model=g1,x='vice_effect',z='hour2')
-  x='vice_effect'
-  z='hour2'
-  model=g1
-  
 
-  xvar='vice_effect'
-  zvar='hour2'
-  
-  model$model
-  
-  
+
+
    n=1000
-    #x1=rnorm(n)
-    x1=sample(c(2,1,0),size=n,r=T)
-    z1=rnorm(n,mean=150,sd=30)
-    y.raw = x1*sqrt(z1)
+    x=sample(c(2,1,0),size=n,r=T)
+    z=rnorm(n,mean=150,sd=30)
+    y.raw = x*sqrt(z)
     e=rnorm(n,sd=sd(y.raw))
-    y1=y.raw+e
-    data1=data.frame(x2=x1,y2=y1,z2=z1)
-  
+    y=y.raw+e
+    library('interacting')
     
-    x=x1
-    z=z1
-    y=y1
-  
-   res1= interprobe('x2','z2','y2',data=data1)
+    x=factor(x)
+    
+   res1= interacting::interprobe(x,z,y)
+
+   
+   
+   x.ticks=data.frame(x1=c(-1,0,1),y1=c('ugly',0,'hot'))
+      
+   warnings()
+   
   res1$frequencies
 res1$breaks   
 

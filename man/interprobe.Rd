@@ -30,7 +30,9 @@ interprobe(
   ylim1 = NULL,
   ylim2 = NULL,
   legend.simple.slopes = NULL,
-  legend.johnson.neyman = NULL
+  legend.johnson.neyman = NULL,
+  x.ticks = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -124,6 +126,13 @@ Values") in Simple Slopes plot}
 
 \item{legend.johnson.neyman}{text to place on legend title (e.g.,
 "Effect of focal predictor") in Johnson Neyman plot}
+
+\item{x.ticks}{values to use for ticks in x-axis, either a vector or numeric values
+or a dataframe with two columns. The first column contains x-axis variable values, the second
+the labels to show in the x-axis for those values, e.g., x.ticks=data.frame(values=c(1,4,7),
+labels=c("Against","Neutral","Favor")).}
+
+\item{quiet}{if TRUE interprobe() does not print output on the console as it runs.}
 }
 \description{
 Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
