@@ -1,4 +1,13 @@
-jn output not being shown 
+See why p-value not included in jn output, once fixed check "0.65 points, p = .029" in paper and subsquent p-values for the jn procedure comparison linear vs GAM
+make y.ticks like x.ticks 
+
+With Tweets:
+1) Do with k=unlimited and k=4 full sample
+2) Add 2 hours on each end
+3) Do it starting at midnight at 6AM
+
+
+
 Andres:
 -Could be useful to (automatically) display "k=#" in figures with GAM for transparency
 -at some point, we discussed the idea of automatically generating multiple visualizations with different ks. 
@@ -6,6 +15,9 @@ Andres:
 
 - I worry that requiring categorical variables with 2 levels to be factors is too restrictive. It basically forces researchers to use dummy coding. 
 		But researchers may want to use contrast coding instead (+1,-1 or +.5,-.5) that allows them to interpret other effects in their models as main effects rather than simple effects. 
+	
+	
+	
 		8015 exemplifies this: if the key categorical predictor is entered as a factor, the interaction results differ even more from the original results (compared to using 1 or -1, which the authors used),
 		 so it's not really possible to model the analysis that is closest to the one used by the authors with interprobe.
 
