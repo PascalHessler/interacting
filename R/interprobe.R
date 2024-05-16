@@ -248,7 +248,7 @@ interprobe <- function(
     
     #Drop 
       df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic",yvar)]
-      df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","p.value","statistic","term",
+      df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","statistic","term",
                               "predicted_lo",'predicted_hi','predicted',yvar)]
 
     #Rename      
