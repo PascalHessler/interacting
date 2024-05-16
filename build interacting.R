@@ -52,9 +52,12 @@ pkg_path <- "c:/git/interacting/r"
   ylim1=NULL  
   ylim2=NULL
   x.ticks=NULL
-  y
+  y1.ticks=NULL
+  y2.ticks=NULL
+  quiet=FALSE
+
   legend.simple.slopes  = NULL
-legend.johnson.neyman = NULL
+  legend.johnson.neyman = NULL
 
 
 
@@ -68,10 +71,10 @@ legend.johnson.neyman = NULL
     #library('interacting')
     
     x=factor(x)
+    r=interprobe(x,z,y)
+    interprobe(x,z,y,y1.ticks=data.frame(val=c(0,10,20),lab=c('low','medium','high')),file='c:/temp/f1.svg')
     
-    interprobe(x,z,y)
-   
-   
+   dev.off()
 
   library('interacting')
     n=100
@@ -81,7 +84,6 @@ legend.johnson.neyman = NULL
     e=rnorm(n,sd=sd(y.raw))
     z1=sample(c(44,55,66),n,r=T)
     y=y.raw+e
-    
     
     
   
