@@ -32,7 +32,10 @@ interprobe(
   legend.simple.slopes = NULL,
   legend.johnson.neyman = NULL,
   x.ticks = NULL,
-  quiet = FALSE
+  y1.ticks = NULL,
+  y2.ticks = NULL,
+  quiet = FALSE,
+  probe.bins = 1000
 )
 }
 \arguments{
@@ -133,6 +136,11 @@ the labels to show in the x-axis for those values, e.g., x.ticks=data.frame(valu
 labels=c("Against","Neutral","Favor")).}
 
 \item{quiet}{if TRUE interprobe() does not print output on the console as it runs.}
+
+\item{probe.bins}{interger specifying how many different values to probe the interactions for
+(the bigger this nummber, the more precise the regions of significance are and smoother the plots).}
+
+\item{y.ticks}{same as x.ticks, for the y-axis}
 }
 \description{
 Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
