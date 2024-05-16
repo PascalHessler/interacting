@@ -14,7 +14,8 @@
                               legend.round,
                               xlim,
                               file,
-							  xvar,zvar,yvar)
+							                xvar,zvar,yvar,
+							                x.ticks, y1.ticks,y2.ticks)
 
   {
     
@@ -69,10 +70,6 @@
               if (length(x) != length(z)) exit("interprobe says(): x and z must have the same length")
         }
     
-    #-------------------------------------------------------------
-    
-   
-      
   #-------------------------------------------------------------
   
   #Case 3: Model        
@@ -183,5 +180,42 @@
             }
               
       }
+      
+      
+  #14 x-ticks and y-ticks
+      #14.1 Numeric or data.frame
+      
+          if (!is.null(x.ticks) &&  !class(x.ticks) %in% c('numeric','data.frame','integer')) {
+            exit("interprobe() says: the argument 'x.ticks' must be either a\n ",
+                 "numeric vector or a dataframe, but it is instead '",class(x.ticks),"'.")
+          }
+ 
+        if (!is.null(y1.ticks) &&  !class(y1.ticks) %in% c('numeric','data.frame','integer')) {
+            exit("interprobe() says: the argument 'y1.ticks' must be either a\n ",
+                 "numeric vector or a dataframe, but it is instead '",class(y1.ticks),"'.")
+        }
+      
+      if (!is.null(y2.ticks) &&  !class(y2.ticks) %in% c('numeric','data.frame','integer')) {
+        exit("interprobe() says: the argument 'y2.ticks' must be either a\n ",
+             "numeric vector or a dataframe, but it is instead '",class(y2.ticks),"'.")
+      }
+      #If dataframe, 2 cols
+        if (!is.null(y1.ticks) &&  class(y1.ticks) =='data.frame' && ncol(y1.ticks)!=2) 
+          {
+                exit("interprobe() says: the argument 'y1.ticks' must be either a\n",
+               "numeric vector or a dataframe with 2 columns, but it is a\n",
+               "dataframe with '",ncol(y1.ticks),"' columns.")
+          } 
+          
+      #If dataframe, 2 cols
+          if (!is.null(y2.ticks) &&  class(y2.ticks) =='data.frame' && ncol(y2.ticks)!=2) {
+            
+              exit("interprobe() says: the argument 'y2.ticks' must be either a\n",
+                   "numeric vector or a dataframe with 2 columns, but it is a\n",
+                   "dataframe with '",ncol(y2.ticks),"' columns.")
+            } 
+        
+      
+    
       
   }#End of function

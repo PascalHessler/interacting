@@ -77,6 +77,7 @@
 #'or a dataframe with two columns. The first column contains x-axis variable values, the second
 #'the labels to show in the x-axis for those values, e.g., x.ticks=data.frame(values=c(1,4,7),
 #'labels=c("Against","Neutral","Favor")).  
+#'@param y.ticks same as x.ticks, for the y-axis
 #'@param quiet if TRUE interprobe() does not print output on the console as it runs.
 #'@export
 
@@ -108,6 +109,8 @@ interprobe <- function(
                     legend.simple.slopes  = NULL,
                     legend.johnson.neyman = NULL,
                     x.ticks=NULL,
+                    y1.ticks=NULL,
+                    y2.ticks=NULL,
                     quiet=FALSE)
                     
   {
@@ -120,7 +123,8 @@ interprobe <- function(
 
   #1 Validate input and determine what was provided, vector, model, or data.frame
         validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar)   
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar,
+                           x.ticks, y1.ticks, y2.ticks)
 
       
     if (!is.null(data)) {
@@ -312,13 +316,15 @@ interprobe <- function(
             if (draw %in% c("both","simple slopes"))
               {
               make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,x.ticks=x.ticks)
+                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,
+                   legend.title=legend.simple.slopes,x.ticks,y1.ticks)
               }
           #Plot Johson-Neyman (floodlight)
              if (draw %in% c("both","jn"))
                {
                 make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                     focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks=x.ticks)  
+                     focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim2,
+                     legend.title=legend.johnson.neyman,x.ticks,y2.ticks)  
                }
               
           #End
@@ -346,7 +352,8 @@ interprobe <- function(
         if (draw %in% c('simple slopes','both'))
           {
           output.simple.slopes = make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,x.ticks=x.ticks)  
+                                            focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,
+                                            legend.title=legend.simple.slopes,x.ticks,y1.ticks)  
           }
       
       
@@ -354,8 +361,10 @@ interprobe <- function(
       if (draw %in% c('jn','both'))
       {
 
-       output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks=x.ticks)  
+       output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, 
+                                          data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                                          focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
+                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks)  
       }
 #12 Add histogram bins (NULL for discrete x1axis)
       if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes

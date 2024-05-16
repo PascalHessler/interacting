@@ -6,6 +6,10 @@ With Tweets:
 2) Add 2 hours on each end
 3) Do it starting at midnight at 6AM
 
+Panel C figure low-teck, line should be thicker
+
+
+
 
 
 Andres:
@@ -22,3 +26,5 @@ Andres:
 		 so it's not really possible to model the analysis that is closest to the one used by the authors with interprobe.
 
 
+
+To Do for Andres:

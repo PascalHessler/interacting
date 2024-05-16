@@ -52,6 +52,7 @@ pkg_path <- "c:/git/interacting/r"
   ylim1=NULL  
   ylim2=NULL
   x.ticks=NULL
+  y
   legend.simple.slopes  = NULL
 legend.johnson.neyman = NULL
 
@@ -64,33 +65,13 @@ legend.johnson.neyman = NULL
     y.raw = x*sqrt(z)
     e=rnorm(n,sd=sd(y.raw))
     y=y.raw+e
-    library('interacting')
+    #library('interacting')
     
     x=factor(x)
     
-   res1= interacting::interprobe(x,z,y)
-
+    interprobe(x,z,y)
    
    
-   x.ticks=data.frame(x1=c(-1,0,1),y1=c('ugly',0,'hot'))
-      
-   warnings()
-   
-  res1$frequencies
-res1$breaks   
-
-merge(res1$frequencies,res1$br)
-
-f1=res1$frequencies
-f2=data.frame(bin=rownames(f1), v0=f1[,1],v1=f1[,2],row.names = NULL)
-cbind(f2,res1$breaks)
-data.frame(f1)
-data.frame(res1$frequencies)
-   res1=  interprobe(x2,z2,y2,data=data1)
-
-  res1$
-  
-  #devtools::test()
 
   library('interacting')
     n=100
@@ -103,87 +84,5 @@ data.frame(res1$frequencies)
     
     
     
-    z1=factor(z1)
-    x=factor(x)
-    
-    
-    g1=mgcv::gam(y~s(z,by=x,k=3))
-    interprobe(x,z,y)
-    interprobe(g1,x='x',z='z')
-    interprobe(g1,x,z)
-    class(model)
-    
-    
-    x=g1
-    x=z
-    z=y
-
-    class(g1)
-    class(arguments$y)
-    
-    
-       r1= interprobe(x=x,z=z,y=y)
-       floodlight=fl
-       fl[[1]]
-       
-d=r1$simple.slopes
-d2=r1$floodlight
-    
-    type='floodlight'
-    res=floodlight
-    ylab='dydx'
-    
-    
-    
-    
-str(ndj)
-    
-    xj=ux[2]
-    
-    ndj
-    ndj
-    ndj$z2=factor(ndj$z2)
-    
-    marginaleffects::slopes(model)
-    marginaleffects::slopes(g1)
-    nd=
-    marginaleffects::slopes(model,newdata=ndj[1,])
-    marginaleffects::slopes(model,newdata=ndj.hand[1,])
-    ndj.hand=data.frame(z=1,x=1,y=4.25,z2='aa')
-    str(ndj)
-    str(ndj.hand)
-    ndj$x=as.numeric(ndj$x)
-    ndj$z2=as.character(ndj$z2)
-    ndj
-    names(ndj)
-    names(ndj.hand)
-    ndj==ndj.hand
-    summary(ndj)
-    ndj=data.frame(ndj)
-    d=data.frame(z=1,x=1,y=4.25,z2='aa')
-    ndj[1,]
-    d[1,]=ndj[1,]
-    
-    names(d)
-    names(ndj)
-    d2=data.frame(z=1,x=1,y=0,z2='aa')
-    model$model
-    d=model$model
-    d=d[,-1]
-    predict
-    ndj  
-      insight::get_data(model)
-    
-    
-    
-    
-    interprobe(x=x2,y=y2,z=z2,data=data1)
-    x=x1
-    z=z1
-    y=y1
-    
-     interprobe(x,z,y)
-
-
   
     
