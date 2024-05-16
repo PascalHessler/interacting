@@ -41,7 +41,7 @@ pkg_path <- "c:/git/interacting/r"
   ylab1='Dependent Variable'
   ylab2='Marginal Effect'
   main1="GAM Simple Slopes"
-  main2='GAM Floodlight'
+  main2='GAM JN'
   focal.label = 'Focal Predictor (x)'
   xlim=NULL
   force.discrete.freqs=FALSE

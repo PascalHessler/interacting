@@ -79,6 +79,8 @@
 #'labels=c("Against","Neutral","Favor")).  
 #'@param y.ticks same as x.ticks, for the y-axis
 #'@param quiet if TRUE interprobe() does not print output on the console as it runs.
+#'@param probe.bins interger specifying how many different values to probe the interactions for 
+#'(the bigger this nummber, the more precise the regions of significance are and smoother the plots).
 #'@export
 
 
@@ -111,7 +113,8 @@ interprobe <- function(
                     x.ticks=NULL,
                     y1.ticks=NULL,
                     y2.ticks=NULL,
-                    quiet=FALSE)
+                    quiet=FALSE,
+                    probe.bins=1000)
                     
   {
  
@@ -187,11 +190,11 @@ interprobe <- function(
 
   #4 set moderator values for computing marginal effects
           if (moderation=='discrete')   zs = uz
-          if (moderation=='continuous') zs = seq(min(data[,zvar]),max(data[,zvar]),length.out=100)
+          if (moderation=='continuous') zs = seq(min(data[,zvar]),max(data[,zvar]),length.out=probe.bins)
           
         #set focal predictor values
           if (focal!='continuous')   xs = ux
-          if (focal=='continuous')   xs = seq(min(data[,xvar]),max(data[,xvar]),length.out=100)
+          if (focal=='continuous')   xs = seq(min(data[,xvar]),max(data[,xvar]),length.out=probe.bins)
 
         
   #5 Estimate model (if the user did not provide it as an argument)
@@ -390,6 +393,6 @@ interprobe <- function(
       
       
 #14 Resort the list
-      output=output[c(4,1,2,3)]
+      #output=output[c(4,1,2,3)]
       invisible(output)          
 }      

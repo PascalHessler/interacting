@@ -27,4 +27,27 @@ Andres:
 
 
 
-To Do for Andres:
+ #DATA DICTIONARY: deleted from code but shoudl be in resesarchbox
+                #fv2_wns:       number of likes for tweet within one hour (windsorized)
+                #hour2:         time of day (6am = 0, 5am = 23)
+                #vice_effect_f: magazine type (virtue vs vice)
+              
+              #Account characteristic controls:
+                #lag_fv2_wns:   lagged number of likes from previous tweet (for given magazine)
+                #lag_hour_tw:   lagged number of tweets
+                #duration_m:    duration between two consecutive tweets
+                #n_follw:       number of followers
+                #cnt:           number of repeated tweets
+              #Tweet characteristic controls:
+                #photo:         tweet includes media file
+                #url:           tweet includes url
+                #hashtag:       tweet includes hashtag
+                #mention:       tweet mentions other accounts
+                #reply:         tweet was posted as reply to other account
+              #Content controls:
+                #wc:            tweet word count
+                #posemo:        tweet positivity (measured using Linguistic Inquiry and Word Count program)
+                #negemo:        tweet negativity (...)
+              #Time controls:
+                #dayofmonth_f:  day of the month fixed effects
+                #monthofyear_f: month of the year fixed effects
