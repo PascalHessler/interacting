@@ -10,7 +10,9 @@
       #1 preliminaries
         #Get frequencies
              fxz=fxz.list$fxz 
-          
+             rs=rowSums(fxz)
+             rs=ifelse(rs>1000000,paste0(round(rs/1000000,1),"M"),rs)
+             rs=ifelse(rs>1000,paste0(round(rs/1000,1),"k"),rs)
         #Determine # of lines and bins
               x.axis.bins = nrow(fxz)
               lines.total = ncol(fxz)
@@ -62,9 +64,7 @@
                   }} #End nested loop for histogram
             
           #Add sample size values
-            rs=rowSums(fxz)
-            rs=ifelse(rs>1000000,paste0(round(rs/1000000,1),"M"),rs)
-            rs=ifelse(rs>1000,paste0(round(rs/1000,1),"k"),rs)
+          
             
             text(rowMeans(breaks) ,y1,rs,pos=3,cex=.8,font=3,col='gray38')
        }
@@ -91,7 +91,8 @@
           }
             
           #Add sample size values
-            text(x1s ,y1,rowSums(fxz),pos=3,cex=.8,font=3,col='gray38')
+            
+            text(x1s ,y1,rs,pos=3,cex=.8,font=3,col='gray38')
        }
                      
              

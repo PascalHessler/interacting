@@ -1,12 +1,8 @@
 See why p-value not included in jn output, once fixed check "0.65 points, p = .029" in paper and subsquent p-values for the jn procedure comparison linear vs GAM
 make y.ticks like x.ticks 
 
-With Tweets:
-1) Do with k=unlimited and k=4 full sample
-2) Add 2 hours on each end
-3) Do it starting at midnight at 6AM
 
-Panel C figure low-teck, line should be thicker
+- check sample size redefinition with discrete x-axis
 
 
 
