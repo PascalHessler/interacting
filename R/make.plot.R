@@ -11,7 +11,7 @@
       #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM floodlight
       
     #Dummy to not mess with ylim if set explicitly
-        ylim.set.by.user =! is.null(ylim)
+        ylim.set.by.user <- !is.null(ylim)
       
 
     #1 Adjustments based on x or z on the x1 axis
