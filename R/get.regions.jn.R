@@ -114,8 +114,11 @@ get.regions.jn=function(j,xvar,zvar, focal)
       
       
     #Add note about max and min
-    output=paste0(output,"\n\nNote: regions of significance reported by interprobe() never include values outside\n",
-                  "range of observed data.")
+    output=paste0(output,"\n\nNotes:\n ",
+                  "1) Regions of significance reported by interprobe() never include values outside\n",
+                  "range of observed data.\n",
+                  "2) These regions are precise to 1/",probe.bin," of the range of x-values. For \n",
+                  "greater precision (and slower estimation) set 'probe.bin' to a value greater than '",probe.bin,"'.")
       
     return(output)
 
