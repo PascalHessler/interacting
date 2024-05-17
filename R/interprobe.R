@@ -114,7 +114,7 @@ interprobe <- function(
                     y1.ticks=NULL,
                     y2.ticks=NULL,
                     quiet=FALSE,
-                    probe.bins=1000)
+                    probe.bins=100)
                     
   {
  
