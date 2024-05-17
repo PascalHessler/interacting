@@ -10,6 +10,9 @@
       
       #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM floodlight
       
+    #Dummy to not mess with ylim if set explicitly
+        ylim.set.by.user =! is.null(ylim)
+      
 
     #1 Adjustments based on x or z on the x1 axis
         #1.1 X on AXIS    
@@ -64,7 +67,7 @@
 
 
           #Expand to include 0 if it is marginal effects
-              if (type=='floodlight') {
+              if (type=='floodlight' & !ylim.set.by.user) {
                 
                 #If it does not cover 0 currently
                     if (ylim1*ylim2>0)
@@ -78,10 +81,10 @@
                   }
           
           #Top space for legend
-            ylim[2]=ylim[2]+.3*diff(ylim)                              
+             if (!ylim.set.by.user) ylim[2]=ylim[2]+.3*diff(ylim)                              
             
          #Bottom space for histogram
-            if (histogram==TRUE) ylim[1]=ylim[1]- (.15 + n.lines*.07)*diff(ylim)        #add at the bottom for the histogram
+            if (histogram==TRUE & !ylim.set.by.user) ylim[1]=ylim[1]- (.15 + n.lines*.07)*diff(ylim)        #add at the bottom for the histogram
           
     #4 Set axes options
             
