@@ -379,7 +379,7 @@ interprobe <- function(
 
       regions.jn = 'N/A'
        if (draw!='simple slopes' & quiet==FALSE) {
-        regions.jn = get.regions.jn(jn , xvar , zvar ,focal)
+        regions.jn = get.regions.jn(jn , xvar , zvar ,focal,probe.bins)
          cat(regions.jn)  
        }
      

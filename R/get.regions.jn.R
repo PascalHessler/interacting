@@ -1,7 +1,7 @@
 
 
 
-get.regions.jn=function(j,xvar,zvar, focal)
+get.regions.jn=function(j,xvar,zvar, focal,probe.bins)
   {
   #Add counter
     j$k=1:nrow(j)
@@ -117,8 +117,8 @@ get.regions.jn=function(j,xvar,zvar, focal)
     output=paste0(output,"\n\nNotes:\n ",
                   "1) Regions of significance reported by interprobe() never include values outside\n",
                   "range of observed data.\n",
-                  "2) These regions are precise to 1/",probe.bin," of the range of x-values. For \n",
-                  "greater precision (and slower estimation) set 'probe.bin' to a value greater than '",probe.bin,"'.")
+                  "2) These regions are precise to 1/",probe.bins," of the range of x-values. For \n",
+                  "greater precision (and slower estimation) set 'probe.bins' to a value greater than '",probe.bins,"'.")
       
     return(output)
 
