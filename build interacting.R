@@ -6,7 +6,7 @@ pkg_path <- "c:/git/interacting/r"
   
 #INSTALL
   devtools::document(pkg_path)
-  #devtools::build(pkg_path, dest_path="C:/dropbox/research/GAM Floodlight/interacting_0.1.0.9001.tar.gz")
+  devtools::build(pkg_path, path="C:/dropbox/research/GAM Floodlight/interacting_0.1.0.9001.tar.gz")
   devtools::install(pkg_path, dependencies = FALSE, build = TRUE)
   library('interacting')
   install.package(path, repos=NULL)
