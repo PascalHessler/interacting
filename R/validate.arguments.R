@@ -91,12 +91,10 @@
   #Other arguments        
   
           
-  #4 k must have lenght 1 and be an integer
+  #4 k must have length 1 and be an integer
     if (!is.null(k))     check1(k,'k',1,'integer')
-      
-      
-
-   #5 spotlights must be of length 3
+  
+  #5 spotlights must be of length 3
      if (!is.null(spotlights) && length(spotlights) !=3) {
           exit("interprobe() says the argument 'spotlights' must be of length 3")
      }
@@ -131,7 +129,7 @@
       check1 (cols, "cols", 3, 'character')
       
   #10 Draw
-      check1 (draw, "draw", 1, 'character')
+      #check1 (draw, "draw", 1, 'character')
       if (!draw %in% c('both','simple slopes','jn')) {
         exit("interprobe() says that the argument 'draw' must be one of three values:\n  - 'both'\n  - 'simple slopes'\n  - 'jn'")
         }

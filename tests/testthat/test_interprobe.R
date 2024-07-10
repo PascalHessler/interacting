@@ -23,8 +23,8 @@
       lm1=lm(y1~x1*z1)
       
     #Get interprobe
-      t1=interprobe(x1,z1,y1,draw=FALSE)
-      t2=interprobe(model=lm1,x=x1,z=z1,draw=FALSE)
+      t1=interprobe(x1,z1,y1,draw='simple slopes')
+      t2=interprobe(model=lm1,x=x1,z=z1,draw='simple.slopes')
       
     #Check specific floodlight values
       expect_equal(round(t1$floodlight$dydx[21],2), 8.36)
