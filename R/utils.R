@@ -2,7 +2,10 @@
 
 #1 adjustcolor2():     Function like adjust color, BUT, the color is not transparent, thanks to chatGPT
 #2 line.seg()    :     Plot lines by segments of differnet color and width
-
+#3 Message with color
+#5 Get breaks
+#9 eval2
+#10 Clean string
 #11 Print formatted message when called directly
     
 
@@ -36,8 +39,7 @@
             }
   
 
-#================================================
-#4 MESSAGING
+#3 Message with color
     format_msg <- function(msg,width=70, header='IMPORTANT.', pre="| ")
     {
     #Line counter
@@ -99,7 +101,7 @@
     }
   
     
-#5 Get breaks
+#4 Get breaks
   get.breaks=function(cut_var)
   {
   interval_matrix <- do.call(rbind, strsplit(gsub("\\[|\\]|\\(|\\)", "", levels(cut_var)), ",", fixed = TRUE))
@@ -215,4 +217,34 @@
   return(cleaned_string)
    }
    
+#11 format p-value
+     cleanp=function(p)
+    {
+      p.clean=round(p,4)           #Round it
+      p.clean=substr(p.clean,2,6)  #Drop the 0
+      p.clean=paste0("p = ",p.clean)
+      if (p < .0001) p.clean= "p < .0001"
+      if (p > .9999) p.clean= "p > .9999"
+      return(p.clean)
+     }  
+     
+     
+     
+#12 round_smart: dynamic number of digits
+  round_smart <- function(x) {
+    abs_x <- abs(x)  # Use the absolute value
+  
+    if (abs_x >= 0.01) {
+      # Always show 2 decimals
+      return(formatC(x, format = "f", digits = 2))
+    } else if (abs_x >= 0.00001) {
+      # Show the first non-zero decimal
+      non_zero_digits <- sub("0\\.", "", sub(".*?([1-9]+.*)", "\\1", formatC(abs_x, format = "f", digits = 5)))
+      return(formatC(x, format = "f", digits = nchar(non_zero_digits)))
+    } else {
+      # For numbers smaller than 0.00001
+      return("<0.00001")
+    }
+  }
+
    

@@ -13,11 +13,11 @@
     .onAttach <- function(libname, pkgname) {
         
       #While developing:
-         packageStartupMessage ("#######################################################\n",
-                                "interacting v.0.1.0  DEV version: 2024 05 30 [0700 - BCN]")
+         packageStartupMessage ("Attached: 'interacting' (version: ",packageVersion('interacting'),  ")\n",
+                                "##################################################################\n",
+                                "DEVELOPMENT VERSION - DOUBLE CHECK IF USING FOR PUBLISHABLE PAPERS\n",
+                              "This Version 2024 10 21 - 09.45AM\n",
+                                "***      Subject to breaking changes and possible errors      ***")
 
   } #End on attach
-    
-    
-      
- 
+
