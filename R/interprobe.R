@@ -89,7 +89,7 @@ interprobe <- function(
                     x=NULL,z=NULL,y=NULL,
                     model=NULL,
                     data=NULL,
-                    k=3,
+                    k=NULL,
                     spotlights=NULL,
                     spotlight.labels=NULL,
                     histogram=TRUE,
@@ -144,7 +144,7 @@ interprobe <- function(
                 "   - Moderator : " ,zvar,"\n"))
         }
   
-  #Validte combination to determine if we were given a model or a dataset or vectors
+  #Validate combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
 
   #2 Create data
