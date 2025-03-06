@@ -17,7 +17,7 @@
     #1 Adjustments based on x or z on the x1 axis
         #1.1 X on AXIS    
             if ( focal!='categorical') {
-              if (xlab=='') xlab='Focal Predictor'
+              if (xlab=='') xlab=xvar
               n.lines=length(spotlights)
               x1.range = range(data[,xvar])
               x1s=xs
@@ -27,7 +27,7 @@
              
       #1.2 Z on Axis 
           if (focal=='categorical') {
-            if (xlab=='') xlab='Moderator'
+            if (xlab=='') xlab=zvar
             if (type=='simple slopes') n.lines=nux
             if (type=='floodlight')    n.lines=nux-1
                   #for categorical, the dy/dx is the diff in xs so 1 fewer line than x values
@@ -93,7 +93,7 @@
             
             #draw x and y ticks?
               xaxt = 's'                         #assume we make the default x-axis ticks
-              yaxt = 's'                         #assume we make the default x-axis ticks
+              yaxt = 's'                         #assume we make the default y-axis ticks
               
               
               if (!is.null(x.ticks)) xaxt = 'n'  #but not if x.ticks isn't null
@@ -172,7 +172,7 @@
           #Legend
             if (x1.axis=='x')
               {
-              if (is.null(legend.title)) legend.title=paste0("Moderator ('",zvar,"')")
+              if (is.null(legend.title)) legend.title=zvar
 
               legend("top",inset=.01,bty='n',lwd=8,col=cols[1:n.lines],
                      title=legend.title,
