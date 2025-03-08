@@ -1,5 +1,5 @@
   
-    compute.floodlight.discrete=function(ux, zs, model,xvar,zvar)
+    compute.jn.discrete=function(ux, zs, model,xvar,zvar)
         
       {
       floodlight = list()

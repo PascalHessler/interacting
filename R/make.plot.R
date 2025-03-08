@@ -4,21 +4,22 @@
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
                              focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title,
-                             x.ticks,y.ticks)
+                             x.ticks,y.ticks,jn.x.axis)
           {   
-      #res: list with results from either simple.slopes or floodlight 
+      #res: list with results from either simple.slopes or jn 
       
-      #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM floodlight
+      #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM jn
       
     #Dummy to not mess with ylim if set explicitly
         ylim.set.by.user <- !is.null(ylim)
       
 
     #1 Adjustments based on x or z on the x1 axis
+        
         #1.1 X on AXIS    
-            if ( focal!='categorical') {
+            if (jn.x.axis=='focal') {
               if (xlab=='') xlab=xvar
-              n.lines=length(spotlights)
+              n.lines  = length(spotlights)
               x1.range = range(data[,xvar])
               x1s=xs
               nux1=nux
@@ -26,10 +27,10 @@
             }
              
       #1.2 Z on Axis 
-          if (focal=='categorical') {
+          if (jn.x.axis!='focal') {
             if (xlab=='') xlab=zvar
-            if (type=='simple slopes') n.lines=nux
-            if (type=='floodlight')    n.lines=nux-1
+            if (type=='simple.slopes') n.lines=length(spotlights)
+            if (type=='jn')            n.lines=length(spotlights)-1
                   #for categorical, the dy/dx is the diff in xs so 1 fewer line than x values
             x1.range = range(data[,zvar])
             x1s=zs
@@ -67,7 +68,7 @@
 
 
           #Expand to include 0 if it is marginal effects
-              if (type=='floodlight' & !ylim.set.by.user) {
+              if (type=='jn' & !ylim.set.by.user) {
                 
                 #If it does not cover 0 currently
                     if (ylim1*ylim2>0)
@@ -79,7 +80,6 @@
                     }
                 
                   }
-          
           #Top space for legend
              if (!ylim.set.by.user) ylim[2]=ylim[2]+.3*diff(ylim)                              
             
@@ -122,8 +122,8 @@
                 if (is.data.frame(y.ticks))  axis(side=2,at=y.ticks[,1], y.ticks[,2],las=1)
               }
          
-    #7 Line at 0 for floodlight
-            if (type=='floodlight') {
+    #7 Line at 0 for jn
+            if (type=='jn') {
               axis(2,at=0,las=1)
               abline(h=0,lty=2,col='gray77')
               }
@@ -131,9 +131,9 @@
                j=1
   
                col.seg = cols
-               if (focal=='categorical' & type=='floodlight') col.seg=col.seg[-1]  
+               if (focal=='categorical' & type=='jn') col.seg=col.seg[-1]  
                
-              #If floodlighting a categorical predictor, drop the first color for that's baseline
+              #If jning a categorical predictor, drop the first color for that's baseline
                
               for (j in 1:n.lines) {
                #Color of lines
@@ -184,10 +184,24 @@
               {
                   if (is.null(legend.title)) legend.title=paste0("Focal predictor ('",xvar,"')")
 
-                  #Actual legend
-                  if (type=='simple slopes') legend("top",inset=.01,bty='n',lwd=5,col=cols[1:n.lines],title=legend.title,title.font=2,legend=xs)
-                  if (type=='floodlight')    legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],       title=legend.title,title.font=2,legend=paste0(xs[-1]," vs. ",xs[1]))
-              
+                #Actual legend
+                  
+                 #Simple Slopes legend
+                    if (type=='simple slopes') {
+                      legend("top",inset=.01,bty='n',lwd=5,col=cols[1:n.lines],title=legend.title,title.font=2,legend=spotlight.labels)
+                    }
+          
+                #JN legend
+                    if (type=='jn' & focal=='categorical')  {
+                        legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],   title=legend.title,title.font=2,legend=paste0(xs[-1]," vs. ",xs[1]))
+                    }
+                  
+                    if (type=='jn' & focal=='continuous')  {
+                        legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],   title=legend.title,title.font=2,legend=spotlight.labels)
+                    }
+                  
+                  
+                  
               }
             
             

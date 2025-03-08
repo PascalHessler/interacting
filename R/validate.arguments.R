@@ -13,7 +13,7 @@
                               draw,
                               legend.round,
                               xlim,
-                              file,
+                              save.as,
 							                xvar,zvar,yvar,
 							                x.ticks, y1.ticks,y2.ticks)
 
@@ -138,10 +138,10 @@
       if (!is.null(xlim)) check1 (xlim, "xlim", 2, 'numeric')
       
   #12 file
-      if (!is.null(file)) {
+      if (!is.null(save.as)) {
               
           #Get extension of file name
-              extension= tools::file_ext(file)
+              extension= tools::file_ext(save.as)
                   
           #Type of figure file
               if (!extension %in% c('svg','png')) exit("interprobe() says 'file' must be either a .png or .svg format.")
