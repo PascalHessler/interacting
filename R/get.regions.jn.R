@@ -20,7 +20,9 @@ get.regions.jn=function(j,xvar,zvar, focal,probe.bins)
     
     
   #Find start/end of sets of values
+    
     #Find batches of observations within sig/ns ranges
+    
       if (focal!='categorical') {
         breaks <- c(TRUE, diff(js$k) != 1 | diff(js$z) != 0 | diff(sign(js$marginal.effect))!=0)
       } 

@@ -130,8 +130,10 @@ interprobe <- function(
   #1.1 Validate input and determine what was provided, vector, model, or data.frame
         validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,save.as,xvar,zvar,yvar,
-                              x.ticks, y1.ticks, y2.ticks)
+                              x.ticks, y1.ticks, y2.ticks,focal, jn.x.axis)
 
+        
+        
   #1.2 If 'data' exist, create local x,y,z
         if (!is.null(data)) {
           x=xvar
@@ -186,6 +188,12 @@ interprobe <- function(
         
         
 
+      #2.4 hard code moderator on y-axis
+         if (focal=='categorical') jn.x.axis='moderator'
+          
+
+
+        
   #3 Set xs and zs for plotting
         
         #Moderator
@@ -196,7 +204,8 @@ interprobe <- function(
           if (focal=='continuous')   xs = seq(min(data[,xvar]),max(data[,xvar]),length.out=probe.bins)
           if (focal!='continuous')   xs = ux
 
-
+        
+        
   #4 Estimate model if not provided           
       
       if (v$input.model==FALSE) {
@@ -212,7 +221,10 @@ interprobe <- function(
        if (is.null(spotlights)) {
            
           #Spotlights for x or z
-            spotvar <- if (jn.x.axis == 'focal') data[, zvar] else data[, xvar]
+            if (jn.x.axis == 'focal') spotvar= data[, zvar]
+            if (jn.x.axis != 'focal') spotvar= data[, xvar] 
+
+            
            
           #Get the spotlights
                spotlights=quantile(spotvar , c(.15,.5,.85),type=3)
@@ -328,9 +340,10 @@ interprobe <- function(
   #12 Plot Simple Slopes       
       if (draw %in% c("both","simple slopes"))
       {
-        make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,
-                   legend.title=legend.simple.slopes , x.ticks , y1.ticks , jn.x.axis)
+      
+                make.plot  (type='simple.slopes',xlab,ylab,main, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
+                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim=ylim1,legend.title=legend.simple.slopes,
+                             x.ticks,y.ticks=y1.ticks,jn.x.axis)
         
     
               }
@@ -387,11 +400,11 @@ interprobe <- function(
      # output$frequencies = cbind(output$frequencies,breaks)
 
       
-#13 REport JN points unless only simple slopes requested or quiet==TRUE
+#13 Report JN points unless only simple slopes requested or quiet==TRUE
 
       regions.jn = 'N/A'
-       if (draw!='simple slopes' & quiet==FALSE) {
-        regions.jn = get.regions.jn(jn , xvar , zvar ,focal,probe.bins)
+       if (draw!='simple slopes' & quiet==FALSE & focal=='categorical') {
+        regions.jn = get.regions.jn(df2 , xvar , zvar ,focal,probe.bins)
          cat(regions.jn)  
        }
      

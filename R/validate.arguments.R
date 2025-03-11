@@ -15,7 +15,8 @@
                               xlim,
                               save.as,
 							                xvar,zvar,yvar,
-							                x.ticks, y1.ticks,y2.ticks)
+							                x.ticks, y1.ticks,y2.ticks,
+							                focal, jn.x.axis)
 
   {
     
@@ -214,6 +215,6 @@
             } 
         
       
-    
+
       
   }#End of function
