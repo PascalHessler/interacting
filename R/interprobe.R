@@ -126,8 +126,7 @@ interprobe <- function(
         zvar <- clean_string(deparse(substitute(z)))
         yvar <- clean_string(deparse(substitute(y)))
 
-        
-        
+          
   #1.1 Validate input and determine what was provided, vector, model, or data.frame
         validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,save.as,xvar,zvar,yvar,
@@ -145,6 +144,10 @@ interprobe <- function(
   #1.3 Validate combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
 
+        #If model then user did not enter yvar necessarily, let's grab yvar
+          if (v$input.model==TRUE) yvar <- all.vars(terms(model))[1]  # Remove the response variabl
+  
+    
           
   #1.4 Show message of what we will be done
         if (quiet==FALSE)
@@ -315,6 +318,7 @@ interprobe <- function(
           if (ylab2=='') ylab2=paste0("Marginal effect of ",xvar)      
       
 
+
   #11 Save figure
       if (!is.null(save.as)) {
               
@@ -339,6 +343,8 @@ interprobe <- function(
                 
               }     
   #12 Plot Simple Slopes       
+              
+
       if (draw %in% c("both","simple slopes"))
           {
           make.plot (type='simple.slopes',xlab,ylab1,main1, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
