@@ -9,8 +9,7 @@
       #res: list with results from either simple.slopes or jn 
       
       #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM jn
-      
-    #Dummy to not mess with ylim if set explicitly
+      #Dummy to not mess with ylim if set explicitly
         ylim.set.by.user <- !is.null(ylim)
       
 
@@ -203,7 +202,7 @@
                   
                 #JN legend
                     if (type=='jn' & focal=='categorical')  {
-                        legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],   title=legend.title,title.font=2,legend=paste0(xs[-1]," vs. ",xs[1]))
+                        legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],   title=legend.title,title.font=2,legend=paste0(xs[-1]," - ",xs[1]))
                     }
                   
                     if (type=='jn' & focal=='continuous')  {

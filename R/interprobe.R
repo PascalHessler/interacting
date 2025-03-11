@@ -121,6 +121,7 @@ interprobe <- function(
  
 #1 Preliminaries
   #1.0 Get var names
+  
         xvar <- clean_string(deparse(substitute(x)))
         zvar <- clean_string(deparse(substitute(z)))
         yvar <- clean_string(deparse(substitute(y)))
@@ -218,7 +219,7 @@ interprobe <- function(
   #5 Set spotlight values and labels
       
       #If not set by user  
-       if (is.null(spotlights)) {
+       if (is.null(spotlights) & focal!='categorical') {
            
           #Spotlights for x or z
             if (jn.x.axis == 'focal') spotvar= data[, zvar]
@@ -339,24 +340,23 @@ interprobe <- function(
               }     
   #12 Plot Simple Slopes       
       if (draw %in% c("both","simple slopes"))
-      {
-      
-                make.plot  (type='simple.slopes',xlab,ylab,main, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
-                             focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim=ylim1,legend.title=legend.simple.slopes,
-                             x.ticks,y.ticks=y1.ticks,jn.x.axis)
-        
-    
-              }
+          {
+          make.plot (type='simple.slopes',xlab,ylab1,main1, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
+                                 focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,
+                                 x.ticks, y1.ticks ,jn.x.axis)  
+          }
+              
           #Plot Johnson-Neyman (jn)
              if (draw %in% c("both","jn"))
                {
-                make.plot (type='jn', xlab, ylab2, main2, jn , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                     focal , moderation , max.unique , fxz.list , nux , nuz , xvar , zvar , xlim , ylim2,
-                     legend.title=legend.johnson.neyman , x.ticks , y2.ticks , jn.x.axis)  
+                make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
+                                          data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                                          focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
+                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,jn.x.axis)  
                }
               
           #End
-            message("The figures have been saved to '",file,"'")
+            message("The figures have been saved to '",save.as,"'")
             dev.off()        
       }          
                   

@@ -80,9 +80,9 @@
 
      
         if (! any(class(model) %in% c("lm","glm","gam"))) exit("interprobe() says you provided a model but it is not lm, glm, or gam")
-        n2=names(model$model)
-        if (!xvar %in% n2) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model '", modelname,"'")
-        if (!zvar %in% n2) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model '", modelname,"'")
+        vars <- all.vars(terms(model))[-1]  # Remove the response variable
+        if (!xvar %in% vars) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model '", modelname,"'")
+        if (!zvar %in% vars) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model '", modelname,"'")
         }
       
     
