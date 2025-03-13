@@ -7,7 +7,6 @@
                              x.ticks,y.ticks,jn.x.axis)
           {   
       #res: list with results from either simple.slopes or jn 
-      
       #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM jn
       #Dummy to not mess with ylim if set explicitly
         ylim.set.by.user <- !is.null(ylim)
@@ -26,6 +25,7 @@
              
         
       #1.2 Z on Axis 
+
           if (jn.x.axis!='focal') {
             if (xlab=='') xlab=zvar
           
@@ -35,6 +35,7 @@
               
             #Number of lines johnson.neyman
               if (type=='jn' & focal=='categorical')   n.lines=nux-1
+              if (type=='jn' & focal!='categorical')   n.lines=length(spotlights)
              
             #for categorical, the dy/dx is the diff in xs so 1 fewer line than x values
               x1.range = range(data[,zvar])

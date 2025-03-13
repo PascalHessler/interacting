@@ -394,7 +394,6 @@ interprobe <- function(
     #12.3 Plot jn/Johson-Neyman     
       if (draw %in% c('jn','both'))
       {
-
        output.johnson.neyman = make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
                                           data,xs, zs, gr,spotlights,cols,spotlight.labels,
                                           focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
