@@ -197,17 +197,15 @@
                     }
           
                     
-                  
-                  
-                
-                  
                 #JN legend
                     if (type=='jn' & focal=='categorical')  {
+                      
                         legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],   title=legend.title,title.font=2,legend=paste0(xs[-1]," - ",xs[1]))
                     }
                   
                     if (type=='jn' & focal=='continuous')  {
-                        legend("top",inset=.01,bty='n',lwd=5,col=cols[-1],   title=legend.title,title.font=2,legend=spotlight.labels)
+                      
+                        legend("top",inset=.01,bty='n',lwd=5,col=cols,   title=legend.title,title.font=2,legend=spotlight.labels)
                     }
                   
                   

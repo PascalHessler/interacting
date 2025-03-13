@@ -1,6 +1,6 @@
 Package: interacting
 Title: Probing interactions robustly to nonlinearities
-Version: 0.1.0.250311
+Version: 0.1.0.250313
 Authors@R: c(
     person(given = "Uri",
            family = "Simonsohn",
