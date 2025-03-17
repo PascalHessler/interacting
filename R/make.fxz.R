@@ -25,6 +25,7 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
             xbins   = cut(data[,xvar] ,n.bin.continuous , include.lowest=TRUE,labels=paste0('xbin_',1:(n.bin.continuous)))
             x1bins  = cut(data[,xvar] ,n.bin.continuous , include.lowest=TRUE) 
             
+            
         #Cut z into three
             cuts=c()
             cuts[1] =( spotlights[1]+spotlights[2])/2
