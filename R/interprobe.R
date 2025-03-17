@@ -1,7 +1,7 @@
 #'Probe Interactions With GAM Simple Slopes and GAM Johnson-Neyman Curves 
 #' 
 #' Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
-#' and computing simple slopes ('spotlight') and Johnson-Neyman ('floodlight') 
+#' and computing simple slopes ('spotlight') and Johnson-Neyman ('jn') 
 #' curves off the GAM model. While designed for GAM it can be used to probe
 #' other models including lm()
 #'  
@@ -25,9 +25,9 @@
 #'the default used by interprobe() is k=3, increasing it will lead to more wiggly
 #' functions increasing risk of over-fitting. mgcv::gam() uses a much higher default
 #' which interprobe opts-out of by specifying it to be k=3. e.g., gam(y~s(x,k=3)).
-#'@param spotlights vector with three values of the moderator at which simple slopes 
-#'and Johnson-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
-#'of moderator values in the data.
+#'@param spotlights vector with three values of the moderator, or focal predictor, 
+#'at which simple slopes and Johnson-Neyman curve are computed. 
+#'Defaults to 15th, 50th and 85th percentile of moderator values in the data.
 #'@param spotlight.labels labels to use in the legend to indicate the spotlight values
 #'@param histogram logical on whether sample sizes are depicted under the figure (default: TRUE)
 #'@param max.unique the sample size can be depicted for each possible value in the x 
@@ -59,11 +59,11 @@
 #'number of decimals to show on the legend.
 #'@param draw which plots to draw?  
 #'   \itemize{
-#'     \item \code{"both"}: Draws both Simple Slopes and Johnson-Neyman
+#'     \item \code{"both"}:  Draws both Simple Slopes and Johnson-Neyman (default)
 #'     \item \code{"simple slopes"}: Only Simple Slopes
 #'     \item \code{"jn"}: Only Johnson-Neyman
 #'   }
-#'@param file name of file to save figure to. Extension of the file name determines
+#'@param save.as name of file to save figure to. Extension of the file name determines
 #'whether figure is a .svg or a .png file (e.g., file='c:/temp/figure1.svg'). 
 #'Default is NULL, in which case the figure is not saved, only shown on screen.
 #'@param xlim numeric vector of length 2, giving the x coordinates range
@@ -89,7 +89,8 @@ interprobe <- function(
                     x=NULL,z=NULL,y=NULL,
                     model=NULL,
                     data=NULL,
-                    k=3,
+                    moderator.on.x.axis=TRUE,
+                    k=NULL,
                     spotlights=NULL,
                     spotlight.labels=NULL,
                     histogram=TRUE,
@@ -98,13 +99,13 @@ interprobe <- function(
                     n.max = 50,           #below this sample size we shade to show few observations
                     xlab='',
                     cols=c('red4','dodgerblue','green4'),
-                    ylab1='Dependent Variable',
-                    ylab2='Marginal Effect',
+                    ylab1='',
+                    ylab2='',
                     main1="GAM Simple Slopes",
                     main2="GAM Johnson-Neyman",
                     legend.round=c(1,4),
                     draw="both",
-                    file=NULL,
+                    save.as=NULL,
                     xlim=NULL,
                     ylim1=NULL,
                     ylim2=NULL,
@@ -118,125 +119,156 @@ interprobe <- function(
                     
   {
  
- 
-  #0 Get var names
+#1 Preliminaries
+  #1.0 Get var names
+  
         xvar <- clean_string(deparse(substitute(x)))
         zvar <- clean_string(deparse(substitute(z)))
         yvar <- clean_string(deparse(substitute(y)))
 
-  #1 Validate input and determine what was provided, vector, model, or data.frame
+          
+  #1.1 Validate input and determine what was provided, vector, model, or data.frame
         validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
-                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,file,xvar,zvar,yvar,
-                           x.ticks, y1.ticks, y2.ticks)
+                              xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,save.as,xvar,zvar,yvar,
+                              x.ticks, y1.ticks, y2.ticks, moderator.on.x.axis)
 
-      
-    if (!is.null(data)) {
-      x=xvar
-      z=zvar
-      y=yvar
-    }
-    
-  #What will be done
-        if (quiet==FALSE)
-        {
-        cat(paste0("Probing the interaction with:\n",
-                "   - Focal predictor : ",xvar,"\n",
-                "   - Moderator : " ,zvar,"\n"))
+        
+        
+  #1.2 If 'data' exist, create local x,y,z
+        if (!is.null(data)) {
+          x=xvar
+          z=zvar
+          y=yvar
         }
   
-  #Validte combination to determine if we were given a model or a dataset or vectors
+  #1.3 Validate combination to determine if we were given a model or a dataset or vectors
     v = validate.input.combinations(data , model, x, y ,z)
 
-  #2 Create data
-    #Extract if provided
-      if (v$input.data==FALSE & v$input.xyz==TRUE)  {
-        data.text = paste0("data = data.frame(",xvar,",", zvar,",", yvar,")")
-        data=eval2(data.text)
-        
+        #If model then user did not enter yvar necessarily, let's grab yvar
+          if (v$input.model==TRUE) yvar <- all.vars(terms(model))[1]  # Remove the response variabl
+  
+    
+          
+  #1.4 Show message of what we will be done
+        if (quiet==FALSE)
+        {
+        cat(paste0("Probing the interaction of '",xvar, "'⋅'" , zvar,"'\n"))
         }
-        
-      if (v$input.model==TRUE)                      data = model$model
-             
+  
+  
+  #1.5 Create data if it does not exist
     
-  #3 Number of unique x & z values
-        #3.1 Count
-          ux  = sort(unique(data[,xvar]))
-          uz  = sort(unique(data[,zvar]))
-          nux = length(ux)     #nux number of unique x values
-          nuz = length(uz)     #nuz number of unique z values
+      #Extract if provided
+        if (v$input.data==FALSE & v$input.xyz==TRUE)  {
+          data.text = paste0("data = data.frame(",xvar,",", zvar,",", yvar,")")
+          data=eval2(data.text)
           
-    
-        #3.2 Check if only 1 value
-          if (nux==1) exit("interprobe says: there is only one observed value for the focal (x) variable, '"    ,xvar,"'")
-          if (nuz==1) exit("interprobe says: there is only one observed value for the moderator (z) variable, '",zvar,"'")
-          
-        #3.3 Categorize as 'continuous', 'discrete', 'categorical' focal predictor
-          if (nux>max.unique)          focal = "continuous"
-          if (nux<=max.unique & nux>3) focal = "discrete"
-          if (nux<=3)                  focal = "categorical"
-         
-        #3.4 Moderator type
-          moderation = ifelse(nuz > max.unique, 'continuous', 'discrete')
-
+        } 
       
-        #3.5
-          if (is.null(xlab)) {
-            xlab=ifelse(focal=='categorial','Moderator','Focal Predictor')
-            
-          }
-          
-            
-  
+      #Get from Model if that was provided    
+        if (v$input.model==TRUE)                      data = model$model
 
-  #4 set moderator values for computing marginal effects
-          if (moderation=='discrete')   zs = uz
+    
+  #2 Determine discrete, categorical, continuous
+    
+      #2.1 Unique values
+        ux  = sort(unique(data[,xvar]))
+        uz  = sort(unique(data[,zvar]))
+        nux = length(ux)     #nux number of unique x values
+        nuz = length(uz)     #nuz number of unique z values
+        
+        #If only 1, stop
+            if (nux==1) exit("interprobe says: there is only one observed value for the focal (x) variable, '"    ,xvar,"'")
+            if (nuz==1) exit("interprobe says: there is only one observed value for the moderator (z) variable, '",zvar,"'")
+            
+      #2.2  Categorize as 'continuous', 'discrete', 'categorical' focal predictor
+            if (nux>max.unique)          focal = "continuous"
+            if (nux<=max.unique & nux>3) focal = "discrete"
+            if (nux<=3)                  focal = "categorical"
+           
+      #2.3  Moderator type
+            if (nuz>  max.unique)        moderation='continuous'
+            if (nuz<= max.unique)        moderation='discrete'
+        
+      #2.4
+            if (nux<=3 & moderator.on.x.axis==FALSE) {
+              message("interprobe() says: Less than 3 unique values for x variable ('",xvar,"').\n",
+                      "Will ignore request to have it on the x-axis")
+              moderator.on.x.axis=TRUE
+              
+              
+            }
+
+
+
+        
+  #3 Set xs and zs for plotting
+        
+        #Moderator
           if (moderation=='continuous') zs = seq(min(data[,zvar]),max(data[,zvar]),length.out=probe.bins)
-          
-        #set focal predictor values
-          if (focal!='continuous')   xs = ux
+          if (moderation=='discrete')   zs = uz
+
+        #Focal
           if (focal=='continuous')   xs = seq(min(data[,xvar]),max(data[,xvar]),length.out=probe.bins)
+          if (focal!='continuous')   xs = ux
 
         
-  #5 Estimate model (if the user did not provide it as an argument)
-          if (v$input.model==FALSE) model = estimate.model(nux,data,k,xvar,zvar,yvar)
-
+        
+  #4 Estimate model if not provided           
+      
+      if (v$input.model==FALSE) {
+         model = estimate.model(nux,data,k,xvar,zvar,yvar)  #see estimate.model.R
+          }
   
-  #6 Set spotlight values and labels
         
-       if (is.null(spotlights)) {
-         spotlights=quantile(data[,zvar],c(.15,.5,.85),type=3)
-         if (is.null(spotlight.labels)) {
-             spotlight.labels=paste0(
-                              c("15th percentile (","50th percentile (", "85th percentile (") ,
-                              c(round2(as.numeric(spotlights), max.d=legend.round[2] , min.d=legend.round[1] )),
-                              c(")",")",")"))
-         }
+        
+        
+  #5 Set spotlight values and labels
+      
+      #If not set by user  
+       if (is.null(spotlights) & focal!='categorical') {
+           
+          #Spotlights for x or z
+            if (moderator.on.x.axis==FALSE) spotvar= data[, zvar]
+            if (moderator.on.x.axis==TRUE) spotvar= data[, xvar] 
+
             
+           
+          #Get the spotlights
+               spotlights=quantile(spotvar , c(.15,.5,.85),type=3)
+            
+          #Get the labels  
+               if (is.null(spotlight.labels)) {
+               spotlight.labels=paste0(
+                                c("15th percentile (","50th percentile (", "85th percentile (") ,
+                                c(round2(as.numeric(spotlights), max.d=legend.round[2] , min.d=legend.round[1] )),
+                                c(")",")",")"))
+               } #End if no labels
+         }  #End if no spotlights
+           
          #Note: round2() is a function in utils.r that does rounding with default formatting
          
-       }
-          
       #If user set spotlights but not spotlight.labels, assign them
           if (is.null(spotlight.labels)) spotlight.labels=as.numeric(spotlights)
           
-  
   #6 Compute simple slopes        
       if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model,xvar,zvar)
-      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,model,xvar,zvar)
-       
+      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,zs, model,xvar,zvar,moderator.on.x.axis)
 
-  #7 Compute floodlight
-      if (nux <=3)  floodlight = compute.floodlight.discrete  (ux, zs, model,xvar,zvar)
-      if (nux  >3)  floodlight = compute.floodlight.continuous(spotlights, data, xs,model,xvar,zvar)
+        
+        
+  #7 Compute johnson-neyman
+      if (nux <=3)  jn = compute.jn.discrete  (ux, zs, model,xvar,zvar)
+      if (nux  >3)  jn = compute.jn.continuous(spotlights, data, xs,zs,model,xvar,zvar,moderator.on.x.axis)
       
 
           
   #8 Get fxz and gr
         #fx:  Frequencies of each bin to determine line width and histogram
-        #gr:  How transparent to make the line that is being plotted, it's the n observartion in bin over n=100
+        #gr:  How transparent to make the line that is being plotted, it's the n observation in bin over n=100
         
           #Frequencies
-            fxz.list = make.fxz(data  , n.bin.continuous,  moderation,nux , max.unique ,spotlights ,xvar,zvar)
+            fxz.list = make.fxz(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights,xvar,zvar,moderator.on.x.axis)
             fxz=fxz.list$fxz
             
           #As % of the adequate sample size in n.max
@@ -247,9 +279,9 @@ interprobe <- function(
   #9 Prepare output to be returned to enable plotting independently by user 
       #clean <- function(str) gsub("[^A-Za-z]", "", str)
       df1 <- data.frame(do.call(rbind, simple.slopes))
-      df2 <- data.frame(do.call(rbind, floodlight))
+      df2 <- data.frame(do.call(rbind, jn))
     
-    #Drop 
+    #Drop variables produces by {marginaleffects} which are not needed
       df1 <- df1[, !names(df1) %in% c("rowid", "y","s.value","p.value","statistic",yvar)]
       df2 <- df2[, !names(df2) %in% c("rowid", "y","s.value","statistic","term",
                               "predicted_lo",'predicted_hi','predicted',yvar)]
@@ -263,75 +295,78 @@ interprobe <- function(
      if (ncol(fxz)==2)  frequencies=data.frame(bin=rownames(fxz), f1=fxz[,1],f2=fxz[,2],row.names = NULL)
      if (ncol(fxz)==3)  frequencies=data.frame(bin=rownames(fxz), f1=fxz[,1],f2=fxz[,2],f3=fxz[,3],row.names = NULL)
       
-    #Assign  name to jn
-     jn=df2
-
-      
-      output=list(simple.slopes = df1, johnson.neyman = jn, frequencies=frequencies)
+    #Prepare output list
+      output=list(simple.slopes = df1, johnson.neyman = df2, frequencies=frequencies)
     
       
-  #10 Remove "GAM" from  figure headers for non-GAM models
-      if (v$input.model==TRUE) {
-        if (!inherits(model, "gam")) {
-          
-          #Pre-print 'linear' if we know it is linear
-            linear.st=''
-            if (inherits(model, "lm")) linear.st='Linear '
-          
-          #Substitute default headers
-            if (main1=="GAM Simple Slopes")   main1=paste0(linear.st,"Simple Slopes")
-            if (main2=="GAM Johnson-Neyman")  main2=paste0(linear.st,"Johnson-Neyman")
-            }
-            }      
-  
+  #10 Prepare labels for figures
       
+      #10.1. Remove "GAM" from default figure headers for non-GAM models
+            if (v$input.model==TRUE) {
+              if (!inherits(model, "gam")) {
+                
+                #Pre-print 'linear' if we know it is linear
+                  linear.st=''
+                  if (inherits(model, "lm")) linear.st='Linear '
+                
+                #Substitute default headers
+                  if (main1=="GAM Simple Slopes")   main1=paste0(linear.st,"Simple Slopes")
+                  if (main2=="GAM Johnson-Neyman")  main2=paste0(linear.st,"Johnson-Neyman")
+                  }
+                  }      
+        
+
+          
+      #10.3 y-axix
+          if (ylab1=='') ylab1=yvar
+          if (ylab2=='') ylab2=paste0("Marginal effect of ",xvar)      
       
-  #11 Plot for saving 
-      if (!is.null(file)) {
+
+
+  #11 Save figure
+      if (!is.null(save.as)) {
               
           #Get extension of file name
-              extension= tools::file_ext(file)
+              extension= tools::file_ext(save.as)
                   
           #Type of figure file
               
               if (draw=='both')
               {
-                if (extension=='svg') svg(file,width=14,height=7)
-                if (extension=='png') png(file,width=14000,height=7000,res=1000)
+                if (extension=='svg') svg(save.as,width=14,height=7)
+                if (extension=='png') png(save.as,width=14000,height=7000,res=1000)
                 par(mfrow=c(1,2))
                 par(oma=c(0,1,0,0))
-                
-                
-
                 
 
               } else {
                 
-                if (extension=='svg') svg(file,width=7,height=7)
-                if (extension=='png') png(file,width=7000,height=7000,res=1000)
+                if (extension=='svg') svg(save.as,width=7,height=7)
+                if (extension=='png') png(save.as,width=7000,height=7000,res=1000)
                 par(oma=c(0,1,0,0))
                 
               }     
+  #12 Plot Simple Slopes       
               
+
+      if (draw %in% c("both","simple slopes"))
+          {
+          make.plot (type='simple.slopes',xlab,ylab1,main1, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
+                                 focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,
+                                 x.ticks, y1.ticks ,moderator.on.x.axis)  
+          }
               
-            
-          #Plot simple slopes (spotlight)
-            if (draw %in% c("both","simple slopes"))
-              {
-              make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                   focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,
-                   legend.title=legend.simple.slopes,x.ticks,y1.ticks)
-              }
-          #Plot Johson-Neyman (floodlight)
+          #Plot Johnson-Neyman (jn)
              if (draw %in% c("both","jn"))
                {
-                make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                     focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim2,
-                     legend.title=legend.johnson.neyman,x.ticks,y2.ticks)  
+                make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
+                                          data,xs, zs, gr,spotlights,cols,spotlight.labels,
+                                          focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
+                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,moderator.on.x.axis)  
                }
               
           #End
-            message("The figures have been saved to '",file,"'")
+            message("The figures have been saved to '",save.as,"'")
             dev.off()        
       }          
                   
@@ -354,20 +389,19 @@ interprobe <- function(
         
         if (draw %in% c('simple slopes','both'))
           {
-          output.simple.slopes = make.plot (type='simple slopes', xlab, ylab1, main1, simple.slopes , histogram, data,xs, zs, gr,spotlights,cols,spotlight.labels,
-                                            focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,
-                                            legend.title=legend.simple.slopes,x.ticks,y1.ticks)  
+          output.simple.slopes = make.plot (type='simple.slopes',xlab,ylab1,main1, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
+                                 focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,
+                                 x.ticks, y1.ticks ,moderator.on.x.axis)  
           }
       
       
-    #12.3 Plot Floodlight/Johson-Neyman     
+    #12.3 Plot jn/Johson-Neyman     
       if (draw %in% c('jn','both'))
       {
-
-       output.johnson.neyman = make.plot (type='floodlight', xlab, ylab2, main2, floodlight , histogram, 
+       output.johnson.neyman = make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
                                           data,xs, zs, gr,spotlights,cols,spotlight.labels,
                                           focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
-                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks)  
+                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,moderator.on.x.axis)  
       }
 #12 Add histogram bins (NULL for discrete x1axis)
       if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes
@@ -375,11 +409,11 @@ interprobe <- function(
      # output$frequencies = cbind(output$frequencies,breaks)
 
       
-#13 REport JN points unless only simple slopes requested or quiet==TRUE
+#13 Report JN points unless only simple slopes requested or quiet==TRUE
 
       regions.jn = 'N/A'
-       if (draw!='simple slopes' & quiet==FALSE) {
-        regions.jn = get.regions.jn(jn , xvar , zvar ,focal,probe.bins)
+       if (draw!='simple slopes' & quiet==FALSE & focal=='categorical') {
+        regions.jn = get.regions.jn(df2 , xvar , zvar ,focal,probe.bins)
          cat(regions.jn)  
        }
      

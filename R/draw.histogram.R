@@ -30,7 +30,7 @@
             #"Sample Size" 
                 xc = (x1+x0)/2
                 yd2 = (yd-y0)*1.05 + y0
-                text(xc,yd2,"Sample Size",font=3,cex=1.1,pos=1)
+                text(xc,yd2,"Number of Observations",font=3,cex=1.1,pos=1)
 
                 
         #3 PLOT

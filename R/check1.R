@@ -40,5 +40,11 @@
             if (is.numeric(var)==FALSE) exit("interprobe() says the argument '",varname,"' must be a numeric, but '",var, "' isn't.")  
           }
         
+        #check type logical
+          if (type.check=='logical')
+            {
+            if (is.logical(var)==FALSE) exit("interprobe() says the argument '",varname,"' must be a logical, but '",var, "' isn't.")  
+          }
+
         
         }

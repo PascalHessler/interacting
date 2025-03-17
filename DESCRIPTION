@@ -1,6 +1,6 @@
 Package: interacting
 Title: Probing interactions robustly to nonlinearities
-Version: 0.1.0.241022
+Version: 0.1.0.250317
 Authors@R: c(
     person(given = "Uri",
            family = "Simonsohn",
@@ -11,7 +11,7 @@ Authors@R: c(
 Description: produce GAM Simple Slopes and GAM Johnson-Neyman curves
 URL: https://github.com/urisohn/interacting
 BugReports: https://github.com/urisohn/interacting
-Imports: mgcv
+Imports: mgcv, marginaleffects
 Suggests: 
     testthat (>= 3.0.0)
 License: GPL-3

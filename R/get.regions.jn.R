@@ -20,7 +20,9 @@ get.regions.jn=function(j,xvar,zvar, focal,probe.bins)
     
     
   #Find start/end of sets of values
+    
     #Find batches of observations within sig/ns ranges
+    
       if (focal!='categorical') {
         breaks <- c(TRUE, diff(js$k) != 1 | diff(js$z) != 0 | diff(sign(js$marginal.effect))!=0)
       } 
@@ -114,7 +116,7 @@ get.regions.jn=function(j,xvar,zvar, focal,probe.bins)
       
       
     #Add note about max and min
-    output=paste0(output,"\n\nNotes:\n ",
+    output=paste0(output,"\n\nNotes:\n",
                   "1) Regions of significance reported by interprobe() never include values outside\n",
                   "range of observed data.\n",
                   "2) These regions are precise to 1/",probe.bins," of the range of x-values. For \n",

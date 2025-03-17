@@ -10,7 +10,8 @@ interprobe(
   y = NULL,
   model = NULL,
   data = NULL,
-  k = 3,
+  moderator.on.x.axis = FALSE,
+  k = NULL,
   spotlights = NULL,
   spotlight.labels = NULL,
   histogram = TRUE,
@@ -19,13 +20,13 @@ interprobe(
   n.max = 50,
   xlab = "",
   cols = c("red4", "dodgerblue", "green4"),
-  ylab1 = "Dependent Variable",
-  ylab2 = "Marginal Effect",
+  ylab1 = "",
+  ylab2 = "",
   main1 = "GAM Simple Slopes",
   main2 = "GAM Johnson-Neyman",
   legend.round = c(1, 4),
   draw = "both",
-  file = NULL,
+  save.as = NULL,
   xlim = NULL,
   ylim1 = NULL,
   ylim2 = NULL,
@@ -65,9 +66,9 @@ the default used by interprobe() is k=3, increasing it will lead to more wiggly
 functions increasing risk of over-fitting. mgcv::gam() uses a much higher default
 which interprobe opts-out of by specifying it to be k=3. e.g., gam(y~s(x,k=3)).}
 
-\item{spotlights}{vector with three values of the moderator at which simple slopes
-and Johnson-Neyman curve are computed. Defaults to 15th, 50th and 85th percentile
-of moderator values in the data.}
+\item{spotlights}{vector with three values of the moderator, or focal predictor,
+at which simple slopes and Johnson-Neyman curve are computed.
+Defaults to 15th, 50th and 85th percentile of moderator values in the data.}
 
 \item{spotlight.labels}{labels to use in the legend to indicate the spotlight values}
 
@@ -109,12 +110,12 @@ number of decimals to show on the legend.}
 
 \item{draw}{which plots to draw?
 \itemize{
-\item \code{"both"}: Draws both Simple Slopes and Johnson-Neyman
+\item \code{"both"}:  Draws both Simple Slopes and Johnson-Neyman (default)
 \item \code{"simple slopes"}: Only Simple Slopes
 \item \code{"jn"}: Only Johnson-Neyman
 }}
 
-\item{file}{name of file to save figure to. Extension of the file name determines
+\item{save.as}{name of file to save figure to. Extension of the file name determines
 whether figure is a .svg or a .png file (e.g., file='c:/temp/figure1.svg').
 Default is NULL, in which case the figure is not saved, only shown on screen.}
 
@@ -144,7 +145,7 @@ labels=c("Against","Neutral","Favor")).}
 }
 \description{
 Probe interaction as proposed in Simonsohn (2024), estimating a GAM model
-and computing simple slopes ('spotlight') and Johnson-Neyman ('floodlight')
+and computing simple slopes ('spotlight') and Johnson-Neyman ('jn')
 curves off the GAM model. While designed for GAM it can be used to probe
 other models including lm()
 }

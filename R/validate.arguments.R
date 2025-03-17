@@ -13,9 +13,10 @@
                               draw,
                               legend.round,
                               xlim,
-                              file,
+                              save.as,
 							                xvar,zvar,yvar,
-							                x.ticks, y1.ticks,y2.ticks)
+							                x.ticks, y1.ticks,y2.ticks,
+							                moderator.on.x.axis)
 
   {
     
@@ -79,9 +80,9 @@
 
      
         if (! any(class(model) %in% c("lm","glm","gam"))) exit("interprobe() says you provided a model but it is not lm, glm, or gam")
-        n2=names(model$model)
-        if (!xvar %in% n2) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model '", modelname,"'")
-        if (!zvar %in% n2) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model '", modelname,"'")
+        vars <- all.vars(terms(model))[-1]  # Remove the response variable
+        if (!xvar %in% vars) exit("interprobe() says the focal variable x ('",xvar    ,"') is not in the model '", modelname,"'")
+        if (!zvar %in% vars) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the model '", modelname,"'")
         }
       
     
@@ -138,10 +139,10 @@
       if (!is.null(xlim)) check1 (xlim, "xlim", 2, 'numeric')
       
   #12 file
-      if (!is.null(file)) {
+      if (!is.null(save.as)) {
               
           #Get extension of file name
-              extension= tools::file_ext(file)
+              extension= tools::file_ext(save.as)
                   
           #Type of figure file
               if (!extension %in% c('svg','png')) exit("interprobe() says 'file' must be either a .png or .svg format.")
@@ -214,6 +215,10 @@
             } 
         
       
-    
+  #15 moderator.on.x.axis
+      check1 (moderator.on.x.axis, "moderator.on.x.axis", 1, 'logical')
+
+      
+      
       
   }#End of function
