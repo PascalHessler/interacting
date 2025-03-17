@@ -16,7 +16,7 @@
          packageStartupMessage ("Attached: 'interacting' (version: ",packageVersion('interacting'),  ")\n",
                                 "##################################################################\n",
                                 "DEVELOPMENT VERSION - DOUBLE CHECK IF USING FOR PUBLISHABLE PAPERS\n",
-                              "This Version 2025 03 17 - 12.35PM\n",
+                              "This Version 2025 03 17 - 02.24PM\n",
                                 "***      Subject to breaking changes and possible errors      ***")
 
   } #End on attach

@@ -4,7 +4,7 @@
 
     make.plot     = function(type,xlab,ylab,main, res , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
                              focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim,legend.title,
-                             x.ticks,y.ticks,jn.x.axis)
+                             x.ticks,y.ticks,moderator.on.x.axis)
           {   
       #res: list with results from either simple.slopes or jn 
       #main is entered in call within interprobe(), specifying GAM Simple Slpoes vs GAM jn
@@ -14,7 +14,7 @@
 
     #1 Adjustments based on x or z on the x1 axis
         #1.1 X on AXIS    
-            if (jn.x.axis=='focal') {
+            if (moderator.on.x.axis==FALSE) {
               if (xlab=='') xlab=xvar
               n.lines  = length(spotlights)
               x1.range = range(data[,xvar])
@@ -26,7 +26,7 @@
         
       #1.2 Z on Axis 
 
-          if (jn.x.axis!='focal') {
+          if (moderator.on.x.axis==TRUE) {
             if (xlab=='') xlab=zvar
           
             #Number of lines simple slopes

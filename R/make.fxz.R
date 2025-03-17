@@ -7,7 +7,7 @@
 #CASE 4  x: discrete z: discrete
 
 
-make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights,xvar,zvar,jn.x.axis)
+make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights,xvar,zvar,moderator.on.x.axis)
 {
   
   
@@ -17,7 +17,7 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
     if (nux>max.unique) {
       
     #1.1 focal  the x-axis
-        if (jn.x.axis=='focal')
+        if (moderator.on.x.axis==FALSE)
           {
   
 
@@ -46,7 +46,7 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
      
       
      #1.2 Moderator in the x-axis
-        if (jn.x.axis!='focal')
+        if (moderator.on.x.axis==TRUE)
           {
   
 

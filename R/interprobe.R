@@ -89,7 +89,7 @@ interprobe <- function(
                     x=NULL,z=NULL,y=NULL,
                     model=NULL,
                     data=NULL,
-                    jn.x.axis='focal',
+                    moderator.on.x.axis=TRUE,
                     k=NULL,
                     spotlights=NULL,
                     spotlight.labels=NULL,
@@ -130,7 +130,7 @@ interprobe <- function(
   #1.1 Validate input and determine what was provided, vector, model, or data.frame
         validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,save.as,xvar,zvar,yvar,
-                              x.ticks, y1.ticks, y2.ticks,focal, jn.x.axis)
+                              x.ticks, y1.ticks, y2.ticks, moderator.on.x.axis)
 
         
         
@@ -190,11 +190,15 @@ interprobe <- function(
             if (nuz>  max.unique)        moderation='continuous'
             if (nuz<= max.unique)        moderation='discrete'
         
-        
+      #2.4
+            if (nux<=3 & moderator.on.x.axis==FALSE) {
+              message("interprobe() says: Less than 3 unique values for x variable ('",xvar,"').\n",
+                      "Will ignore request to have it on the x-axis")
+              moderator.on.x.axis=TRUE
+              
+              
+            }
 
-      #2.4 hard code moderator on y-axis
-         if (focal=='categorical') jn.x.axis='moderator'
-          
 
 
         
@@ -225,8 +229,8 @@ interprobe <- function(
        if (is.null(spotlights) & focal!='categorical') {
            
           #Spotlights for x or z
-            if (jn.x.axis == 'focal') spotvar= data[, zvar]
-            if (jn.x.axis != 'focal') spotvar= data[, xvar] 
+            if (moderator.on.x.axis==FALSE) spotvar= data[, zvar]
+            if (moderator.on.x.axis==TRUE) spotvar= data[, xvar] 
 
             
            
@@ -249,13 +253,13 @@ interprobe <- function(
           
   #6 Compute simple slopes        
       if (nux <=3)  simple.slopes = compute.slopes.discrete  (ux, zs, model,xvar,zvar)
-      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,zs, model,xvar,zvar,jn.x.axis)
+      if (nux  >3)  simple.slopes = compute.slopes.continuous(spotlights, data, xs,zs, model,xvar,zvar,moderator.on.x.axis)
 
         
         
   #7 Compute johnson-neyman
       if (nux <=3)  jn = compute.jn.discrete  (ux, zs, model,xvar,zvar)
-      if (nux  >3)  jn = compute.jn.continuous(spotlights, data, xs,zs,model,xvar,zvar,jn.x.axis)
+      if (nux  >3)  jn = compute.jn.continuous(spotlights, data, xs,zs,model,xvar,zvar,moderator.on.x.axis)
       
 
           
@@ -264,7 +268,7 @@ interprobe <- function(
         #gr:  How transparent to make the line that is being plotted, it's the n observation in bin over n=100
         
           #Frequencies
-            fxz.list = make.fxz(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights,xvar,zvar,jn.x.axis)
+            fxz.list = make.fxz(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights,xvar,zvar,moderator.on.x.axis)
             fxz=fxz.list$fxz
             
           #As % of the adequate sample size in n.max
@@ -349,7 +353,7 @@ interprobe <- function(
           {
           make.plot (type='simple.slopes',xlab,ylab1,main1, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
                                  focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,
-                                 x.ticks, y1.ticks ,jn.x.axis)  
+                                 x.ticks, y1.ticks ,moderator.on.x.axis)  
           }
               
           #Plot Johnson-Neyman (jn)
@@ -358,7 +362,7 @@ interprobe <- function(
                 make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
                                           data,xs, zs, gr,spotlights,cols,spotlight.labels,
                                           focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
-                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,jn.x.axis)  
+                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,moderator.on.x.axis)  
                }
               
           #End
@@ -387,7 +391,7 @@ interprobe <- function(
           {
           output.simple.slopes = make.plot (type='simple.slopes',xlab,ylab1,main1, simple.slopes , histogram, data,xs,zs, gr, spotlights , cols , spotlight.labels ,
                                  focal , moderation , max.unique , fxz.list,nux,nuz,xvar,zvar,xlim,ylim1,legend.title=legend.simple.slopes,
-                                 x.ticks, y1.ticks ,jn.x.axis)  
+                                 x.ticks, y1.ticks ,moderator.on.x.axis)  
           }
       
       
@@ -397,7 +401,7 @@ interprobe <- function(
        output.johnson.neyman = make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
                                           data,xs, zs, gr,spotlights,cols,spotlight.labels,
                                           focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
-                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,jn.x.axis)  
+                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,moderator.on.x.axis)  
       }
 #12 Add histogram bins (NULL for discrete x1axis)
       if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes

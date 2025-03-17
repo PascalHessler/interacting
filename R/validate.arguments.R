@@ -16,7 +16,7 @@
                               save.as,
 							                xvar,zvar,yvar,
 							                x.ticks, y1.ticks,y2.ticks,
-							                focal, jn.x.axis)
+							                moderator.on.x.axis)
 
   {
     
@@ -215,6 +215,10 @@
             } 
         
       
+  #15 moderator.on.x.axis
+      check1 (moderator.on.x.axis, "moderator.on.x.axis", 1, 'logical')
 
+      
+      
       
   }#End of function

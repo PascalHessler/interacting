@@ -1,11 +1,11 @@
 
 
-    compute.jn.continuous=function(spotlights, data, xs,zs,model,xvar,zvar,jn.x.axis)
+    compute.jn.continuous=function(spotlights, data, xs,zs,model,xvar,zvar,moderator.on.x.axis)
       {
   
   
       #When x is in the x-axis
-        if (jn.x.axis=='focal')
+        if (moderator.on.x.axis==FALSE)
         {
           jn = list()
           j=1
@@ -34,7 +34,7 @@
 
       
      #When z is in the x-axis
-        if (jn.x.axis!='focal')
+        if (moderator.on.x.axis==TRUE)
         {
           jn = list()
           j=1

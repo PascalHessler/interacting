@@ -10,7 +10,7 @@ interprobe(
   y = NULL,
   model = NULL,
   data = NULL,
-  jn.x.axis = "focal",
+  moderator.on.x.axis = FALSE,
   k = NULL,
   spotlights = NULL,
   spotlight.labels = NULL,

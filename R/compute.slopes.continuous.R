@@ -1,13 +1,13 @@
 
 
 
-    compute.slopes.continuous=function(spotlights, data, xs,zs, model,xvar,zvar,jn.x.axis)
+    compute.slopes.continuous=function(spotlights, data, xs,zs, model,xvar,zvar,moderator.on.x.axis)
     {
     simple.slopes = list()
     j=1
     
     #Simple slopes with x in the x-axis
-        if (jn.x.axis=='focal')
+        if (moderator.on.x.axis==FALSE)
         {
         for (zj in spotlights)
           {
@@ -33,7 +33,7 @@
         }
     
     #Simple slopes with z in the x-axis
-        if (jn.x.axis!='focal')
+        if (moderator.on.x.axis==TRUE)
         {
         for (xj in spotlights)
           {
