@@ -58,9 +58,9 @@ validate.input.combinations=function(data, model, x,y,z)
    
         if (input.data + input.xyz + input.model==0) {
             message("interprobe says:\nYou must specify the variables to be used through one of these 3 combinations:\n",
-                    "1) data=df and variable names for x, z, y",
-                    "2) vectors x,z, and y\n",
-                    "3) model and variable names 'x' and 'z'")
+                    "1) 'data' and variable names for 'x', 'z', 'y'\n",
+                    "2) vectors 'x', 'z', and 'y'\n",
+                    "3) 'model' and variable names 'x' and 'z'")
             exit()
             }
 
