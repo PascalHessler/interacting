@@ -10,7 +10,7 @@ interprobe(
   y = NULL,
   model = NULL,
   data = NULL,
-  moderator.on.x.axis = FALSE,
+  moderator.on.x.axis = TRUE,
   k = NULL,
   spotlights = NULL,
   spotlight.labels = NULL,

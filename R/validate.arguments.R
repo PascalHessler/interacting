@@ -35,9 +35,9 @@
 
           #3 Are x,z,y in the dataset
             n1=names(data)
-            if (!xvar %in% n1) exit("interprobe() says the focal variable x ('",xvar,    "') is not in the dataset '",dataname,"'.")
-            if (!zvar %in% n1) exit("interprobe() says the moderator variable z ('",zvar,"') is not in the dataset '",dataname,"'.")
-            if (!yvar %in% n1) exit("interprobe() says the dependent variable y ('",yvar,"') is not in the dataset '",dataname,"'.")
+            if (!xvar %in% n1) exit("interprobe() says the focal variable ('",xvar,    "') is not in the dataset '",dataname,"'.")
+            if (!zvar %in% n1) exit("interprobe() says the moderator variable ('",zvar,"') is not in the dataset '",dataname,"'.")
+            if (!yvar %in% n1) exit("interprobe() says the dependent variable ('",yvar,"') is not in the dataset '",dataname,"'.")
   
           
           }    
@@ -219,6 +219,11 @@
       check1 (moderator.on.x.axis, "moderator.on.x.axis", 1, 'logical')
 
       
+  #16 Three unique variables were set
+      if (length(unique(c(xvar,zvar,yvar)))<3) {
+          exit("interprobe() says: you seem to have entered the same variable twice")
+        
+      }
       
       
   }#End of function

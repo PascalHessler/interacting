@@ -10,7 +10,12 @@
 make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotlights,xvar,zvar,moderator.on.x.axis)
 {
   
+  #Process zvar
+    uz=sort(unique(data[,zvar]))
+    nuz=length(unique(data[,zvar]))
+    
   
+    
 #------------------------------------------------------------
 #CASE 1  x: continuous nux>max.unique, always plot three lines for spotlights
     
@@ -49,11 +54,23 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
         if (moderator.on.x.axis==TRUE)
           {
   
-
-        #Cut x-axis into n.bins
-            xbins   = cut(data[,zvar] ,n.bin.continuous , include.lowest=TRUE,labels=paste0('xbin_',1:(n.bin.continuous)))
-            x1bins  = cut(data[,zvar] ,n.bin.continuous , include.lowest=TRUE) 
-            
+        #Cut x var
+          #If z is continuous
+              if (nuz>max.unique)
+              {
+              xbins   = cut(data[,zvar] ,n.bin.continuous , include.lowest=TRUE,labels=paste0('xbin_',1:(n.bin.continuous)))
+              x1bins  = cut(data[,zvar] ,n.bin.continuous , include.lowest=TRUE) 
+              }
+          
+             #If z is discrete
+              if (nuz<=max.unique)
+              {
+              xbins   = data[,zvar]
+              x1bins  = data[,zvar]
+              }
+          
+        
+          
         #Cut spotlight variable into three
             cuts=c()
             cuts[1] =( spotlights[1]+spotlights[2])/2
@@ -66,7 +83,7 @@ make.fxz = function(data  , n.bin.continuous,  moderation ,nux,max.unique ,spotl
         #Compute the cross frequencies
             fxz   = table(xbins,zbins)
             output=namedList(fxz , x1bins)          #namedList() in Utils.R
-
+        
             return(output)
             
         } #End 1.2 
