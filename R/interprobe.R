@@ -120,13 +120,26 @@ interprobe <- function(
   {
  
 #1 Preliminaries
-  #1.0 Get var names
   
+  
+  #1.0 Get var names
         xvar <- clean_string(deparse(substitute(x)))
         zvar <- clean_string(deparse(substitute(z)))
         yvar <- clean_string(deparse(substitute(y)))
 
+  
+  #1.1 if data is stated, force x,z,y to be in quotes (so variable in teh datafrmae
+        if (!is.null(data)) {
           
+          #if any is null, stop
+            if (is.null(x) | is.null(z) | is.null(y)) exit("interprobe says(): you must specify 'x', 'z' and 'y'")
+
+          #assign them the variable name
+            x=xvar
+            z=zvar
+            y=yvar
+        }
+                
   #1.1 Validate input and determine what was provided, vector, model, or data.frame
         validate.arguments(x, z ,y ,  model,data, k,spotlights,spotlight.labels,histogram, max.unique,n.bin.continuous, n.max ,
                               xlab,ylab1,ylab2,main1,main2,cols,draw,legend.round,xlim,save.as,xvar,zvar,yvar,
