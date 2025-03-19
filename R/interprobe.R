@@ -71,7 +71,7 @@
 #'@param ylim2 numeric vector of length 2, giving the y coordinates range for Johnson-Neyman (jn) plot
 #'@param legend.simple.slopes text to place on legend title (e.g., "Moderator 
 #'Values") in Simple Slopes plot
-#'@param legend.johnson.neyman text to place on legend title (e.g., 
+#'@param legend.jn text to place on legend title (e.g., 
 #'"Effect of focal predictor") in Johnson Neyman plot 
 #'@param x.ticks values to use for ticks in x-axis, either a vector or numeric values
 #'or a dataframe with two columns. The first column contains x-axis variable values, the second
@@ -110,7 +110,7 @@ interprobe <- function(
                     ylim1=NULL,
                     ylim2=NULL,
                     legend.simple.slopes  = NULL,
-                    legend.johnson.neyman = NULL,
+                    legend.jn = NULL,
                     x.ticks=NULL,
                     y1.ticks=NULL,
                     y2.ticks=NULL,
@@ -375,7 +375,7 @@ interprobe <- function(
                 make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
                                           data,xs, zs, gr,spotlights,cols,spotlight.labels,
                                           focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
-                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,moderator.on.x.axis)  
+                                          xlim,ylim2,legend.title=legend.jn,x.ticks,y2.ticks,moderator.on.x.axis)  
                }
               
           #End
@@ -414,7 +414,7 @@ interprobe <- function(
        output.johnson.neyman = make.plot (type='jn', xlab, ylab2, main2, jn , histogram, 
                                           data,xs, zs, gr,spotlights,cols,spotlight.labels,
                                           focal,moderation,max.unique,fxz.list,nux,nuz,xvar,zvar,
-                                          xlim,ylim2,legend.title=legend.johnson.neyman,x.ticks,y2.ticks,moderator.on.x.axis)  
+                                          xlim,ylim2,legend.title=legend.jn,x.ticks,y2.ticks,moderator.on.x.axis)  
       }
 #12 Add histogram bins (NULL for discrete x1axis)
       if (draw %in% c('both','simple slopes')) breaks=output.simple.slopes
