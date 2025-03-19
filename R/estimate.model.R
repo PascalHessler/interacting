@@ -45,7 +45,7 @@ estimate.model = function(nux,data,k,xvar,zvar,yvar)
                 model.text=paste0('try(mgcv::gam(' , yvar, '~' , 
                                         's(', zvar, k_if_specified,')', '+' ,
                                         's(', xvar, k_if_specified,')', '+' , 
-                                        'ti(',xvar, ',' , zvar, k_if_specified,'),data=data),silent=TRUE)') 
+                                        'ti(',xvar, ',' , zvar, k_if_specified,'),method="REML", data=data),silent=TRUE)') 
           
             #Run model
                  model = eval2(model.text)
