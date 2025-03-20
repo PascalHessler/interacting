@@ -31,7 +31,7 @@ interprobe(
   ylim1 = NULL,
   ylim2 = NULL,
   legend.simple.slopes = NULL,
-  legend.johnson.neyman = NULL,
+  legend.jn = NULL,
   x.ticks = NULL,
   y1.ticks = NULL,
   y2.ticks = NULL,
@@ -128,7 +128,7 @@ Default is NULL, in which case the figure is not saved, only shown on screen.}
 \item{legend.simple.slopes}{text to place on legend title (e.g., "Moderator
 Values") in Simple Slopes plot}
 
-\item{legend.johnson.neyman}{text to place on legend title (e.g.,
+\item{legend.jn}{text to place on legend title (e.g.,
 "Effect of focal predictor") in Johnson Neyman plot}
 
 \item{x.ticks}{values to use for ticks in x-axis, either a vector or numeric values
