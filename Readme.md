@@ -45,7 +45,7 @@ The interprobe function will display two plots:
 - GAM Simple Slopes: Shows how mpg varies with hp at different values of wt.
 - GAM Johnson-Neyman: Highlights regions of significance where the interaction is statistically meaningful.
 
-![Gam simple slopes on the right and Johnson-Neyman on the right](./EcampleGAM.png)
+[![Gam simple slopes on the right and Johnson-Neyman on the right](exampleGAM.png)
 
 ## Citation
 
